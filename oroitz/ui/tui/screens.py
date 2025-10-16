@@ -83,12 +83,11 @@ class SessionWizardScreen(Screen):
                     yield Label("Profile:")
                     yield Select(
                         [("windows", "Windows"), ("linux", "Linux"), ("mac", "macOS")],
-                        value="windows",
                         id="profile-select"
                     )
 
                 with Horizontal(id="buttons"):
-                    yield Button("Back", id="back-button", variant="secondary")
+                    yield Button("Back", id="back-button", variant="default")
                     yield Button("Start Analysis", id="start-button", variant="primary")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:

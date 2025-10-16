@@ -20,10 +20,10 @@ def cli(log_level: str) -> None:
 
 
 @cli.command()
-@click.argument("image_path", type=click.Path(exists=True, path_type=Path))
-@click.option("--profile", default="windows", help="Memory image profile", type=str)
-@click.option("--output", type=click.Path(path_type=Path), help="Output file path")
-def quick_triage(image_path: Path, profile: str, output: Optional[Path]) -> None:
+@click.argument("image_path", type=click.Path(exists=True))
+@click.option("--profile", default="Win10x64_19041", help="Volatility profile to use")
+@click.option("--output", type=click.Path(), help="Output file for JSON export")
+def quick_triage(image_path: str, profile: str, output: Optional[str]) -> None:
     """Run quick triage analysis on a memory image."""
     click.echo(f"Running quick triage on {image_path} with profile {profile}")
 
@@ -49,13 +49,25 @@ def quick_triage(image_path: Path, profile: str, output: Optional[Path]) -> None
     # Export if requested
     if output:
         exporter = OutputExporter()
-        exporter.export_json(normalized, output)
+        exporter.export_json(normalized, Path(output))
         click.echo(f"Results exported to {output}")
     else:
         # Print summary
         click.echo(f"Processes found: {len(normalized.processes)}")
         click.echo(f"Network connections: {len(normalized.network_connections)}")
         click.echo(f"Malfind hits: {len(normalized.malfind_hits)}")
+
+
+@cli.command()
+def tui() -> None:
+    """Launch the Textual TUI interface."""
+    try:
+        from oroitz.ui.tui import OroitzTUI
+        app = OroitzTUI()
+        app.run()
+    except ImportError as e:
+        click.echo(f"TUI not available: {e}", err=True)
+        click.echo("Make sure Textual is installed: pip install textual", err=True)
 
 
 if __name__ == "__main__":

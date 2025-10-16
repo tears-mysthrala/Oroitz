@@ -12,6 +12,7 @@ class Config(BaseSettings):
     # Core paths
     config_file: Optional[Path] = None
     cache_dir: Path = Path.home() / ".oroitz" / "cache"
+    sessions_dir: Path = Path.home() / ".oroitz" / "sessions"
     log_level: str = "INFO"
     max_concurrency: int = 4
 

@@ -70,5 +70,16 @@ def tui() -> None:
         click.echo("Make sure Textual is installed: pip install textual", err=True)
 
 
+@cli.command()
+def gui() -> None:
+    """Launch the PySide6 GUI interface."""
+    try:
+        from oroitz.ui.gui.main import main
+        main()
+    except ImportError as e:
+        click.echo(f"GUI not available: {e}", err=True)
+        click.echo("Make sure PySide6 is installed: pip install PySide6", err=True)
+
+
 if __name__ == "__main__":
     cli()  # type: ignore

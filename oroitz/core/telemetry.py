@@ -1,15 +1,14 @@
 """Telemetry and logging for Oroitz."""
 
 import logging
+import sys
 from typing import Any, Dict
 
-from rich.logging import RichHandler
-
-# Configure logging
+# Configure simple logging to avoid Rich import issues
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[RichHandler()],
+    format="[%(asctime)s] %(levelname)s - %(name)s - %(message)s",
+    stream=sys.stdout,
 )
 
 logger = logging.getLogger("oroitz")

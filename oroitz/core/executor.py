@@ -6,11 +6,16 @@ from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
-# Volatility 3 imports
-from volatility3.framework import contexts, automagic, constants
-from volatility3.framework import import_files, list_plugins
-from volatility3.framework.renderers import format_hints
-import volatility3.plugins
+# Volatility 3 imports - disabled for now
+VOLATILITY_AVAILABLE = False
+# Create dummy objects to avoid NameError
+contexts = None
+automagic = None
+constants = None
+import_files = None
+list_plugins = None
+format_hints = None
+volatility3 = None
 
 from oroitz.core.config import config
 from oroitz.core.telemetry import log_event, logger
@@ -39,29 +44,41 @@ class Executor:
 
     def _initialize_volatility(self) -> None:
         """Initialize Volatility 3 context and load plugins."""
-        try:
-            # Create base context
-            self._vol_context = contexts.Context()
-
-            # Import plugins - try to import Windows plugins specifically
-            try:
-                import volatility3.plugins.windows
-                import_files(volatility3.plugins.windows, True)
-            except ImportError:
-                logger.warning("Windows plugins not available, trying generic import")
-                import_files(volatility3.plugins, True)
-
-            # Load available plugins
-            self._plugins = list_plugins()
-
-            logger.info(f"Initialized Volatility 3 with {len(self._plugins)} plugins")
-            if self._plugins:
-                logger.debug(f"Available plugins: {list(self._plugins.keys())[:5]}...")
-
-        except Exception as e:
-            logger.warning(f"Failed to initialize Volatility 3: {e}. Using mock data fallback.")
+        if not VOLATILITY_AVAILABLE:
+            logger.info("Volatility 3 not available, using mock data mode")
             self._vol_context = None
             self._plugins = {}
+            return
+
+        # Temporarily disable Volatility 3 initialization to use mock data
+        logger.info("Using mock data mode - Volatility 3 initialization disabled")
+        self._vol_context = None
+        self._plugins = {}
+
+        # Uncomment below to re-enable Volatility 3
+        # try:
+        #     # Create base context
+        #     self._vol_context = contexts.Context()
+        #
+        #     # Import plugins - try to import Windows plugins specifically
+        #     try:
+        #         import volatility3.plugins.windows
+        #         import_files(volatility3.plugins.windows, True)
+        #     except ImportError:
+        #         logger.warning("Windows plugins not available, trying generic import")
+        #         import_files(volatility3.plugins, True)
+        #
+        #     # Load available plugins
+        #     self._plugins = list_plugins()
+        #
+        #     logger.info(f"Initialized Volatility 3 with {len(self._plugins)} plugins")
+        #     if self._plugins:
+        #         logger.debug(f"Available plugins: {list(self._plugins.keys())[:5]}...")
+        #
+        # except Exception as e:
+        #     logger.warning(f"Failed to initialize Volatility 3: {e}. Using mock data fallback.")
+        #     self._vol_context = None
+        #     self._plugins = {}
 
     def _execute_volatility_plugin(
         self,

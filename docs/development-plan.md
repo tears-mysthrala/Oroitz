@@ -17,7 +17,7 @@ Provide an execution order with concrete tasks so implementation can proceed pha
 ## Phase 1 – Core Foundation
 
 1. Scaffold repository structure (see Project Structure Guide).
-2. Implement configuration system (`volwrap.core.config`) with default + user overrides.
+2. Implement configuration system (`oroitz.core.config`) with default + user overrides.
 3. Add logging/telemetry scaffolding.
 4. Create session model and persistence layer (no Volatility calls yet).
 5. Write unit tests for configuration and session persistence.
@@ -25,7 +25,7 @@ Provide an execution order with concrete tasks so implementation can proceed pha
 ## Phase 2 – Workflow & Volatility Integration
 
 1. Implement workflow registry and seed workflows from catalogue.
-2. Integrate Volatility 3 execution via `volwrap.core.executor` with plugin stubs.
+2. Integrate Volatility 3 execution via `oroitz.core.executor` with plugin stubs.
 3. Implement output normalization and schema validation for `quick_triage` data.
 4. Add caching layer for plugin results.
 5. Provide CLI prototype commands to run `quick_triage` for testing.

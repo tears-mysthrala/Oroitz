@@ -17,6 +17,7 @@ packages = [
 python = ">=3.11,<3.13"
 volatility3 = "^2.4.1"
 pydantic = "^2.7.0"
+pydantic-settings = "^2.0.0"
 rich = "^13.7.0"
 textual = "^0.58.0"
 PySide6 = "^6.7.0"

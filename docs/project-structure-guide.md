@@ -60,6 +60,6 @@ Provide a concrete filesystem layout and setup steps so future contributors can 
 ## Next Steps for Scaffolding
 
 1. Create `pyproject.toml` with shared dependency groups (`core`, `gui`, `tui`, `dev`).
-2. Establish namespace packages (`volwrap.core`, `volwrap.gui`, `volwrap.tui`).
+2. Establish namespace packages (`oroitz.core`, `oroitz.gui`, `oroitz.tui`).
 3. Add placeholder modules with TODO comments to unblock incremental development.
 4. Document any deviations in an ADR and link back to this guide.

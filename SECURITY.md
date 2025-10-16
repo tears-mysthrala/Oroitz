@@ -27,7 +27,7 @@ Avoid filing public GitHub issues for security problems.
 
 Security bugs in the following areas fall under this policy:
 
-- Core engine orchestration, adapters, and bindings under the `volwrap` namespace.
+- Core engine orchestration, adapters, and bindings under the `oroitz` namespace.
 - GUI and TUI applications, including their packaging scripts.
 - CLI utilities and workflow orchestration logic.
 

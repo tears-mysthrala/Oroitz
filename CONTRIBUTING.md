@@ -6,7 +6,7 @@ Thank you for considering a contribution. This project aims to build a cross-pla
 
 - Align proposals and implementations with the specifications under `docs/`, starting with [`docs/volatility-wrapper-spec.md`](docs/volatility-wrapper-spec.md) and the companion component specs.
 - Treat architecture decision records in `docs/adrs/` as authoritative unless a new ADR is proposed.
-- Keep business logic within the `volwrap.core` package and use adapters for CLI, GUI, and TUI layers.
+- Keep business logic within the `oroitz.core` package and use adapters for CLI, GUI, and TUI layers.
 - Follow the code style enforced by Ruff and Black; avoid introducing additional formatters without discussion.
 - Do not commit large memory images or proprietary Volatility plugins; reference public datasets instead.
 

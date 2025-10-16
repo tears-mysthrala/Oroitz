@@ -12,29 +12,29 @@ Define the architecture, data flow, and responsibilities of the Python-based eng
 
 ## Module Breakdown
 
-- `volwrap.core.session`
+- `oroitz.core.session`
   - Manages lifecycle of analysis sessions (create, load, save, resume).
   - Tracks metadata (image path, profile, plugin versions, timestamps).
   - Provides context manager support for resource cleanup.
-- `volwrap.core.workflow`
+- `oroitz.core.workflow`
   - Defines reusable workflows as ordered plugin operations and transforms.
   - Validates plugin compatibility with the supplied memory image profile.
   - Exposes registry functions (`register`, `get`, `list`) with schema validation.
-- `volwrap.core.executor`
+- `oroitz.core.executor`
   - Wraps Volatility 3 plugin invocation.
   - Handles concurrency configuration, timeouts, retries.
   - Emits structured events for logging/telemetry.
-- `volwrap.core.output`
+- `oroitz.core.output`
   - Normalizes plugin output to structured models using Pydantic.
   - Supports exporters for JSON, CSV, Parquet, and in-memory pandas DataFrames.
   - Provides streaming writers for large outputs.
-- `volwrap.core.cache`
+- `oroitz.core.cache`
   - Persists intermediate results keyed by session + plugin parameters.
   - Supports pluggable backends (filesystem default; future SQLite/Redis adapters).
-- `volwrap.core.config`
+- `oroitz.core.config`
   - Loads and validates configuration from files (`config.toml`), environment variables, CLI flags, or UI bindings.
   - Supplies typed settings objects to other modules.
-- `volwrap.core.telemetry`
+- `oroitz.core.telemetry`
   - Emits structured logs, metrics, and optional analytics events.
   - Integrates with the GUI/TUI to display progress and errors.
 
@@ -64,7 +64,7 @@ Define the architecture, data flow, and responsibilities of the Python-based eng
 ## Configuration Strategy
 
 - Default config file: `config/default.toml`.
-- User overrides stored in `~/.volwrap/config.toml` (Windows path equivalent on win32).
+- User overrides stored in `~/.oroitz/config.toml` (Windows path equivalent on win32).
 - Session-specific overrides passed via CLI/UI serialized into the session record.
 - Validation performed with Pydantic models; fail fast with descriptive errors.
 
@@ -73,7 +73,7 @@ Define the architecture, data flow, and responsibilities of the Python-based eng
 - Differentiate between recoverable plugin errors and fatal session errors.
 - Provide actionable messages (missing symbols, unsupported profile, corrupted image).
 - Surface errors to GUI/TUI via event bus; display remediation suggestions drawn from knowledge base.
-- Log full stack traces to rotating file logs (`logs/volwrap.log`).
+- Log full stack traces to rotating file logs (`logs/oroitz.log`).
 
 ## Telemetry & Logging
 
@@ -95,8 +95,8 @@ Define the architecture, data flow, and responsibilities of the Python-based eng
 
 ## Persistence Artifacts
 
-- Session metadata stored as JSON in `~/.volwrap/sessions/{session_id}.json`.
-- Cached plugin outputs stored under `~/.volwrap/cache/{session_id}/{plugin_name}/` with metadata manifest.
+- Session metadata stored as JSON in `~/.oroitz/sessions/{session_id}.json`.
+- Cached plugin outputs stored under `~/.oroitz/cache/{session_id}/{plugin_name}/` with metadata manifest.
 - Exported artifacts go to user-specified directories; include provenance file describing inputs and Volatility versions.
 
 ## Testing Guidelines

@@ -101,7 +101,7 @@ Document the default workflows, their constituent Volatility plugins, expected o
 
 ## Implementation Checklist
 
-1. Create workflow definition data structures in `volwrap.core.workflow`.
+1. Create workflow definition data structures in `oroitz.core.workflow`.
 2. Populate seed workflows matching the catalogue above.
 3. Add unit tests ensuring plugin order, transforms, and output mapping align with spec.
 4. Expose workflows to GUI/TUI through adapter endpoints (`list_workflows`, `describe_workflow`).

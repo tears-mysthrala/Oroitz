@@ -13,7 +13,7 @@ Describe the structure and behavior of the desktop application so it can be impl
 ## Application Structure
 
 - Entrypoint: `ui/gui/main.py` with `main()` launching a `QApplication` and the root `MainWindow` widget.
-- Package namespace: `volwrap.gui`.
+- Package namespace: `oroitz.gui`.
 - Use Qt Designer `.ui` files for core layouts stored in `ui/gui/resources/layouts/`.
 - Centralize application state in a `GuiSessionManager` class that wraps core engine sessions.
 - Adopt Model-View-ViewModel (MVVM) pattern:
@@ -66,7 +66,7 @@ Describe the structure and behavior of the desktop application so it can be impl
 
 ## Integration with Core Engine
 
-- GUI uses `volwrap.core` session API via an adapter layer `volwrap.gui.adapters.core_adapter`.
+- GUI uses `oroitz.core` session API via an adapter layer `oroitz.gui.adapters.core_adapter`.
 - Adapter exposes async-friendly methods returning futures/promises to integrate with UI threads.
 - Progress events from the core engine map to Qt signals displayed in progress timeline and logs panes.
 
@@ -97,7 +97,7 @@ Describe the structure and behavior of the desktop application so it can be impl
 
 ## Implementation Checklist
 
-1. Scaffold `volwrap.gui` package with `__init__.py`, `main.py`, `adapters/`, `viewmodels/`, `views/`, `resources/`.
+1. Scaffold `oroitz.gui` package with `__init__.py`, `main.py`, `adapters/`, `viewmodels/`, `views/`, `resources/`.
 2. Create base `MainWindow` derived from `QMainWindow` with menu bar and stacked central widget.
 3. Implement Landing View layout in Qt Designer; connect signals for session selection.
 4. Build New Session Wizard as `QWizard` subclass with validation hooks calling core adapter.

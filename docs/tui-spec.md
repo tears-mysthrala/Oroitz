@@ -12,8 +12,8 @@ Define how to implement the terminal user interface using Textual so developers 
 
 ## Application Structure
 
-- Entrypoint: `ui/tui/app.py` with `VolWrapTUI(App)` subclass.
-- Package namespace: `volwrap.tui`.
+- Entrypoint: `ui/tui/app.py` with `oroitzTUI(App)` subclass.
+- Package namespace: `oroitz.tui`.
 - Organize code into `views/`, `widgets/`, `controllers/`, `services/` directories.
 - Use Textual `Message` classes for event propagation between components.
 - Maintain shared state in `TuiSessionStore` (simple dataclass + notifier pattern).
@@ -78,7 +78,7 @@ Define how to implement the terminal user interface using Textual so developers 
 
 ## Implementation Checklist
 
-1. Scaffold `volwrap.tui` package with base `App` subclass, `views`, and `widgets` directories.
+1. Scaffold `oroitz.tui` package with base `App` subclass, `views`, and `widgets` directories.
 2. Implement `TuiSessionStore` with observable pattern to notify views of updates.
 3. Build `HomeView` with recent sessions table and command palette shortcuts.
 4. Implement `SessionWizardView` stepper, leveraging validation helpers from core engine.

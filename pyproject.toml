@@ -1,12 +1,16 @@
 [tool.poetry]
-name = "volatility-wrapper"
+name = "oroitz"
 version = "0.0.1"
-description = "Cross-platform GUI/TUI wrapper around Volatility 3"
-authors = ["VolWrap Team <team@example.com>"]
+description = "Oroitz: cross-platform Volatility 3 wrapper with shared core and multi-interface adapters"
+authors = ["Tears Workshop <tearsmysthrala@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+homepage = "https://github.com/tears-mysthrala/Oroitz"
+repository = "https://github.com/tears-mysthrala/Oroitz.git"
+documentation = "https://github.com/tears-mysthrala/Oroitz/tree/main/docs"
+keywords = ["volatility", "forensics", "memory-analysis", "dfir"]
 packages = [
-  { include = "volwrap" }
+  { include = "oroitz" }
 ]
 
 [tool.poetry.dependencies]

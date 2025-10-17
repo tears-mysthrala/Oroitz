@@ -10,6 +10,8 @@ from oroitz.core.output import OutputExporter, OutputNormalizer
 from oroitz.core.session import Session
 from oroitz.core.telemetry import setup_logging
 
+from .screens import HomeScreen
+
 
 class OroitzTUI(App):
     """Main Textual application for Oroitz."""
@@ -201,7 +203,3 @@ class OroitzTUI(App):
         await self.pop_screen()
         await self.pop_screen()
         await self.pop_screen()  # Should get us back to home
-
-
-# Import screens here to avoid circular imports
-from .screens import HomeScreen

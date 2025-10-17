@@ -9,11 +9,9 @@ from pydantic import BaseModel
 # Volatility 3 imports
 VOLATILITY_AVAILABLE = True
 try:
-    from volatility3.framework import contexts
-    from volatility3.framework.automagic import available, run
-    from volatility3.framework import constants
-    from volatility3.framework import import_files
     import volatility3.plugins
+    from volatility3.framework import constants, contexts, import_files
+    from volatility3.framework.automagic import available, run
 except ImportError:
     VOLATILITY_AVAILABLE = False
     # Create dummy objects to avoid NameError
@@ -25,13 +23,14 @@ except ImportError:
     format_hints = None
     volatility3 = None
 
+from oroitz.core.cache import cache
 from oroitz.core.config import config
 from oroitz.core.telemetry import log_event, logger
-from oroitz.core.cache import cache
 
 
 class ExecutionResult(BaseModel):
     """Result of a plugin execution."""
+
     plugin_name: str
     success: bool
     output: Optional[Any] = None
@@ -77,15 +76,11 @@ class Executor:
             self._plugins = {}
 
     def _execute_volatility_plugin(
-        self,
-        plugin_name: str,
-        image_path: str,
-        profile: str,
-        **kwargs: Any
+        self, plugin_name: str, image_path: str, profile: str, **kwargs: Any
     ) -> Optional[List[Dict[str, Any]]]:
         """Execute a Volatility 3 plugin and return normalized output."""
         if not self._vol_context:
-            logger.warning(f"Volatility context not available, falling back to mock data")
+            logger.warning("Volatility context not available, falling back to mock data")
             return self._get_mock_data(plugin_name)
 
         try:
@@ -94,14 +89,19 @@ class Executor:
             import_files(volatility3.plugins, True)
 
             # Try to get the plugin class dynamically
-            plugin_parts = plugin_name.split('.')
+            plugin_parts = plugin_name.split(".")
             plugin_module_name = f"volatility3.plugins.{'.'.join(plugin_parts[:-1])}"
             plugin_class_name = plugin_parts[-1]
-            
+
             try:
                 plugin_module = __import__(plugin_module_name, fromlist=[plugin_class_name])
                 # Try different capitalizations
-                for class_name in [plugin_class_name, plugin_class_name.capitalize(), plugin_class_name.title(), ''.join(word.capitalize() for word in plugin_class_name.split('_'))]:
+                for class_name in [
+                    plugin_class_name,
+                    plugin_class_name.capitalize(),
+                    plugin_class_name.title(),
+                    "".join(word.capitalize() for word in plugin_class_name.split("_")),
+                ]:
                     try:
                         plugin_class = getattr(plugin_module, class_name)
                         break
@@ -139,7 +139,7 @@ class Executor:
             tree_grid = plugin.run()
 
             # Convert TreeGrid to list of dictionaries
-            if tree_grid and hasattr(tree_grid, '_rows'):
+            if tree_grid and hasattr(tree_grid, "_rows"):
                 headers = [col.name for col in tree_grid._columns]
                 for row in tree_grid._rows:
                     result_dict = {}
@@ -171,7 +171,7 @@ class Executor:
         image_path: str,
         profile: str,
         session_id: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ExecutionResult:
         """Execute a single Volatility plugin."""
         start_time = time.time()
@@ -206,8 +206,7 @@ class Executor:
             success = True
             error = None
             log_event(
-                "plugin_success",
-                {"plugin": plugin_name, "duration": time.time() - start_time}
+                "plugin_success", {"plugin": plugin_name, "duration": time.time() - start_time}
             )
 
         except Exception as e:
@@ -229,21 +228,13 @@ class Executor:
         )
 
     def execute_workflow(
-        self,
-        workflow_spec: Any,
-        image_path: str,
-        profile: str
+        self, workflow_spec: Any, image_path: str, profile: str
     ) -> List[ExecutionResult]:
         """Execute all plugins in a workflow."""
         results: List[ExecutionResult] = []
 
         for plugin in workflow_spec.plugins:
-            result = self.execute_plugin(
-                plugin.name,
-                image_path,
-                profile,
-                **plugin.parameters
-            )
+            result = self.execute_plugin(plugin.name, image_path, profile, **plugin.parameters)
             results.append(result)
 
         return results

@@ -1,18 +1,18 @@
 """TUI Screens for Oroitz."""
 
+import asyncio
+from pathlib import Path
+from typing import List, Optional
+
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal, Vertical, VerticalScroll
 from textual.screen import Screen
-from textual.widgets import Button, Static, DataTable, Input, Select, Label, ProgressBar
-from textual import events
-from typing import Optional, List, Dict, Any
-import asyncio
-from pathlib import Path
+from textual.widgets import Button, DataTable, Input, Label, ProgressBar, Select, Static
 
+from oroitz.core.executor import ExecutionResult, Executor
+from oroitz.core.output import OutputExporter, OutputNormalizer
 from oroitz.core.session import Session
-from oroitz.core.workflow import registry, WorkflowSpec
-from oroitz.core.executor import Executor, ExecutionResult
-from oroitz.core.output import OutputNormalizer, OutputExporter
+from oroitz.core.workflow import WorkflowSpec, registry
 
 
 class HomeScreen(Screen):
@@ -36,7 +36,7 @@ class HomeScreen(Screen):
                         yield Button(
                             f"{workflow.name}\n{workflow.description}",
                             id=f"workflow-{workflow.id}",
-                            classes="workflow-button"
+                            classes="workflow-button",
                         )
 
                 yield Static("", id="spacer")
@@ -83,7 +83,7 @@ class SessionWizardScreen(Screen):
                     yield Label("Profile:")
                     yield Select(
                         [("windows", "Windows"), ("linux", "Linux"), ("mac", "macOS")],
-                        id="profile-select"
+                        id="profile-select",
                     )
 
                 with Horizontal(id="buttons"):
@@ -165,7 +165,9 @@ class RunScreen(Screen):
 
                 with Horizontal(id="run-buttons"):
                     yield Button("Cancel", id="cancel-button", variant="error")
-                    yield Button("View Results", id="results-button", variant="primary", disabled=True)
+                    yield Button(
+                        "View Results", id="results-button", variant="primary", disabled=True
+                    )
 
     async def on_mount(self) -> None:
         """Start execution when screen mounts."""
@@ -181,7 +183,9 @@ class RunScreen(Screen):
 
             for i, plugin_spec in enumerate(self.workflow.plugins):
                 plugin_name = plugin_spec.name
-                self.query_one("#log-content").update(f"Running plugin {i+1}/{total_plugins}: {plugin_name}\n")
+                self.query_one("#log-content").update(
+                    f"Running plugin {i+1}/{total_plugins}: {plugin_name}\n"
+                )
 
                 # Execute plugin
                 result = await asyncio.get_event_loop().run_in_executor(
@@ -189,13 +193,13 @@ class RunScreen(Screen):
                     self.executor.execute_plugin,
                     plugin_name,
                     str(self.session.image_path),
-                    self.session.profile
+                    self.session.profile,
                 )
 
                 results.append(result)
 
                 # Update progress
-                self.query_one("#progress-bar").update(progress=i+1)
+                self.query_one("#progress-bar").update(progress=i + 1)
 
                 # Update log
                 status = "✓" if result.success else "✗"
@@ -251,7 +255,10 @@ class ResultsScreen(Screen):
         with Container(id="results-container"):
             with Vertical():
                 yield Static(f"Results: {self.workflow.name}", id="results-title")
-                yield Static(f"Session: {self.session.image_path} ({self.session.profile})", classes="session-info")
+                yield Static(
+                    f"Session: {self.session.image_path} ({self.session.profile})",
+                    classes="session-info",
+                )
 
                 # Results summary
                 summary = self._get_summary()
@@ -288,13 +295,7 @@ class ResultsScreen(Screen):
             records = len(result.output) if result.output else 0
             error = result.error or ""
 
-            table.add_row(
-                result.plugin_name,
-                status,
-                ".2f",
-                str(records),
-                error
-            )
+            table.add_row(result.plugin_name, status, ".2f", str(records), error)
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle button presses."""

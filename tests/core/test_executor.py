@@ -1,6 +1,6 @@
 """Tests for executor module."""
 
-from oroitz.core.executor import Executor, ExecutionResult
+from oroitz.core.executor import Executor
 
 
 def test_executor_creation():
@@ -48,7 +48,7 @@ def test_execute_unknown_plugin():
 
 def test_execute_workflow():
     """Test executing a complete workflow."""
-    from oroitz.core.workflow import WorkflowSpec, PluginSpec
+    from oroitz.core.workflow import PluginSpec, WorkflowSpec
 
     executor = Executor()
 

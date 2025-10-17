@@ -1,10 +1,13 @@
 """Tests for output module."""
 
+import pytest
+from pydantic import ValidationError
+
 from oroitz.core.output import (
+    MalfindHit,
+    NetworkConnection,
     OutputNormalizer,
     ProcessInfo,
-    NetworkConnection,
-    MalfindHit,
     QuickTriageOutput,
 )
 
@@ -113,7 +116,12 @@ def test_normalize_quick_triage():
             plugin_name="windows.netscan",
             success=True,
             output=[
-                {"pid": 123, "local_addr": "127.0.0.1:80", "remote_addr": "0.0.0.0:0", "state": "LISTENING"},
+                {
+                    "pid": 123,
+                    "local_addr": "127.0.0.1:80",
+                    "remote_addr": "0.0.0.0:0",
+                    "state": "LISTENING",
+                },
             ],
             error=None,
             duration=0.5,
@@ -142,3 +150,48 @@ def test_normalize_quick_triage():
     assert normalized.processes[0].name == "System"
     assert normalized.network_connections[0].state == "LISTENING"
     assert normalized.malfind_hits[0].process_name == "bad.exe"
+
+
+def test_schema_validation_process_info():
+    """Test schema validation for ProcessInfo."""
+    # Valid process
+    process = ProcessInfo(pid=123, name="test.exe")
+    assert process.pid == 123
+
+    # Invalid: negative pid
+    with pytest.raises(ValidationError):
+        ProcessInfo(pid=-1, name="test.exe")
+
+    # Invalid: empty name
+    with pytest.raises(ValidationError):
+        ProcessInfo(pid=123, name="")
+
+    # Invalid: negative threads
+    with pytest.raises(ValidationError):
+        ProcessInfo(pid=123, name="test.exe", threads=-1)
+
+
+def test_schema_validation_network_connection():
+    """Test schema validation for NetworkConnection."""
+    # Valid connection
+    conn = NetworkConnection(pid=123, state="ESTABLISHED")
+    assert conn.pid == 123
+
+    # Invalid: negative pid
+    with pytest.raises(ValidationError):
+        NetworkConnection(pid=-1, state="LISTENING")
+
+
+def test_schema_validation_malfind_hit():
+    """Test schema validation for MalfindHit."""
+    # Valid hit
+    hit = MalfindHit(pid=123, tag="MzHeader")
+    assert hit.pid == 123
+
+    # Invalid: negative pid
+    with pytest.raises(ValidationError):
+        MalfindHit(pid=-1, tag="Suspicious")
+
+    # Invalid: negative commit_charge
+    with pytest.raises(ValidationError):
+        MalfindHit(pid=123, commit_charge=-1)

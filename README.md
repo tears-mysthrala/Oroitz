@@ -58,14 +58,14 @@ The repository has progressed from planning to active development with a functio
 - ✅ Session model and persistence layer created
 - ✅ Unit tests for configuration and session persistence
 
-#### Phase 2 – Workflow & Volatility Integration (In Progress)
+#### Phase 2 – Workflow & Volatility Integration
 
 - ✅ Workflow registry implemented and seeded with workflows
 - ✅ Volatility 3 execution integration via `oroitz.core.executor` (currently using mock data)
 - ✅ Output normalization and schema validation for `quick_triage` data
 - ✅ Caching layer for plugin results
 - ✅ CLI prototype commands for `quick_triage` testing
-- 🔄 Unit/integration tests for `quick_triage` end-to-end (basic tests implemented)
+- ✅ Unit/integration tests for `quick_triage` end-to-end (comprehensive coverage including schema validation, caching, and CLI)
 
 #### Phase 3 – TUI (Baseline) (In Progress)
 

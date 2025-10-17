@@ -63,6 +63,7 @@ def tui() -> None:
     """Launch the Textual TUI interface."""
     try:
         from oroitz.ui.tui import OroitzTUI
+
         app = OroitzTUI()
         app.run()
     except ImportError as e:
@@ -75,6 +76,7 @@ def gui() -> None:
     """Launch the PySide6 GUI interface."""
     try:
         from oroitz.ui.gui.main import main
+
         main()
     except ImportError as e:
         click.echo(f"GUI not available: {e}", err=True)

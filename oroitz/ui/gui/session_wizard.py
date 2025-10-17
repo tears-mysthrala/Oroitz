@@ -15,7 +15,6 @@ from PySide6.QtWidgets import (
     QPushButton,
     QRadioButton,
     QVBoxLayout,
-    QWidget,
     QWizard,
     QWizardPage,
 )
@@ -65,7 +64,7 @@ class SessionWizard(QWizard):
                 name=session_name,
                 image_path=Path(image_path) if image_path else None,
                 profile=profile,
-                workflow_id=workflow_id
+                workflow_id=workflow_id,
             )
 
             # Store workflow selection in session (extend Session model later)
@@ -135,10 +134,7 @@ class ImageSelectionPage(QWizardPage):
     def _browse_image(self) -> None:
         """Open file dialog to select memory image."""
         file_path, _ = QFileDialog.getOpenFileName(
-            self,
-            "Select Memory Image",
-            "",
-            "Memory Images (*.raw *.mem *.dmp);;All Files (*)"
+            self, "Select Memory Image", "", "Memory Images (*.raw *.mem *.dmp);;All Files (*)"
         )
         if file_path:
             self.image_edit.setText(file_path)

@@ -1,7 +1,6 @@
 """PySide6 GUI application entry point."""
 
 import sys
-from pathlib import Path
 
 from PySide6.QtWidgets import QApplication
 

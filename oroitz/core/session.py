@@ -7,6 +7,9 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
+from oroitz.core.executor import ExecutionResult
+from oroitz.core.output import QuickTriageOutput
+
 
 class Session(BaseModel):
     """Represents an analysis session."""
@@ -38,6 +41,62 @@ class Session(BaseModel):
     def __exit__(self, exc_type, exc_val, exc_tb):
         # Cleanup if needed
         pass
+
+    def run(self, workflow_id: str, options: Optional[dict] = None) -> Optional["QuickTriageOutput"]:
+        """Run a workflow and return normalized results."""
+
+        from oroitz.core.cache import Cache
+        from oroitz.core.executor import Executor
+        from oroitz.core.output import OutputNormalizer
+        from oroitz.core.workflow import registry
+
+        workflow = registry.get(workflow_id)
+        if not workflow:
+            return None
+
+        if not self.image_path or not self.profile:
+            return None
+
+        # Check compatibility
+        if not registry.validate_compatibility(workflow_id, self.profile):
+            return None
+
+        executor = Executor()
+        normalizer = OutputNormalizer()
+        cache = Cache()  # Uses default cache dir
+
+        results = []
+        for plugin_spec in workflow.plugins:
+            # Check cache first
+            cached = cache.get(self.id, plugin_spec.name, plugin_spec.parameters)
+            if cached is not None:
+                result = ExecutionResult(
+                    plugin_name=plugin_spec.name,
+                    success=True,
+                    output=cached,
+                    error=None,
+                    duration=0.0,
+                    timestamp=0.0  # Not cached
+                )
+            else:
+                result = executor.execute_plugin(
+                    plugin_spec.name,
+                    str(self.image_path),
+                    self.profile,
+                    session_id=self.id,
+                    **plugin_spec.parameters
+                )
+                if result.success:
+                    cache.set(self.id, plugin_spec.name, plugin_spec.parameters, result.output)
+
+            results.append(result)
+
+        # For now, assume quick_triage
+        if workflow_id == "quick_triage":
+            return normalizer.normalize_quick_triage(results)
+        else:
+            # For other workflows, return None or implement later
+            return None
 
 
 class SessionManager:

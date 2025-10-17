@@ -1,15 +1,13 @@
-import pytest
-from unittest.mock import MagicMock, patch, AsyncMock
-from pathlib import Path
+from unittest.mock import patch
 
-from textual.pilot import Pilot
+import pytest
 from textual.widgets import Button, DataTable, Input, Select
 
-from oroitz.ui.tui import OroitzTUI
-from oroitz.ui.tui.screens import HomeScreen, SessionWizardScreen, ResultsScreen, RunScreen
-from oroitz.core.workflow import seed_workflows, registry
-from oroitz.core.session import Session
 from oroitz.core.executor import ExecutionResult
+from oroitz.core.session import Session
+from oroitz.core.workflow import registry, seed_workflows
+from oroitz.ui.tui import OroitzTUI
+from oroitz.ui.tui.screens import HomeScreen, ResultsScreen, SessionWizardScreen
 
 
 @pytest.fixture
@@ -196,11 +194,11 @@ class TestResultsScreen:
                 success=True,
                 output=[
                     {"pid": 4, "name": "System", "ppid": 0},
-                    {"pid": 1234, "name": "notepad.exe", "ppid": 876}
+                    {"pid": 1234, "name": "notepad.exe", "ppid": 876},
                 ],
                 error=None,
                 duration=1.5,
-                timestamp=1234567890
+                timestamp=1234567890,
             )
         ]
 
@@ -208,7 +206,7 @@ class TestResultsScreen:
         session = Session(image_path="/test.img", profile="windows")
         workflows = registry.list()
         workflow = workflows[0] if workflows else None
-        
+
         if workflow:
             # Push results screen with mock data
             pilot.app.push_screen(ResultsScreen(workflow, session, mock_results))
@@ -230,7 +228,7 @@ class TestResultsScreen:
                 output=[{"pid": 4, "name": "System"}],
                 error=None,
                 duration=1.0,
-                timestamp=1234567890
+                timestamp=1234567890,
             )
         ]
 
@@ -238,7 +236,7 @@ class TestResultsScreen:
         session = Session(image_path="/test.img", profile="windows")
         workflows = registry.list()
         workflow = workflows[0] if workflows else None
-        
+
         if workflow:
             pilot.app.push_screen(ResultsScreen(workflow, session, mock_results))
 
@@ -248,7 +246,7 @@ class TestResultsScreen:
             export_btn = pilot.get_widget_by_id("export-json")
             if export_btn:
                 # Mock the export function
-                with patch('oroitz.ui.tui.screens.OutputExporter') as mock_exporter:
+                with patch("oroitz.ui.tui.screens.OutputExporter") as mock_exporter:
                     await pilot.click(export_btn)
                     # Should trigger export (mocked)
 

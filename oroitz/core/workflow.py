@@ -9,18 +9,21 @@ from oroitz.core.telemetry import logger
 
 class PluginSpec(BaseModel):
     """Specification for a Volatility plugin."""
+
     name: str = Field(..., min_length=1, description="Plugin name cannot be empty")
     parameters: Dict[str, Any] = Field(default_factory=dict)
 
 
 class TransformSpec(BaseModel):
     """Specification for output transformation."""
+
     name: str = Field(..., min_length=1, description="Transform name cannot be empty")
     parameters: Dict[str, Any] = Field(default_factory=dict)
 
 
 class WorkflowSpec(BaseModel):
     """Specification for a workflow."""
+
     id: str = Field(..., min_length=1, description="Workflow ID cannot be empty")
     name: str = Field(..., min_length=1, description="Workflow name cannot be empty")
     description: str = Field(..., min_length=1, description="Workflow description cannot be empty")

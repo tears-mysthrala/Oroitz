@@ -1,26 +1,17 @@
 """Main window for the PySide6 GUI application."""
 
-from pathlib import Path
-from typing import Optional
 
-from PySide6.QtCore import Qt, QTimer, Signal
-from PySide6.QtGui import QAction, QIcon
+from PySide6.QtCore import Signal
+from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
-    QApplication,
-    QHBoxLayout,
-    QLabel,
-    QListWidget,
-    QListWidgetItem,
     QMainWindow,
-    QPushButton,
-    QSplitter,
     QStackedWidget,
     QVBoxLayout,
     QWidget,
 )
 
 from oroitz.core.session import SessionManager
-from oroitz.core.workflow import registry, seed_workflows
+from oroitz.core.workflow import seed_workflows
 from oroitz.ui.gui.landing_view import LandingView
 from oroitz.ui.gui.session_dashboard import SessionDashboard
 from oroitz.ui.gui.session_wizard import SessionWizard

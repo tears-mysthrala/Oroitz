@@ -1,14 +1,14 @@
 """Tests for the PySide6 GUI application."""
 
-import pytest
-from unittest.mock import MagicMock, patch
 from pathlib import Path
+from unittest.mock import patch
 
+import pytest
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication, QPushButton, QLineEdit, QListWidget, QComboBox, QWizard
+from PySide6.QtWidgets import QApplication, QComboBox, QLineEdit, QPushButton, QWizard
 
 from oroitz.core.session import SessionManager
-from oroitz.core.workflow import registry, seed_workflows
+from oroitz.core.workflow import seed_workflows
 from oroitz.ui.gui.landing_view import LandingView
 from oroitz.ui.gui.main_window import MainWindow
 from oroitz.ui.gui.session_dashboard import SessionDashboard
@@ -60,6 +60,7 @@ class TestMainWindow:
     def test_show_session_dashboard(self, main_window):
         """Test showing session dashboard."""
         from oroitz.core.session import Session
+
         session = Session(name="Test Session")
         main_window.show_session_dashboard(session)
         assert main_window.stacked_widget.currentWidget() == main_window.session_dashboard
@@ -85,10 +86,11 @@ class TestLandingView:
     def test_initial_state(self, qapp):
         """Test initial state of landing view."""
         # Create a fresh session manager for this test
-        from oroitz.core.session import SessionManager
         import tempfile
         from pathlib import Path
-        
+
+        from oroitz.core.session import SessionManager
+
         with tempfile.TemporaryDirectory() as temp_dir:
             session_manager = SessionManager(Path(temp_dir) / "sessions")
             view = LandingView(session_manager)
@@ -117,13 +119,14 @@ class TestLandingView:
     def test_session_selection(self, qapp, qtbot):
         """Test session selection from list."""
         # Create a fresh session manager for this test
-        from oroitz.core.session import SessionManager, Session
         import tempfile
         from pathlib import Path
-        
+
+        from oroitz.core.session import Session, SessionManager
+
         with tempfile.TemporaryDirectory() as temp_dir:
             session_manager = SessionManager(Path(temp_dir) / "sessions")
-            
+
             # Add a mock session
             session = Session(name="Test Session", image_path=Path("/test.img"), profile="windows")
             session_manager._sessions[session.id] = session
@@ -223,14 +226,15 @@ class TestSessionDashboard:
     def test_set_session(self, qapp):
         """Test setting session in dashboard."""
         dashboard = SessionDashboard()
-        from oroitz.core.session import Session
         from pathlib import Path
+
+        from oroitz.core.session import Session
 
         session = Session(
             name="Test Session",
             image_path=Path("/test.img"),
             profile="Win10x64_19041",
-            workflow_id="quick_triage"
+            workflow_id="quick_triage",
         )
 
         dashboard.set_session(session)
@@ -240,20 +244,21 @@ class TestSessionDashboard:
     def test_workflow_execution(self, qapp, qtbot):
         """Test workflow execution in dashboard."""
         dashboard = SessionDashboard()
-        from oroitz.core.session import Session
         from pathlib import Path
+
+        from oroitz.core.session import Session
 
         # Set up a session
         session = Session(
             name="Test Session",
             image_path=Path("/test.img"),
             profile="Win10x64_19041",
-            workflow_id="quick_triage"
+            workflow_id="quick_triage",
         )
         dashboard.set_session(session)
 
         # Mock the start button click
-        with patch.object(dashboard, '_on_start_clicked') as mock_start:
+        with patch.object(dashboard, "_on_start_clicked") as mock_start:
             qtbot.mouseClick(dashboard.start_btn, Qt.LeftButton)
             mock_start.assert_called_once()
 

@@ -1,9 +1,8 @@
 """Results explorer for displaying and exporting analysis results."""
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import List
 
-from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QHeaderView,
@@ -100,9 +99,9 @@ class ResultsExplorer(QWidget):
         # Set up table
         table.setRowCount(len(processes))
         table.setColumnCount(8)
-        table.setHorizontalHeaderLabels([
-            "PID", "Name", "PPID", "Threads", "Handles", "Session", "Wow64", "Anomalies"
-        ])
+        table.setHorizontalHeaderLabels(
+            ["PID", "Name", "PPID", "Threads", "Handles", "Session", "Wow64", "Anomalies"]
+        )
 
         # Populate table
         for row, process in enumerate(processes):
@@ -113,7 +112,9 @@ class ResultsExplorer(QWidget):
             table.setItem(row, 4, QTableWidgetItem(str(process.handles or "")))
             table.setItem(row, 5, QTableWidgetItem(str(process.session or "")))
             table.setItem(row, 6, QTableWidgetItem(str(process.wow64 or "")))
-            table.setItem(row, 7, QTableWidgetItem(", ".join(process.anomalies) if process.anomalies else ""))
+            table.setItem(
+                row, 7, QTableWidgetItem(", ".join(process.anomalies) if process.anomalies else "")
+            )
 
         # Resize columns to content
         table.resizeColumnsToContents()
@@ -130,9 +131,9 @@ class ResultsExplorer(QWidget):
         # Set up table
         table.setRowCount(len(connections))
         table.setColumnCount(6)
-        table.setHorizontalHeaderLabels([
-            "PID", "Owner", "Local Address", "Remote Address", "State", "Created"
-        ])
+        table.setHorizontalHeaderLabels(
+            ["PID", "Owner", "Local Address", "Remote Address", "State", "Created"]
+        )
 
         # Populate table
         for row, conn in enumerate(connections):
@@ -158,9 +159,9 @@ class ResultsExplorer(QWidget):
         # Set up table
         table.setRowCount(len(hits))
         table.setColumnCount(8)
-        table.setHorizontalHeaderLabels([
-            "PID", "Process Name", "Start", "End", "Tag", "Protection", "Commit", "Private"
-        ])
+        table.setHorizontalHeaderLabels(
+            ["PID", "Process Name", "Start", "End", "Tag", "Protection", "Commit", "Private"]
+        )
 
         # Populate table
         for row, hit in enumerate(hits):

@@ -1,6 +1,6 @@
 """Tests for workflow module."""
 
-from oroitz.core.workflow import WorkflowSpec, PluginSpec, registry, seed_workflows
+from oroitz.core.workflow import PluginSpec, WorkflowSpec, registry, seed_workflows
 
 
 def test_workflow_spec_creation():

@@ -11,6 +11,7 @@ from oroitz.core.telemetry import logger
 
 class ProcessInfo(BaseModel):
     """Normalized process information."""
+
     pid: int = Field(..., ge=0, description="Process ID must be non-negative")
     name: str = Field(..., min_length=1, description="Process name cannot be empty")
     ppid: Optional[int] = Field(None, ge=0)
@@ -22,16 +23,17 @@ class ProcessInfo(BaseModel):
     exit_time: Optional[str] = None
     anomalies: List[str] = Field(default_factory=list)
 
-    @field_validator('pid', 'ppid', 'threads', 'handles', 'session')
+    @field_validator("pid", "ppid", "threads", "handles", "session")
     @classmethod
     def validate_non_negative(cls, v: Optional[int]) -> Optional[int]:
         if v is not None and v < 0:
-            raise ValueError('Value must be non-negative')
+            raise ValueError("Value must be non-negative")
         return v
 
 
 class NetworkConnection(BaseModel):
     """Normalized network connection information."""
+
     offset: Optional[str] = None
     pid: Optional[int] = Field(None, ge=0)
     owner: Optional[str] = None
@@ -40,16 +42,17 @@ class NetworkConnection(BaseModel):
     remote_addr: Optional[str] = None
     state: Optional[str] = None
 
-    @field_validator('pid')
+    @field_validator("pid")
     @classmethod
     def validate_pid(cls, v: Optional[int]) -> Optional[int]:
         if v is not None and v < 0:
-            raise ValueError('PID must be non-negative')
+            raise ValueError("PID must be non-negative")
         return v
 
 
 class MalfindHit(BaseModel):
     """Normalized malfind hit information."""
+
     pid: Optional[int] = Field(None, ge=0)
     process_name: Optional[str] = None
     start: Optional[str] = None
@@ -59,16 +62,17 @@ class MalfindHit(BaseModel):
     commit_charge: Optional[int] = Field(None, ge=0)
     private_memory: Optional[int] = Field(None, ge=0)
 
-    @field_validator('pid', 'commit_charge', 'private_memory')
+    @field_validator("pid", "commit_charge", "private_memory")
     @classmethod
     def validate_non_negative(cls, v: Optional[int]) -> Optional[int]:
         if v is not None and v < 0:
-            raise ValueError('Value must be non-negative')
+            raise ValueError("Value must be non-negative")
         return v
 
 
 class QuickTriageOutput(BaseModel):
     """Output for quick_triage workflow."""
+
     processes: List[ProcessInfo] = Field(default_factory=list)
     network_connections: List[NetworkConnection] = Field(default_factory=list)
     malfind_hits: List[MalfindHit] = Field(default_factory=list)

@@ -47,11 +47,7 @@ class Cache:
         return None
 
     def set(
-        self,
-        session_id: str,
-        plugin_name: str,
-        parameters: Dict[str, Any],
-        result: Any
+        self, session_id: str, plugin_name: str, parameters: Dict[str, Any], result: Any
     ) -> None:
         """Cache a result."""
         cache_key = self._get_cache_key(session_id, plugin_name, parameters)

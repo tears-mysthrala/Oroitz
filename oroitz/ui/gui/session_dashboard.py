@@ -1,6 +1,5 @@
 """Session dashboard for monitoring analysis progress."""
 
-import asyncio
 from typing import Optional
 
 from PySide6.QtCore import QThread, Signal
@@ -247,7 +246,7 @@ class SessionDashboard(QWidget):
         self.worker = WorkflowWorker(
             self.current_session.workflow_id,
             str(self.current_session.image_path),
-            self.current_session.profile
+            self.current_session.profile,
         )
 
         # Connect signals

@@ -1,18 +1,19 @@
 """Textual TUI application for Oroitz."""
 
+import asyncio
+from typing import Optional
+
+from textual import events
 from textual.app import App, ComposeResult
 from textual.containers import Container, Horizontal, Vertical
-from textual.widgets import Header, Footer, Button, Static, DataTable, Input, Select
 from textual.screen import Screen
-from textual import events
-from typing import Optional
-import asyncio
+from textual.widgets import Button, DataTable, Footer, Header, Input, Select, Static
 
-from oroitz.core.session import Session
-from oroitz.core.workflow import registry
 from oroitz.core.executor import Executor
-from oroitz.core.output import OutputNormalizer, OutputExporter
+from oroitz.core.output import OutputExporter, OutputNormalizer
+from oroitz.core.session import Session
 from oroitz.core.telemetry import setup_logging
+from oroitz.core.workflow import registry
 
 
 class OroitzTUI(App):

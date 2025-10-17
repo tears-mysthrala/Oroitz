@@ -9,9 +9,7 @@ from PySide6.QtWidgets import (
     QDialogButtonBox,
     QFileDialog,
     QFormLayout,
-    QGroupBox,
     QHBoxLayout,
-    QLabel,
     QLineEdit,
     QPushButton,
     QSpinBox,
@@ -121,9 +119,9 @@ class SettingsDialog(QDialog):
 
         # Default profile
         self.default_profile_combo = QComboBox()
-        self.default_profile_combo.addItems([
-            "Win10x64_19041", "Win10x64_2004", "Win7SP1x64", "Linux"
-        ])
+        self.default_profile_combo.addItems(
+            ["Win10x64_19041", "Win10x64_2004", "Win7SP1x64", "Linux"]
+        )
         layout.addRow("Default Profile:", self.default_profile_combo)
 
         # Cache results
@@ -200,10 +198,7 @@ class SettingsDialog(QDialog):
     def _browse_volatility_path(self) -> None:
         """Browse for Volatility executable."""
         path, _ = QFileDialog.getOpenFileName(
-            self,
-            "Select Volatility Executable",
-            "",
-            "Executable files (*.exe);;All Files (*)"
+            self, "Select Volatility Executable", "", "Executable files (*.exe);;All Files (*)"
         )
         if path:
             self.volatility_path_edit.setText(path)
@@ -211,9 +206,7 @@ class SettingsDialog(QDialog):
     def _browse_sessions_dir(self) -> None:
         """Browse for sessions directory."""
         path = QFileDialog.getExistingDirectory(
-            self,
-            "Select Sessions Directory",
-            str(self.sessions_dir_edit.text())
+            self, "Select Sessions Directory", str(self.sessions_dir_edit.text())
         )
         if path:
             self.sessions_dir_edit.setText(path)

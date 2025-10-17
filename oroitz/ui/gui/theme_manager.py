@@ -1,13 +1,13 @@
 """Theme management for the GUI application."""
 
 from enum import Enum
-from typing import Dict
 
 from PySide6.QtWidgets import QApplication
 
 
 class Theme(Enum):
     """Available application themes."""
+
     SYSTEM = "system"
     LIGHT = "light"
     DARK = "dark"

@@ -8,20 +8,20 @@ It validates that both interfaces work correctly in isolation.
 
 import subprocess
 import sys
-import os
 from pathlib import Path
+
 
 def run_gui_tests():
     """Run GUI tests in isolation."""
     print("🔍 Running GUI tests (PySide6)...")
     try:
         # Run GUI tests with poetry
-        result = subprocess.run([
-            "poetry", "run", "pytest",
-            "tests/ui/test_gui.py",
-            "-v",
-            "--tb=short"
-        ], capture_output=True, text=True, cwd=Path(__file__).parent)
+        result = subprocess.run(
+            ["poetry", "run", "pytest", "tests/ui/test_gui.py", "-v", "--tb=short"],
+            capture_output=True,
+            text=True,
+            cwd=Path(__file__).parent,
+        )
 
         print("GUI Test Output:")
         print(result.stdout)
@@ -34,14 +34,18 @@ def run_gui_tests():
         print(f"❌ GUI test execution failed: {e}")
         return False
 
+
 def run_tui_tests():
     """Run TUI tests in isolation using the dedicated runner."""
     print("🔍 Running TUI tests (Textual)...")
     try:
         # Use the dedicated TUI test runner with poetry
-        result = subprocess.run([
-            "poetry", "run", "python", "test_tui_runner.py"
-        ], capture_output=True, text=True, cwd=Path(__file__).parent)
+        result = subprocess.run(
+            ["poetry", "run", "python", "test_tui_runner.py"],
+            capture_output=True,
+            text=True,
+            cwd=Path(__file__).parent,
+        )
 
         print("TUI Test Output:")
         print(result.stdout)
@@ -53,6 +57,7 @@ def run_tui_tests():
     except Exception as e:
         print(f"❌ TUI test execution failed: {e}")
         return False
+
 
 def main():
     """Run comprehensive UI test validation."""
@@ -75,6 +80,7 @@ def main():
     else:
         print("\n⚠️  Some tests failed. Check output above for details.")
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

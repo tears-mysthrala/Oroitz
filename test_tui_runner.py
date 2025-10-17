@@ -15,12 +15,7 @@ os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = "/dev/null"
 
 # Import textual components FIRST, before any other imports
 try:
-    import textual
-    from textual.app import App
-    from textual.containers import Container, Horizontal, Vertical
-    from textual.pilot import Pilot
-    from textual.screen import Screen
-    from textual.widgets import Button, DataTable, Input, Select
+    import textual  # noqa: F401
 
     print("✓ Textual imports successful")
 except ImportError as e:
@@ -29,7 +24,12 @@ except ImportError as e:
 
 # Now import our TUI modules
 try:
-    from oroitz.ui.tui.screens import HomeScreen, ResultsScreen, RunScreen, SessionWizardScreen
+    from oroitz.ui.tui.screens import (  # noqa: F401
+        HomeScreen,
+        ResultsScreen,
+        RunScreen,
+        SessionWizardScreen,
+    )
 
     print("✓ TUI modules imported successfully")
 except ImportError as e:
@@ -41,7 +41,7 @@ except ImportError as e:
 
 # Import test dependencies
 try:
-    import pytest
+    import pytest  # noqa: F401
 
     print("✓ Test dependencies imported successfully")
 except ImportError as e:

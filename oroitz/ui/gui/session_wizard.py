@@ -224,7 +224,7 @@ class SummaryPage(QWizardPage):
                 workflow = registry.get(workflow_id)
                 if workflow:
                     workflow_name = workflow.name
-            except:
+            except Exception:
                 pass
 
         summary = f"""

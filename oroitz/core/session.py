@@ -42,7 +42,9 @@ class Session(BaseModel):
         # Cleanup if needed
         pass
 
-    def run(self, workflow_id: str, options: Optional[dict] = None) -> Optional["QuickTriageOutput"]:
+    def run(
+        self, workflow_id: str, options: Optional[dict] = None
+    ) -> Optional["QuickTriageOutput"]:
         """Run a workflow and return normalized results."""
 
         from oroitz.core.cache import Cache
@@ -119,9 +121,20 @@ class SessionManager:
                 # Skip corrupted session files
                 continue
 
-    def create_session(self, name: str = "Untitled Session", image_path: Optional[Path] = None, profile: Optional[str] = None, workflow_id: Optional[str] = None) -> Session:
+    def create_session(
+        self,
+        name: str = "Untitled Session",
+        image_path: Optional[Path] = None,
+        profile: Optional[str] = None,
+        workflow_id: Optional[str] = None
+    ) -> Session:
         """Create a new session."""
-        session = Session(name=name, image_path=image_path, profile=profile, workflow_id=workflow_id)
+        session = Session(
+            name=name,
+            image_path=image_path,
+            profile=profile,
+            workflow_id=workflow_id
+        )
         self._sessions[session.id] = session
         return session
 

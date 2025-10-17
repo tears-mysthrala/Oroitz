@@ -6,6 +6,10 @@ from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
+from oroitz.core.cache import cache
+from oroitz.core.config import config
+from oroitz.core.telemetry import log_event, logger
+
 # Volatility 3 imports
 VOLATILITY_AVAILABLE = True
 try:
@@ -22,10 +26,6 @@ except ImportError:
     list_plugins = None
     format_hints = None
     volatility3 = None
-
-from oroitz.core.cache import cache
-from oroitz.core.config import config
-from oroitz.core.telemetry import log_event, logger
 
 
 class ExecutionResult(BaseModel):

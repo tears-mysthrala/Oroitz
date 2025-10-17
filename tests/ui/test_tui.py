@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -36,7 +37,7 @@ class TestOroitzTUI:
     def test_session_management(self, tui_app):
         """Test session management."""
         # Test setting session
-        session = Session(image_path="/test.img", profile="windows")
+        session = Session(image_path=Path("/test.img"), profile="windows")
         tui_app.set_current_session(session)
         assert tui_app.get_current_session() == session
 
@@ -203,7 +204,7 @@ class TestResultsScreen:
         ]
 
         # Create mock session and workflow
-        session = Session(image_path="/test.img", profile="windows")
+        session = Session(image_path=Path("/test.img"), profile="windows")
         workflows = registry.list()
         workflow = workflows[0] if workflows else None
 
@@ -233,7 +234,7 @@ class TestResultsScreen:
         ]
 
         # Create mock session and workflow
-        session = Session(image_path="/test.img", profile="windows")
+        session = Session(image_path=Path("/test.img"), profile="windows")
         workflows = registry.list()
         workflow = workflows[0] if workflows else None
 
@@ -246,7 +247,7 @@ class TestResultsScreen:
             export_btn = pilot.get_widget_by_id("export-json")
             if export_btn:
                 # Mock the export function
-                with patch("oroitz.ui.tui.screens.OutputExporter") as mock_exporter:
+                with patch("oroitz.ui.tui.screens.OutputExporter"):
                     await pilot.click(export_btn)
                     # Should trigger export (mocked)
 

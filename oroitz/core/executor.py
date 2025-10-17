@@ -6,19 +6,28 @@ from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
-# Volatility 3 imports - disabled for now
-VOLATILITY_AVAILABLE = False
-# Create dummy objects to avoid NameError
-contexts = None
-automagic = None
-constants = None
-import_files = None
-list_plugins = None
-format_hints = None
-volatility3 = None
+# Volatility 3 imports
+VOLATILITY_AVAILABLE = True
+try:
+    from volatility3.framework import contexts
+    from volatility3.framework.automagic import available, run
+    from volatility3.framework import constants
+    from volatility3.framework import import_files
+    import volatility3.plugins
+except ImportError:
+    VOLATILITY_AVAILABLE = False
+    # Create dummy objects to avoid NameError
+    contexts = None
+    automagic = None
+    constants = None
+    import_files = None
+    list_plugins = None
+    format_hints = None
+    volatility3 = None
 
 from oroitz.core.config import config
 from oroitz.core.telemetry import log_event, logger
+from oroitz.core.cache import cache
 
 
 class ExecutionResult(BaseModel):
@@ -50,35 +59,22 @@ class Executor:
             self._plugins = {}
             return
 
-        # Temporarily disable Volatility 3 initialization to use mock data
-        logger.info("Using mock data mode - Volatility 3 initialization disabled")
-        self._vol_context = None
-        self._plugins = {}
+        try:
+            # Create base context
+            self._vol_context = contexts.Context()
 
-        # Uncomment below to re-enable Volatility 3
-        # try:
-        #     # Create base context
-        #     self._vol_context = contexts.Context()
-        #
-        #     # Import plugins - try to import Windows plugins specifically
-        #     try:
-        #         import volatility3.plugins.windows
-        #         import_files(volatility3.plugins.windows, True)
-        #     except ImportError:
-        #         logger.warning("Windows plugins not available, trying generic import")
-        #         import_files(volatility3.plugins, True)
-        #
-        #     # Load available plugins
-        #     self._plugins = list_plugins()
-        #
-        #     logger.info(f"Initialized Volatility 3 with {len(self._plugins)} plugins")
-        #     if self._plugins:
-        #         logger.debug(f"Available plugins: {list(self._plugins.keys())[:5]}...")
-        #
-        # except Exception as e:
-        #     logger.warning(f"Failed to initialize Volatility 3: {e}. Using mock data fallback.")
-        #     self._vol_context = None
-        #     self._plugins = {}
+            # Import plugins
+            import_files(volatility3.plugins, True)
+
+            # For now, don't list plugins, assume they can be loaded dynamically
+            self._plugins = {}  # We'll check existence when running
+
+            logger.info("Initialized Volatility 3 successfully")
+
+        except Exception as e:
+            logger.warning(f"Failed to initialize Volatility 3: {e}. Using mock data fallback.")
+            self._vol_context = None
+            self._plugins = {}
 
     def _execute_volatility_plugin(
         self,
@@ -88,8 +84,8 @@ class Executor:
         **kwargs: Any
     ) -> Optional[List[Dict[str, Any]]]:
         """Execute a Volatility 3 plugin and return normalized output."""
-        if not self._vol_context or plugin_name not in self._plugins:
-            logger.warning(f"Plugin {plugin_name} not available, falling back to mock data")
+        if not self._vol_context:
+            logger.warning(f"Volatility context not available, falling back to mock data")
             return self._get_mock_data(plugin_name)
 
         try:
@@ -97,12 +93,29 @@ class Executor:
             ctx = contexts.Context()
             import_files(volatility3.plugins, True)
 
-            # Get the plugin class
-            plugin_class = self._plugins[plugin_name]
+            # Try to get the plugin class dynamically
+            plugin_parts = plugin_name.split('.')
+            plugin_module_name = f"volatility3.plugins.{'.'.join(plugin_parts[:-1])}"
+            plugin_class_name = plugin_parts[-1]
+            
+            try:
+                plugin_module = __import__(plugin_module_name, fromlist=[plugin_class_name])
+                # Try different capitalizations
+                for class_name in [plugin_class_name, plugin_class_name.capitalize(), plugin_class_name.title(), ''.join(word.capitalize() for word in plugin_class_name.split('_'))]:
+                    try:
+                        plugin_class = getattr(plugin_module, class_name)
+                        break
+                    except AttributeError:
+                        continue
+                else:
+                    raise AttributeError(f"No class found for {plugin_class_name}")
+            except (ImportError, AttributeError):
+                logger.warning(f"Plugin {plugin_name} not found, falling back to mock data")
+                return self._get_mock_data(plugin_name)
 
             # Configure the plugin
             plugin_config_path = f"plugins.{plugin_name}"
-            ctx.config[plugin_config_path] = {}
+            # ctx.config[plugin_config_path] = {}  # Remove this, let automagic handle it
 
             # Set up basic configuration
             ctx.config[f"{plugin_config_path}.image"] = image_path
@@ -113,10 +126,10 @@ class Executor:
                 ctx.config[f"{plugin_config_path}.{key}"] = value
 
             # Get available automagics
-            automagics = automagic.available(ctx)
+            automagics = available(ctx)
 
             # Run automagics to set up the context
-            automagic.run(automagics, ctx, plugin_class, plugin_config_path, None)
+            run(automagics, ctx, plugin_class, plugin_config_path, None)
 
             # Create and run the plugin
             plugin = plugin_class(ctx, plugin_config_path)
@@ -157,17 +170,38 @@ class Executor:
         plugin_name: str,
         image_path: str,
         profile: str,
+        session_id: Optional[str] = None,
         **kwargs: Any
     ) -> ExecutionResult:
         """Execute a single Volatility plugin."""
         start_time = time.time()
         timestamp = start_time
 
+        # Use session_id or default
+        cache_session_id = session_id or "default"
+
+        # Check cache first
+        cache_key_params = {"image_path": image_path, "profile": profile, **kwargs}
+        cached_result = cache.get(cache_session_id, plugin_name, cache_key_params)
+        if cached_result is not None:
+            logger.info(f"Using cached result for {plugin_name}")
+            return ExecutionResult(
+                plugin_name=plugin_name,
+                success=True,
+                output=cached_result,
+                error=None,
+                duration=0.0,  # Cached, no execution time
+                timestamp=timestamp,
+            )
+
         try:
             log_event("plugin_start", {"plugin": plugin_name, "image": image_path})
 
             # Execute real Volatility 3 plugin
             output = self._execute_volatility_plugin(plugin_name, image_path, profile, **kwargs)
+
+            # Cache the result
+            cache.set(cache_session_id, plugin_name, cache_key_params, output)
 
             success = True
             error = None

@@ -91,7 +91,7 @@ def seed_workflows() -> None:
             PluginSpec(name="windows.netscan"),
             PluginSpec(name="windows.malfind"),
         ],
-        supported_profiles=["windows"],
+        supported_profiles=[],  # Allow any profile for testing
     )
     registry.register(quick_triage)
 

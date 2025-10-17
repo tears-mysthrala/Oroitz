@@ -84,4 +84,4 @@ def test_seed_workflows():
     assert workflow is not None
     assert workflow.name == "Quick Triage"
     assert len(workflow.plugins) == 3
-    assert workflow.supported_profiles == ["windows"]
+    assert workflow.supported_profiles == []

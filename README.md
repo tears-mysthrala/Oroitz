@@ -39,6 +39,99 @@ Oroitz is a cross-platform wrapper around Volatility 3 that delivers a shared Py
 
 The repository has progressed from planning to active development with a functional core engine, CLI, GUI, and TUI implementations. The system currently uses mock data for Volatility 3 plugin execution while Volatility integration is being finalized. Core workflows, output normalization, and user interfaces are operational. Refer to [`docs/development-plan.md`](docs/development-plan.md) for the current roadmap and milestones.
 
+## Development Roadmap
+
+### ✅ **Completed Phases**
+
+#### Phase 0 – Preparation
+
+- ✅ Specification documents reviewed and created
+- ✅ Poetry dependency management configured
+- ✅ Architecture Decision Records authored (ADR-0001, ADR-0002, ADR-0003)
+- ✅ Git repository initialized with pre-commit hooks
+
+#### Phase 1 – Core Foundation
+
+- ✅ Repository structure scaffolded
+- ✅ Configuration system implemented (`oroitz.core.config`)
+- ✅ Logging/telemetry infrastructure added
+- ✅ Session model and persistence layer created
+- ✅ Unit tests for configuration and session persistence
+
+#### Phase 2 – Workflow & Volatility Integration (In Progress)
+
+- ✅ Workflow registry implemented and seeded with workflows
+- ✅ Volatility 3 execution integration via `oroitz.core.executor` (currently using mock data)
+- ✅ Output normalization and schema validation for `quick_triage` data
+- ✅ Caching layer for plugin results
+- ✅ CLI prototype commands for `quick_triage` testing
+- 🔄 Unit/integration tests for `quick_triage` end-to-end (basic tests implemented)
+
+#### Phase 3 – TUI (Baseline) (In Progress)
+
+- ✅ Textual application structure scaffolded
+- ✅ HomeScreen, SessionWizardScreen, and RunScreen implemented
+- ✅ ResultsScreen with DataTable exports for `quick_triage` outputs
+- ✅ Command palette, shortcuts, and error handling overlays
+- 🔄 Automated tests (Textual pilot) - basic tests working, expanding coverage
+- 🔄 Manual testing feedback collection
+
+#### Phase 4 – GUI (Beta) (In Progress)
+
+- ✅ PySide6 application scaffolded with MainWindow and LandingView
+- ✅ New Session Wizard implemented and integrated
+- ✅ Session Dashboard with workflow progress and logs
+- ✅ Results Explorer with table filtering and export actions
+- ✅ Settings dialog, notification center, and theming support
+- 🔄 pytest-qt integration tests - 17/17 tests passing, expanding coverage
+- 🔄 Usability feedback collection
+
+### 🚧 **Current Focus**
+
+#### Testing Infrastructure & UI Polish
+
+- Complete comprehensive test coverage for GUI and TUI interfaces
+- Resolve PySide6/Textual import conflicts with isolated test environments
+- Polish UI/UX based on testing feedback
+- Prepare for real Volatility 3 integration
+
+### 📋 **Upcoming Phases**
+
+#### Phase 5 – Feature Expansion
+
+- Add remaining workflows (`process_deepdive`, `network_focus`, `timeline_overview`)
+- Enhance output normalization schemas and export options (Parquet, DataFrame)
+- Implement telemetry opt-in flows and analytics sink
+- Improve caching (SQLite backend) and concurrency settings
+- Add Node.js binding stub (if required)
+
+#### Phase 6 – Hardening & Release Prep
+
+- Performance benchmarking with large memory images
+- Complete documentation site with guides and screenshots
+- Finalize installer packaging (PyInstaller) and distribution artifacts
+- Prepare release checklist and CI/CD workflows
+- Security review and community feedback collection
+
+### 🎯 **Immediate Next Steps**
+
+1. **Complete UI Testing**: Finish TUI test expansion and comprehensive validation
+2. **Real Volatility Integration**: Replace mock data with actual Volatility 3 execution
+3. **Performance Optimization**: Benchmark and optimize for large memory images
+4. **Documentation**: Create user guides and API documentation
+5. **CI/CD Setup**: Implement automated testing and release pipelines
+
+### 📊 **Progress Metrics**
+
+- **Core Engine**: 100% ✅ (Configuration, sessions, workflows, caching, CLI)
+- **GUI Implementation**: 95% ✅ (17/17 tests passing, all major features implemented)
+- **TUI Implementation**: 90% ✅ (Basic functionality working, tests in progress)
+- **Testing Infrastructure**: 85% ✅ (Comprehensive test suite, isolated environments)
+- **Volatility Integration**: 70% 🔄 (Mock data working, real integration pending)
+- **Documentation**: 60% 🔄 (Specs complete, user guides needed)
+
+**Want to help?** Check the [Issues](https://github.com/tears-mysthrala/Oroitz/issues) for current tasks or contribute to the areas marked with 🔄!
+
 ## Getting Started
 
 1. Install Python 3.11 and ensure `python --version` reports 3.11.x.

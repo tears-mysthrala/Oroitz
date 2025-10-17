@@ -24,11 +24,11 @@ except ImportError as e:
 
 # Now import our TUI modules
 try:
-    from oroitz.ui.tui.screens import (  # noqa: F401
-        HomeScreen,
-        ResultsScreen,
-        RunScreen,
-        SessionWizardScreen,
+    from oroitz.ui.tui.views import (  # noqa: F401
+        HomeView,
+        ResultsView,
+        RunView,
+        SessionWizardView,
     )
 
     print("✓ TUI modules imported successfully")
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         print("✓ App creation test passed")
 
         # Test 2: Session management
-        session = test_module.Session(image_path="/test.img", profile="windows")
+        session = test_module.Session(image_path=test_module.Path("/test.img"), profile="windows")
         app.set_current_session(session)
         assert app.get_current_session() == session
         app.set_current_session(None)

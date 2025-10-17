@@ -1,0 +1,190 @@
+/* Oroitz TUI Styles - Base Monokai Theme */
+
+:root {
+    --primary: #f92672;
+    --primary-darken-1: #e91e63;
+    --primary-darken-2: #c2185b;
+    --surface: #272822;
+    --surface-darken-1: #1e1f1c;
+    --text: #f8f8f2;
+    --text-muted: #75715e;
+    --success: #a6e22e;
+    --error: #f92672;
+    --warning: #fd971f;
+    --info: #66d9ef;
+}
+
+/* High contrast variant */
+.theme-high-contrast {
+    --primary: #ffffff;
+    --primary-darken-1: #cccccc;
+    --primary-darken-2: #aaaaaa;
+    --surface: #000000;
+    --surface-darken-1: #111111;
+    --text: #ffffff;
+    --text-muted: #cccccc;
+    --success: #00ff00;
+    --error: #ff0000;
+    --warning: #ffff00;
+    --info: #00ffff;
+}
+
+Screen {
+    background: var(--surface);
+    color: var(--text);
+}
+
+Container {
+    height: 100%;
+    width: 100%;
+}
+
+#home-container,
+#wizard-container,
+#run-container,
+#results-container,
+#settings-container {
+    padding: 1;
+}
+
+#title,
+#wizard-title,
+#run-title,
+#results-title,
+#settings-title {
+    text-align: center;
+    margin: 2;
+    color: var(--primary);
+    text-style: bold;
+}
+
+.subtitle,
+.description,
+.image-info,
+.profile-info,
+.session-info {
+    text-align: center;
+    margin: 1;
+    color: var(--text-muted);
+}
+
+.workflow-button {
+    width: 100%;
+    margin: 1;
+    padding: 1;
+    background: var(--primary-darken-1);
+    border: solid var(--primary);
+}
+
+.workflow-button:hover {
+    background: var(--primary);
+}
+
+.workflow-button:focus {
+    background: var(--primary);
+    border: solid var(--text);
+}
+
+#form {
+    margin: 2;
+}
+
+#buttons {
+    margin: 2;
+    align: center middle;
+}
+
+#progress-bar {
+    margin: 2;
+}
+
+#log-container {
+    height: 60%;
+    margin: 2;
+    border: solid var(--primary-darken-2);
+    padding: 1;
+}
+
+#log-title {
+    color: var(--primary);
+    text-style: bold;
+}
+
+#log-content {
+    color: var(--text);
+    background: var(--surface-darken-1);
+    padding: 1;
+}
+
+#run-buttons {
+    margin: 2;
+    align: center middle;
+}
+
+.summary {
+    text-align: center;
+    margin: 2;
+    color: var(--success);
+    text-style: bold;
+}
+
+#results-table {
+    height: 50%;
+    margin: 2;
+}
+
+#export-buttons {
+    margin: 2;
+    align: center middle;
+}
+
+Button {
+    margin: 1;
+}
+
+.error {
+    background: var(--error);
+    color: var(--text);
+}
+
+.success {
+    background: var(--success);
+    color: var(--text);
+}
+
+#error-container {
+    padding: 2;
+    align: center middle;
+}
+
+#error-title {
+    text-align: center;
+    margin: 2;
+    color: var(--error);
+    text-style: bold;
+}
+
+#error-message {
+    text-align: center;
+    margin: 2;
+    color: var(--error);
+    background: var(--surface-darken-1);
+    padding: 1;
+    border: solid var(--error);
+}
+
+.error-details-title {
+    margin: 1;
+    color: var(--text-muted);
+    text-style: bold;
+}
+
+#error-details {
+    margin: 1;
+    color: var(--text);
+    background: var(--surface-darken-1);
+    padding: 1;
+    border: solid var(--text-muted);
+    height: 40%;
+    overflow: auto;
+}

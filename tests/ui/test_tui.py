@@ -8,7 +8,7 @@ from oroitz.core.executor import ExecutionResult
 from oroitz.core.session import Session
 from oroitz.core.workflow import registry, seed_workflows
 from oroitz.ui.tui import OroitzTUI
-from oroitz.ui.tui.screens import HomeScreen, ResultsScreen, SessionWizardScreen
+from oroitz.ui.tui.views import HomeView, ResultsView, SessionWizardView
 
 
 @pytest.fixture
@@ -47,9 +47,9 @@ class TestOroitzTUI:
 
     @pytest.mark.asyncio
     async def test_initial_screen(self, pilot):
-        """Test initial screen is HomeScreen."""
+        """Test initial screen is HomeView."""
         await pilot.pause()
-        assert isinstance(pilot.app.screen, HomeScreen)
+        assert isinstance(pilot.app.screen, HomeView)
 
     @pytest.mark.asyncio
     async def test_workflow_buttons_display(self, pilot):
@@ -76,8 +76,8 @@ class TestOroitzTUI:
         assert pilot.app._exit
 
 
-class TestHomeScreen:
-    """Test HomeScreen functionality."""
+class TestHomeView:
+    """Test HomeView functionality."""
 
     @pytest.mark.asyncio
     async def test_screen_composition(self, pilot):
@@ -115,8 +115,8 @@ class TestHomeScreen:
             # Note: Navigation might not work in test environment
 
 
-class TestSessionWizardScreen:
-    """Test SessionWizardScreen functionality."""
+class TestSessionWizardView:
+    """Test SessionWizardView functionality."""
 
     @pytest.mark.asyncio
     async def test_wizard_initial_state(self, pilot):
@@ -125,7 +125,7 @@ class TestSessionWizardScreen:
         workflows = registry.list()
         if workflows:
             workflow = workflows[0]
-            pilot.app.push_screen(SessionWizardScreen(workflow))
+            pilot.app.push_screen(SessionWizardView(workflow))
 
             await pilot.pause()
 
@@ -140,7 +140,7 @@ class TestSessionWizardScreen:
         workflows = registry.list()
         if workflows:
             workflow = workflows[0]
-            pilot.app.push_screen(SessionWizardScreen(workflow))
+            pilot.app.push_screen(SessionWizardView(workflow))
 
             await pilot.pause()
 
@@ -157,7 +157,7 @@ class TestSessionWizardScreen:
         workflows = registry.list()
         if workflows:
             workflow = workflows[0]
-            pilot.app.push_screen(SessionWizardScreen(workflow))
+            pilot.app.push_screen(SessionWizardView(workflow))
 
             await pilot.pause()
 
@@ -182,8 +182,8 @@ class TestSessionWizardScreen:
                 await pilot.pause()
 
 
-class TestResultsScreen:
-    """Test ResultsScreen functionality."""
+class TestResultsView:
+    """Test ResultsView functionality."""
 
     @pytest.mark.asyncio
     async def test_results_display(self, pilot):
@@ -210,7 +210,7 @@ class TestResultsScreen:
 
         if workflow:
             # Push results screen with mock data
-            pilot.app.push_screen(ResultsScreen(workflow, session, mock_results))
+            pilot.app.push_screen(ResultsView(workflow, session, mock_results))
 
             await pilot.pause()
 
@@ -239,7 +239,7 @@ class TestResultsScreen:
         workflow = workflows[0] if workflows else None
 
         if workflow:
-            pilot.app.push_screen(ResultsScreen(workflow, session, mock_results))
+            pilot.app.push_screen(ResultsView(workflow, session, mock_results))
 
             await pilot.pause()
 
@@ -247,7 +247,7 @@ class TestResultsScreen:
             export_btn = pilot.get_widget_by_id("export-json")
             if export_btn:
                 # Mock the export function
-                with patch("oroitz.ui.tui.screens.OutputExporter"):
+                with patch("oroitz.ui.tui.views.OutputExporter"):
                     await pilot.click(export_btn)
                     # Should trigger export (mocked)
 
@@ -261,7 +261,7 @@ class TestTUIIntegration:
         await pilot.pause()
 
         # Start at home screen
-        assert isinstance(pilot.app.screen, HomeScreen)
+        assert isinstance(pilot.app.screen, HomeView)
 
         # Click on quick triage workflow
         quick_triage_btn = pilot.get_widget_by_id("workflow-quick_triage")
@@ -281,7 +281,7 @@ class TestTUIIntegration:
         workflows = registry.list()
         if workflows:
             workflow = workflows[0]
-            pilot.app.push_screen(SessionWizardScreen(workflow))
+            pilot.app.push_screen(SessionWizardView(workflow))
 
             await pilot.pause()
 
@@ -305,9 +305,9 @@ class TestTUIIntegration:
         workflows = registry.list()
         if workflows:
             workflow = workflows[0]
-            pilot.app.push_screen(SessionWizardScreen(workflow))
+            pilot.app.push_screen(SessionWizardView(workflow))
             await pilot.pause()
-            assert isinstance(pilot.app.screen, SessionWizardScreen)
+            assert isinstance(pilot.app.screen, SessionWizardView)
 
             pilot.app.pop_screen()
             await pilot.pause()
@@ -337,6 +337,6 @@ class TestTUIIntegration:
 
 #     if workflow:
 #         async with app.run_test() as pilot:
-#             pilot.app.push_screen(SessionWizardScreen(workflow))
+#             pilot.app.push_screen(SessionWizardView(workflow))
 #             await pilot.pause()
 #             snapshot.assert_match(pilot.get_screen_snapshot())

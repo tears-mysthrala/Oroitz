@@ -118,11 +118,10 @@ The repository has progressed from planning to active development with a functio
 
 ### 🎯 **Immediate Next Steps**
 
-1. **Complete UI Testing**: Finish TUI test expansion and comprehensive validation
+1. **Complete User Documentation**: Finish user guides and add screenshots
 2. **Real Volatility Integration**: Replace mock data with actual Volatility 3 execution
 3. **Performance Optimization**: Benchmark and optimize for large memory images
-4. **Documentation**: Create user guides and API documentation
-5. **CI/CD Setup**: Implement automated testing and release pipelines
+4. **CI/CD Setup**: Implement automated testing and release pipelines
 
 ### 📊 **Progress Metrics**
 
@@ -131,7 +130,7 @@ The repository has progressed from planning to active development with a functio
 - **TUI Implementation**: 100% ✅ (All features implemented, comprehensive testing complete)
 - **Testing Infrastructure**: 100% ✅ (Comprehensive test suite, isolated environments)
 - **Volatility Integration**: 100% ✅ (Real CLI execution with subprocess, automatic fallback to mock data, tested with real memory samples)
-- **Documentation**: 60% 🔄 (Specs complete, user guides needed)
+- **Documentation**: 75% 🔄 (User guides in progress, technical docs complete)
 
 **Want to help?** Check the [Issues](https://github.com/tears-mysthrala/Oroitz/issues) for current tasks or contribute to the areas marked with 🔄!
 
@@ -180,12 +179,25 @@ Refer to [`docs/development-plan.md`](docs/development-plan.md) for the phased r
 
 ## Documentation Index
 
-- Product specification: [`docs/volatility-wrapper-spec.md`](docs/volatility-wrapper-spec.md)
-- Core engine details: [`docs/core-engine-spec.md`](docs/core-engine-spec.md)
-- TUI plan: [`docs/tui-spec.md`](docs/tui-spec.md)
-- GUI plan: [`docs/gui-spec.md`](docs/gui-spec.md)
-- Workflow catalog: [`docs/workflows-and-plugins.md`](docs/workflows-and-plugins.md)
-- Architectural decisions: [`docs/adrs`](docs/adrs)
+### User Guides
+
+- [Getting Started](docs/user-guides/getting-started.md) - Installation and first analysis
+- [CLI User Guide](docs/user-guides/cli-guide.md) - Command-line interface usage
+- [GUI User Guide](docs/user-guides/gui-guide.md) - Desktop application tutorial
+- [TUI User Guide](docs/user-guides/tui-guide.md) - Terminal interface guide
+- [Workflow Reference](docs/user-guides/workflow-reference.md) - Complete workflow documentation
+- [Troubleshooting](docs/user-guides/troubleshooting.md) - Common issues and solutions
+
+### Technical Documentation
+
+- [Product specification](docs/volatility-wrapper-spec.md)
+- [Core engine details](docs/core-engine-spec.md)
+- [TUI plan](docs/tui-spec.md)
+- [GUI plan](docs/gui-spec.md)
+- [Workflow catalog](docs/workflows-and-plugins.md)
+- [Architectural decisions](docs/adrs)
+- [Project structure guide](docs/project-structure-guide.md)
+- [Development plan](docs/development-plan.md)
 
 ## Contributing
 

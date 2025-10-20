@@ -125,3 +125,12 @@ Thumbs.db
 
 # Poetry
 poetry.lock
+
+# samples/
+samples/
+*.7z
+*.zip
+*.tar.gz
+*.rar
+*.mem
+*.dmp

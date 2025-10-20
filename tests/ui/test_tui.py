@@ -1,3 +1,11 @@
+import os
+
+# Set environment variables to minimize PySide6 interference
+os.environ["SHIBOKEN_DISABLE_SIGNATURE_CACHE"] = "1"
+os.environ["QT_QPA_PLATFORM"] = "offscreen"
+# Disable PySide6 entirely if possible
+os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = "/dev/null"
+
 from pathlib import Path
 from unittest.mock import patch
 
@@ -100,7 +108,7 @@ class TestSessionWizardView:
             if profile_select:
                 assert isinstance(profile_select, Select)
                 # Should have some default profiles
-                assert len(profile_select.options) > 0
+                assert len(profile_select.options) > 0  # type: ignore
 
     @pytest.mark.asyncio
     async def test_session_creation(self, pilot):

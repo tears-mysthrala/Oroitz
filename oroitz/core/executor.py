@@ -242,26 +242,26 @@ class Executor:
         """Mock data for pslist plugin."""
         return [
             {
-                "pid": 4,
-                "name": "System",
-                "ppid": 0,
-                "threads": 100,
-                "handles": 500,
-                "session": 0,
-                "wow64": False,
-                "create_time": "2023-01-01T00:00:00Z",
-                "exit_time": None,
+                "PID": 4,
+                "ImageFileName": "System",
+                "PPID": 0,
+                "Threads": 100,
+                "Handles": 500,
+                "SessionId": 0,
+                "Wow64": False,
+                "CreateTime": "2023-01-01T00:00:00Z",
+                "ExitTime": None,
             },
             {
-                "pid": 1234,
-                "name": "notepad.exe",
-                "ppid": 876,
-                "threads": 8,
-                "handles": 150,
-                "session": 1,
-                "wow64": True,
-                "create_time": "2023-01-01T12:00:00Z",
-                "exit_time": None,
+                "PID": 1234,
+                "ImageFileName": "notepad.exe",
+                "PPID": 876,
+                "Threads": 8,
+                "Handles": 150,
+                "SessionId": 1,
+                "Wow64": True,
+                "CreateTime": "2023-01-01T12:00:00Z",
+                "ExitTime": None,
             },
         ]
 
@@ -269,13 +269,15 @@ class Executor:
         """Mock data for netscan plugin."""
         return [
             {
-                "offset": "0x12345678",
-                "pid": 1234,
-                "owner": "notepad.exe",
-                "created": "2023-01-01T12:00:00Z",
-                "local_addr": "192.168.1.100:12345",
-                "remote_addr": "8.8.8.8:53",
-                "state": "ESTABLISHED",
+                "Offset": "0x12345678",
+                "PID": 1234,
+                "Owner": "notepad.exe",
+                "Created": "2023-01-01T12:00:00Z",
+                "LocalAddr": "192.168.1.100",
+                "LocalPort": 12345,
+                "ForeignAddr": "8.8.8.8",
+                "ForeignPort": 53,
+                "State": "ESTABLISHED",
             },
         ]
 
@@ -283,13 +285,13 @@ class Executor:
         """Mock data for malfind plugin."""
         return [
             {
-                "pid": 5678,
-                "process_name": "suspicious.exe",
-                "start": "0x400000",
-                "end": "0x500000",
-                "tag": "MzHeader",
-                "protection": "PAGE_EXECUTE_READWRITE",
-                "commit_charge": 1024,
-                "private_memory": 2048,
+                "PID": 5678,
+                "Process": "suspicious.exe",
+                "Start VPN": "0x400000",
+                "End VPN": "0x500000",
+                "Tag": "MzHeader",
+                "Protection": "PAGE_EXECUTE_READWRITE",
+                "CommitCharge": 1024,
+                "PrivateMemory": 2048,
             },
         ]

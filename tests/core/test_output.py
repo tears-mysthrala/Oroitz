@@ -18,14 +18,14 @@ def test_normalize_pslist():
 
     raw_output = [
         {
-            "pid": 123,
-            "name": "notepad.exe",
-            "ppid": 456,
-            "threads": 8,
-            "handles": 150,
-            "session": 1,
-            "wow64": True,
-            "create_time": "2023-01-01T12:00:00Z",
+            "PID": 123,
+            "ImageFileName": "notepad.exe",
+            "PPID": 456,
+            "Threads": 8,
+            "Handles": 150,
+            "SessionId": 1,
+            "Wow64": True,
+            "CreateTime": "2023-01-01T12:00:00Z",
         }
     ]
 
@@ -46,13 +46,15 @@ def test_normalize_netscan():
 
     raw_output = [
         {
-            "offset": "0x12345678",
-            "pid": 1234,
-            "owner": "notepad.exe",
-            "created": "2023-01-01T12:00:00Z",
-            "local_addr": "192.168.1.100:12345",
-            "remote_addr": "8.8.8.8:53",
-            "state": "ESTABLISHED",
+            "Offset": "0x12345678",
+            "PID": 1234,
+            "Owner": "notepad.exe",
+            "Created": "2023-01-01T12:00:00Z",
+            "LocalAddr": "192.168.1.100",
+            "LocalPort": 12345,
+            "ForeignAddr": "8.8.8.8",
+            "ForeignPort": 53,
+            "State": "ESTABLISHED",
         }
     ]
 
@@ -72,14 +74,14 @@ def test_normalize_malfind():
 
     raw_output = [
         {
-            "pid": 5678,
-            "process_name": "suspicious.exe",
-            "start": "0x400000",
-            "end": "0x500000",
-            "tag": "MzHeader",
-            "protection": "PAGE_EXECUTE_READWRITE",
-            "commit_charge": 1024,
-            "private_memory": 2048,
+            "PID": 5678,
+            "Process": "suspicious.exe",
+            "Start VPN": "0x400000",
+            "End VPN": "0x500000",
+            "Tag": "MzHeader",
+            "Protection": "PAGE_EXECUTE_READWRITE",
+            "CommitCharge": 1024,
+            "PrivateMemory": 2048,
         }
     ]
 
@@ -105,8 +107,8 @@ def test_normalize_quick_triage():
             plugin_name="windows.pslist",
             success=True,
             output=[
-                {"pid": 4, "name": "System"},
-                {"pid": 123, "name": "notepad.exe"},
+                {"PID": 4, "ImageFileName": "System"},
+                {"PID": 123, "ImageFileName": "notepad.exe"},
             ],
             error=None,
             duration=1.0,
@@ -117,10 +119,12 @@ def test_normalize_quick_triage():
             success=True,
             output=[
                 {
-                    "pid": 123,
-                    "local_addr": "127.0.0.1:80",
-                    "remote_addr": "0.0.0.0:0",
-                    "state": "LISTENING",
+                    "PID": 123,
+                    "LocalAddr": "127.0.0.1",
+                    "LocalPort": 80,
+                    "ForeignAddr": "0.0.0.0",
+                    "ForeignPort": 0,
+                    "State": "LISTENING",
                 },
             ],
             error=None,
@@ -131,7 +135,7 @@ def test_normalize_quick_triage():
             plugin_name="windows.malfind",
             success=True,
             output=[
-                {"pid": 999, "process_name": "bad.exe", "tag": "Suspicious"},
+                {"PID": 999, "Process": "bad.exe", "Tag": "Suspicious"},
             ],
             error=None,
             duration=2.0,

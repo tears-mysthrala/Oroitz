@@ -80,7 +80,7 @@ class OroitzTUI(App):
         # TODO: Implement resume
         self.notify("Resume not implemented yet", severity="information")
 
-    def action_export(self) -> None:
-        """Export results."""
-        # TODO: Implement export from current screen
-        self.notify("Export not implemented yet", severity="information")
+    def action_feedback(self) -> None:
+        """Open feedback collection form."""
+        from .views.feedback_view import FeedbackView
+        self.push_screen(FeedbackView())

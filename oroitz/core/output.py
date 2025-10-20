@@ -1,5 +1,6 @@
 """Output normalization and export for Oroitz."""
 
+import csv
 import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -159,9 +160,58 @@ class OutputExporter:
         logger.info(f"Exported to JSON: {path}")
 
     def export_csv(self, output: BaseModel, path: Path) -> None:
-        """Export to CSV (placeholder - would need pandas or csv module)."""
-        # For now, just log
-        logger.info(f"CSV export not implemented yet: {path}")
+        """Export to CSV."""
+        path.parent.mkdir(parents=True, exist_ok=True)
+        
+        if isinstance(output, QuickTriageOutput):
+            # Export each section to separate CSV files
+            base_path = path.with_suffix('')
+            
+            # Processes
+            if output.processes:
+                processes_path = Path(f"{base_path}_processes.csv")
+                with open(processes_path, 'w', newline='', encoding='utf-8') as f:
+                    if output.processes:
+                        writer = csv.DictWriter(f, fieldnames=output.processes[0].model_dump().keys())
+                        writer.writeheader()
+                        for item in output.processes:
+                            writer.writerow(item.model_dump())
+                logger.info(f"Exported processes to CSV: {processes_path}")
+            
+            # Network connections
+            if output.network_connections:
+                net_path = Path(f"{base_path}_network.csv")
+                with open(net_path, 'w', newline='', encoding='utf-8') as f:
+                    if output.network_connections:
+                        writer = csv.DictWriter(f, fieldnames=output.network_connections[0].model_dump().keys())
+                        writer.writeheader()
+                        for item in output.network_connections:
+                            writer.writerow(item.model_dump())
+                logger.info(f"Exported network connections to CSV: {net_path}")
+            
+            # Malfind hits
+            if output.malfind_hits:
+                malfind_path = Path(f"{base_path}_malfind.csv")
+                with open(malfind_path, 'w', newline='', encoding='utf-8') as f:
+                    if output.malfind_hits:
+                        writer = csv.DictWriter(f, fieldnames=output.malfind_hits[0].model_dump().keys())
+                        writer.writeheader()
+                        for item in output.malfind_hits:
+                            writer.writerow(item.model_dump())
+                logger.info(f"Exported malfind hits to CSV: {malfind_path}")
+        else:
+            # Generic export for other models
+            with open(path, 'w', newline='', encoding='utf-8') as f:
+                data = output.model_dump()
+                if isinstance(data, dict):
+                    writer = csv.DictWriter(f, fieldnames=data.keys())
+                    writer.writeheader()
+                    writer.writerow(data)
+                elif isinstance(data, list) and data:
+                    writer = csv.DictWriter(f, fieldnames=data[0].keys())
+                    writer.writeheader()
+                    writer.writerows(data)
+            logger.info(f"Exported to CSV: {path}")
 
     def export_parquet(self, output: BaseModel, path: Path) -> None:
         """Export to Parquet (placeholder)."""

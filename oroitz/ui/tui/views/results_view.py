@@ -6,7 +6,7 @@ from typing import List
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal, Vertical
 from textual.screen import Screen
-from textual.widgets import Button, DataTable, Static
+from textual.widgets import Button, DataTable, Static, TabbedContent, TabPane
 
 from oroitz.core.executor import ExecutionResult
 from oroitz.core.output import OutputExporter, OutputNormalizer
@@ -48,8 +48,22 @@ class ResultsView(Screen):
                 summary = self._get_summary()
                 yield Static(f"Summary: {summary}", id="summary")
 
-                # Data table for results
-                yield DataTable(id="results-table")
+                # Tabbed results interface
+                with TabbedContent():
+                    with TabPane("Overview", id="overview-tab"):
+                        yield DataTable(id="overview-table")
+
+                    with TabPane("Processes", id="processes-tab"):
+                        yield DataTable(id="processes-table")
+
+                    with TabPane("Network", id="network-tab"):
+                        yield DataTable(id="network-table")
+
+                    with TabPane("DLLs", id="dlls-tab"):
+                        yield DataTable(id="dlls-table")
+
+                    with TabPane("Timeline", id="timeline-tab"):
+                        yield DataTable(id="timeline-table")
 
                 with Horizontal(id="export-buttons"):
                     yield Button("Export JSON", id="export-json", variant="default")
@@ -57,8 +71,8 @@ class ResultsView(Screen):
                     yield Button("Back to Home", id="home-button", variant="primary")
 
     def on_mount(self) -> None:
-        """Populate the results table when screen mounts."""
-        self._populate_table()
+        """Populate the results tables when screen mounts."""
+        self._populate_tables()
 
     def _get_summary(self) -> str:
         """Get a summary of the results."""
@@ -66,20 +80,74 @@ class ResultsView(Screen):
         successful = sum(1 for r in self.results if r.success)
         return f"{successful}/{total} plugins completed successfully"
 
-    def _populate_table(self) -> None:
-        """Populate the results data table."""
-        table = self.query_one("#results-table", DataTable)
-
-        # Add columns
-        table.add_columns("Plugin", "Status", "Duration", "Records", "Error")
-
-        # Add rows
+    def _populate_tables(self) -> None:
+        """Populate all results tables."""
+        # Overview tab - plugin execution results
+        overview_table = self.query_one("#overview-table", DataTable)
+        overview_table.add_columns("Plugin", "Status", "Duration", "Records", "Error")
         for result in self.results:
             status = "Success" if result.success else "Failed"
             records = len(result.output) if result.output else 0
             error = result.error or ""
+            overview_table.add_row(result.plugin_name, status, ".2f", str(records), error)
 
-            table.add_row(result.plugin_name, status, ".2f", str(records), error)
+        # For now, populate other tabs with mock data based on plugin types
+        # In a real implementation, this would parse the actual output data
+        self._populate_processes_tab()
+        self._populate_network_tab()
+        self._populate_dlls_tab()
+        self._populate_timeline_tab()
+
+    def _populate_processes_tab(self) -> None:
+        """Populate processes tab with process-related data."""
+        table = self.query_one("#processes-table", DataTable)
+        table.add_columns("PID", "Name", "PPID", "Threads", "Handles", "Create Time")
+
+        # Mock process data - in real implementation, parse from pslist output
+        mock_processes = [
+            ("4", "System", "0", "100", "500", "2023-01-01T00:00:00Z"),
+            ("1234", "notepad.exe", "876", "8", "150", "2023-01-01T12:00:00Z"),
+        ]
+        for pid, name, ppid, threads, handles, create_time in mock_processes:
+            table.add_row(pid, name, ppid, threads, handles, create_time)
+
+    def _populate_network_tab(self) -> None:
+        """Populate network tab with network-related data."""
+        table = self.query_one("#network-table", DataTable)
+        table.add_columns("Local Address", "Remote Address", "State", "PID", "Process")
+
+        # Mock network data - in real implementation, parse from netscan output
+        mock_connections = [
+            ("192.168.1.100:12345", "8.8.8.8:53", "ESTABLISHED", "1234", "notepad.exe"),
+        ]
+        for local, remote, state, pid, process in mock_connections:
+            table.add_row(local, remote, state, pid, process)
+
+    def _populate_dlls_tab(self) -> None:
+        """Populate DLLs tab with DLL-related data."""
+        table = self.query_one("#dlls-table", DataTable)
+        table.add_columns("Process", "DLL Name", "Base Address", "Size")
+
+        # Mock DLL data - in real implementation, parse from dlllist output
+        mock_dlls = [
+            ("notepad.exe", "kernel32.dll", "0x77400000", "0x1000"),
+            ("notepad.exe", "user32.dll", "0x75e00000", "0x800"),
+        ]
+        for process, dll, base, size in mock_dlls:
+            table.add_row(process, dll, base, size)
+
+    def _populate_timeline_tab(self) -> None:
+        """Populate timeline tab with temporal data."""
+        table = self.query_one("#timeline-table", DataTable)
+        table.add_columns("Timestamp", "Event", "Process", "Details")
+
+        # Mock timeline data - in real implementation, parse from timeliner output
+        mock_events = [
+            ("2023-01-01T12:00:00Z", "Process Create", "notepad.exe", "PID 1234 created"),
+            ("2023-01-01T12:00:05Z", "Network Connect", "notepad.exe", "Connected to 8.8.8.8:53"),
+        ]
+        for timestamp, event, process, details in mock_events:
+            table.add_row(timestamp, event, process, details)
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle button presses."""

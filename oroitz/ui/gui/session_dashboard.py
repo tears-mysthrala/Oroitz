@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
 from oroitz.core.executor import Executor
 from oroitz.core.session import Session
 from oroitz.core.workflow import registry
+from oroitz.ui.gui.notification_center import NotificationCenter
 from oroitz.ui.gui.results_explorer import ResultsExplorer
 
 
@@ -277,6 +278,8 @@ class SessionDashboard(QWidget):
         # Display results in explorer
         self.results_explorer.set_results(results)
 
+        NotificationCenter().show_success("Analysis completed successfully", self)
+
         # Clean up worker
         if self.worker:
             self.worker = None
@@ -287,6 +290,8 @@ class SessionDashboard(QWidget):
         self.start_btn.setEnabled(True)
         self.pause_btn.setEnabled(False)
         self.stop_btn.setEnabled(False)
+
+        NotificationCenter().show_error(f"Analysis failed: {error_message}", self)
 
         # Clean up worker
         if self.worker:

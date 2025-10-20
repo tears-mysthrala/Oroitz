@@ -6,6 +6,8 @@ from typing import List
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QHeaderView,
+    QLabel,
+    QLineEdit,
     QPushButton,
     QTableWidget,
     QTableWidgetItem,
@@ -16,6 +18,7 @@ from PySide6.QtWidgets import (
 
 from oroitz.core.executor import ExecutionResult
 from oroitz.core.output import OutputExporter, OutputNormalizer
+from oroitz.ui.gui.notification_center import NotificationCenter
 
 
 class ResultsExplorer(QWidget):
@@ -65,6 +68,15 @@ class ResultsExplorer(QWidget):
         widget = QWidget()
         layout = QVBoxLayout(widget)
 
+        # Search box
+        search_layout = QHBoxLayout()
+        search_layout.addWidget(QLabel("Search:"))
+        search_edit = QLineEdit()
+        search_edit.setPlaceholderText("Filter results...")
+        search_edit.textChanged.connect(lambda text, t=title: self._filter_table(t, text))
+        search_layout.addWidget(search_edit)
+        layout.addLayout(search_layout)
+
         table = QTableWidget()
         table.setAlternatingRowColors(True)
         table.setSelectionBehavior(QTableWidget.SelectRows)
@@ -93,7 +105,7 @@ class ResultsExplorer(QWidget):
             self._clear_table(self.processes_tab)
             return
 
-        table = self.processes_tab.layout().itemAt(0).widget()
+        table = self.processes_tab.layout().itemAt(1).widget()
         processes = self.normalized_data.processes
 
         # Set up table
@@ -125,7 +137,7 @@ class ResultsExplorer(QWidget):
             self._clear_table(self.network_tab)
             return
 
-        table = self.network_tab.layout().itemAt(0).widget()
+        table = self.network_tab.layout().itemAt(1).widget()
         connections = self.normalized_data.network_connections
 
         # Set up table
@@ -153,7 +165,7 @@ class ResultsExplorer(QWidget):
             self._clear_table(self.malfind_tab)
             return
 
-        table = self.malfind_tab.layout().itemAt(0).widget()
+        table = self.malfind_tab.layout().itemAt(1).widget()
         hits = self.normalized_data.malfind_hits
 
         # Set up table
@@ -179,9 +191,40 @@ class ResultsExplorer(QWidget):
 
     def _clear_table(self, tab_widget: QWidget) -> None:
         """Clear a table widget."""
-        table = tab_widget.layout().itemAt(0).widget()
+        table = tab_widget.layout().itemAt(1).widget()
         table.setRowCount(0)
         table.setColumnCount(0)
+
+    def _filter_table(self, tab_title: str, filter_text: str) -> None:
+        """Filter the table based on search text."""
+        if tab_title == "Processes":
+            table = self.processes_tab.layout().itemAt(1).widget()
+            data = self.normalized_data.processes if self.normalized_data else []
+        elif tab_title == "Network Connections":
+            table = self.network_tab.layout().itemAt(1).widget()
+            data = self.normalized_data.network_connections if self.normalized_data else []
+        elif tab_title == "Malfind Results":
+            table = self.malfind_tab.layout().itemAt(1).widget()
+            data = self.normalized_data.malfind_hits if self.normalized_data else []
+        else:
+            return
+
+        if not filter_text:
+            # Show all rows
+            for row in range(table.rowCount()):
+                table.setRowHidden(row, False)
+            return
+
+        # Filter rows
+        filter_lower = filter_text.lower()
+        for row in range(table.rowCount()):
+            visible = False
+            for col in range(table.columnCount()):
+                item = table.item(row, col)
+                if item and filter_lower in item.text().lower():
+                    visible = True
+                    break
+            table.setRowHidden(row, not visible)
 
     def _export_json(self) -> None:
         """Export results to JSON."""
@@ -194,9 +237,17 @@ class ResultsExplorer(QWidget):
         exporter = OutputExporter()
         exporter.export_json(self.normalized_data, export_path)
 
-        # TODO: Show success message
+        NotificationCenter().show_success(f"Results exported to {export_path}", self)
 
     def _export_csv(self) -> None:
         """Export results to CSV."""
-        # TODO: Implement CSV export
-        pass
+        if not self.normalized_data:
+            return
+
+        # TODO: Show file dialog for export location
+        export_path = Path.home() / "oroitz_results.csv"
+
+        exporter = OutputExporter()
+        exporter.export_csv(self.normalized_data, export_path)
+
+        NotificationCenter().show_success(f"Results exported to CSV files in {export_path.parent}", self)

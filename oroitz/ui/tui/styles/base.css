@@ -188,3 +188,36 @@ Button {
     height: 40%;
     overflow: auto;
 }
+
+#feedback-container {
+    padding: 1;
+}
+
+#feedback-title {
+    text-align: center;
+    margin: 2;
+    color: var(--primary);
+    text-style: bold;
+}
+
+.feedback-subtitle {
+    text-align: center;
+    margin: 1;
+    color: var(--text-muted);
+}
+
+#feedback-form {
+    height: 70%;
+    margin: 1;
+}
+
+.section-header {
+    margin: 2 0 1 0;
+    color: var(--primary);
+    text-style: bold;
+}
+
+#feedback-buttons {
+    margin: 2;
+    align: center middle;
+}

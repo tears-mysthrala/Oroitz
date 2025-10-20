@@ -20,6 +20,14 @@ class Config(BaseSettings):
     volatility_path: Optional[Path] = None
     symbols_path: Optional[Path] = None
 
+    # GUI settings
+    telemetry_enabled: bool = False
+    default_profile: str = "Win10x64_19041"
+    cache_enabled: bool = True
+    auto_export: bool = False
+    theme: str = "system"
+    font_size: int = 10
+
     model_config = SettingsConfigDict(
         env_prefix="OROITZ_",
         env_file=".env",

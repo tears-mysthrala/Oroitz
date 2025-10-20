@@ -36,6 +36,7 @@ class HomeView(Screen):
                         )
 
                 yield Static("", id="spacer")
+                yield Button("Provide Feedback", id="feedback-button", variant="default")
                 yield Button("Exit", id="exit-button", variant="error")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -44,6 +45,9 @@ class HomeView(Screen):
 
         if button_id == "exit-button":
             self.app.exit()
+        elif button_id == "feedback-button":
+            from .feedback_view import FeedbackView
+            self.app.push_screen(FeedbackView())
         elif button_id and button_id.startswith("workflow-"):
             workflow_id = button_id.replace("workflow-", "")
             workflow = registry.get(workflow_id)

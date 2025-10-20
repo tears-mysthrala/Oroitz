@@ -157,43 +157,46 @@ class SettingsDialog(QDialog):
         # General
         self.log_level_combo.setCurrentText(config.log_level)
         self.max_concurrency_spin.setValue(config.max_concurrency)
-        # self.telemetry_check.setChecked(config.telemetry_enabled)  # TODO: Add to config
+        self.telemetry_check.setChecked(config.telemetry_enabled)
 
         # Paths
         # self.volatility_path_edit.setText(str(config.volatility_path))  # TODO: Add to config
         self.sessions_dir_edit.setText(str(config.sessions_dir))
 
         # Analysis
-        # self.default_profile_combo.setCurrentText(config.default_profile)  # TODO: Add to config
-        # self.cache_results_check.setChecked(config.cache_enabled)  # TODO: Add to config
-        # self.auto_export_check.setChecked(config.auto_export)  # TODO: Add to config
+        self.default_profile_combo.setCurrentText(config.default_profile)
+        self.cache_results_check.setChecked(config.cache_enabled)
+        self.auto_export_check.setChecked(config.auto_export)
 
         # Appearance
         # self.theme_combo.setCurrentText(config.theme)  # TODO: Add to config
         # self.font_size_spin.setValue(config.font_size)  # TODO: Add to config
         self.theme_combo.setCurrentText(ThemeManager.get_current_theme().value)
+        self.font_size_spin.setValue(config.font_size)
 
     def _save_settings(self) -> None:
         """Save settings from UI to config."""
         # General
         config.log_level = self.log_level_combo.currentText()
         config.max_concurrency = self.max_concurrency_spin.value()
-        # config.telemetry_enabled = self.telemetry_check.isChecked()  # TODO: Add to config
+        config.telemetry_enabled = self.telemetry_check.isChecked()
 
         # Paths
         # config.volatility_path = Path(self.volatility_path_edit.text())  # TODO: Add to config
         config.sessions_dir = Path(self.sessions_dir_edit.text())
 
         # Analysis
-        # config.default_profile = self.default_profile_combo.currentText()  # TODO: Add to config
-        # config.cache_enabled = self.cache_results_check.isChecked()  # TODO: Add to config
-        # config.auto_export = self.auto_export_check.isChecked()  # TODO: Add to config
+        config.default_profile = self.default_profile_combo.currentText()
+        config.cache_enabled = self.cache_results_check.isChecked()
+        config.auto_export = self.auto_export_check.isChecked()
 
         # Appearance
         # config.theme = self.theme_combo.currentText()  # TODO: Add to config
         # config.font_size = self.font_size_spin.value()  # TODO: Add to config
         theme = Theme(self.theme_combo.currentText())
         ThemeManager.set_theme(theme)
+        config.theme = self.theme_combo.currentText()
+        config.font_size = self.font_size_spin.value()
 
     def _browse_volatility_path(self) -> None:
         """Browse for Volatility executable."""

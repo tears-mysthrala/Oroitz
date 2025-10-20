@@ -129,7 +129,7 @@ poetry.lock
 # Memory dumps
 *.dmp
 *.mem
-
+*.bin
 # Compressed files
 *.7z
 *.zip

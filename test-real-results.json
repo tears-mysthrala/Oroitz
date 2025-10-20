@@ -1,0 +1,1653 @@
+{
+  "processes": [
+    {
+      "pid": 4,
+      "name": "System",
+      "ppid": 0,
+      "threads": 100,
+      "handles": 541,
+      "session": null,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:35+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 404,
+      "name": "smss.exe",
+      "ppid": 4,
+      "threads": 4,
+      "handles": 28,
+      "session": null,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:35+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 472,
+      "name": "csrss.exe",
+      "ppid": 460,
+      "threads": 11,
+      "handles": 466,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:35+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 516,
+      "name": "csrss.exe",
+      "ppid": 508,
+      "threads": 10,
+      "handles": 305,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:36+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 524,
+      "name": "wininit.exe",
+      "ppid": 460,
+      "threads": 3,
+      "handles": 98,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:36+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 552,
+      "name": "winlogon.exe",
+      "ppid": 508,
+      "threads": 3,
+      "handles": 116,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:36+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 604,
+      "name": "services.exe",
+      "ppid": 524,
+      "threads": 6,
+      "handles": 250,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:36+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 616,
+      "name": "lsass.exe",
+      "ppid": 524,
+      "threads": 13,
+      "handles": 610,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:36+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 624,
+      "name": "lsm.exe",
+      "ppid": 524,
+      "threads": 10,
+      "handles": 208,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:36+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 788,
+      "name": "svchost.exe",
+      "ppid": 604,
+      "threads": 6,
+      "handles": 298,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:42+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 848,
+      "name": "svchost.exe",
+      "ppid": 604,
+      "threads": 8,
+      "handles": 280,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:42+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 884,
+      "name": "svchost.exe",
+      "ppid": 604,
+      "threads": 15,
+      "handles": 274,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:42+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 976,
+      "name": "svchost.exe",
+      "ppid": 604,
+      "threads": 6,
+      "handles": 152,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:42+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1000,
+      "name": "svchost.exe",
+      "ppid": 604,
+      "threads": 45,
+      "handles": 2072,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:42+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1056,
+      "name": "SLsvc.exe",
+      "ppid": 604,
+      "threads": 4,
+      "handles": 96,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:42+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1088,
+      "name": "svchost.exe",
+      "ppid": 604,
+      "threads": 17,
+      "handles": 567,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:42+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1160,
+      "name": "svchost.exe",
+      "ppid": 604,
+      "threads": 20,
+      "handles": 265,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:42+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1188,
+      "name": "svchost.exe",
+      "ppid": 604,
+      "threads": 22,
+      "handles": 596,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:42+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1308,
+      "name": "svchost.exe",
+      "ppid": 604,
+      "threads": 17,
+      "handles": 265,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:43+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1424,
+      "name": "spoolsv.exe",
+      "ppid": 604,
+      "threads": 17,
+      "handles": 291,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:49+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1460,
+      "name": "armsvc.exe",
+      "ppid": 604,
+      "threads": 2,
+      "handles": 56,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:49+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1480,
+      "name": "dns.exe",
+      "ppid": 604,
+      "threads": 10,
+      "handles": 164,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:49+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1508,
+      "name": "ftpbasicsvr.exe",
+      "ppid": 604,
+      "threads": 2,
+      "handles": 52,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:49+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1576,
+      "name": "svchost.exe",
+      "ppid": 604,
+      "threads": 5,
+      "handles": 124,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:49+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1604,
+      "name": "svchost.exe",
+      "ppid": 604,
+      "threads": 3,
+      "handles": 73,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:49+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1620,
+      "name": "snmp.exe",
+      "ppid": 604,
+      "threads": 4,
+      "handles": 147,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:49+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1640,
+      "name": "vmtoolsd.exe",
+      "ppid": 604,
+      "threads": 7,
+      "handles": 273,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:49+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1696,
+      "name": "svchost.exe",
+      "ppid": 604,
+      "threads": 4,
+      "handles": 44,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:49+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 832,
+      "name": "TPAutoConnSvc.e",
+      "ppid": 604,
+      "threads": 9,
+      "handles": 136,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:52+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1924,
+      "name": "dllhost.exe",
+      "ppid": 604,
+      "threads": 13,
+      "handles": 240,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:53+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1572,
+      "name": "msdtc.exe",
+      "ppid": 604,
+      "threads": 11,
+      "handles": 167,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:53+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 2096,
+      "name": "taskeng.exe",
+      "ppid": 1000,
+      "threads": 5,
+      "handles": 137,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:17:53+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 2352,
+      "name": "taskeng.exe",
+      "ppid": 1000,
+      "threads": 10,
+      "handles": 250,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T02:18:17+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 2368,
+      "name": "userinit.exe",
+      "ppid": 552,
+      "threads": 0,
+      "handles": null,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T02:18:17+00:00",
+      "exit_time": "2014-01-08T02:18:43+00:00",
+      "anomalies": []
+    },
+    {
+      "pid": 2392,
+      "name": "dwm.exe",
+      "ppid": 1160,
+      "threads": 3,
+      "handles": 76,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T02:18:17+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 2480,
+      "name": "TPAutoConnect.e",
+      "ppid": 832,
+      "threads": 2,
+      "handles": 103,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T02:18:17+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 2496,
+      "name": "explorer.exe",
+      "ppid": 2368,
+      "threads": 24,
+      "handles": 689,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T02:18:17+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 2580,
+      "name": "vmtoolsd.exe",
+      "ppid": 2496,
+      "threads": 6,
+      "handles": 9004,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T02:18:18+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 2592,
+      "name": "AdobeARM.exe",
+      "ppid": 2496,
+      "threads": 6,
+      "handles": 282,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T02:18:18+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 2616,
+      "name": "reader_sl.exe",
+      "ppid": 2592,
+      "threads": 0,
+      "handles": null,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T02:18:18+00:00",
+      "exit_time": "2014-01-08T02:19:20+00:00",
+      "anomalies": []
+    },
+    {
+      "pid": 2720,
+      "name": "Oobe.exe",
+      "ppid": 2444,
+      "threads": 0,
+      "handles": null,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T02:18:22+00:00",
+      "exit_time": "2014-01-08T02:55:43+00:00",
+      "anomalies": []
+    },
+    {
+      "pid": 3224,
+      "name": "svchost.exe",
+      "ppid": 604,
+      "threads": 9,
+      "handles": 228,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:19:53+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 3336,
+      "name": "iashost.exe",
+      "ppid": 788,
+      "threads": 2,
+      "handles": 97,
+      "session": 0,
+      "wow64": false,
+      "create_time": "2014-01-08T02:19:53+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 3680,
+      "name": "wuauclt.exe",
+      "ppid": 1000,
+      "threads": 2,
+      "handles": 139,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T02:20:55+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 3920,
+      "name": "notepad.exe",
+      "ppid": 2496,
+      "threads": 1,
+      "handles": 51,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T03:19:07+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1800,
+      "name": "FTK Imager.exe",
+      "ppid": 2496,
+      "threads": 5,
+      "handles": 251,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T03:19:32+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 1888,
+      "name": "iexplore.exe",
+      "ppid": 2496,
+      "threads": 14,
+      "handles": 641,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T03:20:24+00:00",
+      "exit_time": null,
+      "anomalies": []
+    },
+    {
+      "pid": 2708,
+      "name": "notepad.exe",
+      "ppid": 2496,
+      "threads": 1,
+      "handles": 45,
+      "session": 1,
+      "wow64": false,
+      "create_time": "2014-01-08T17:33:08+00:00",
+      "exit_time": null,
+      "anomalies": []
+    }
+  ],
+  "network_connections": [
+    {
+      "offset": "30269448",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:50+00:00",
+      "local_addr": "0.0.0.0:56153",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "30269448",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:50+00:00",
+      "local_addr": ":::56153",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "30270608",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:50+00:00",
+      "local_addr": "0.0.0.0:56152",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "63197192",
+      "pid": 4,
+      "owner": "System",
+      "created": "2014-01-08T02:19:53+00:00",
+      "local_addr": "0.0.0.0:1701",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "63197192",
+      "pid": 4,
+      "owner": "System",
+      "created": "2014-01-08T02:19:53+00:00",
+      "local_addr": ":::1701",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "83860960",
+      "pid": 604,
+      "owner": "services.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1031",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "83860960",
+      "pid": 604,
+      "owner": "services.exe",
+      "created": null,
+      "local_addr": ":::1031",
+      "remote_addr": ":::0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "133598688",
+      "pid": 604,
+      "owner": "services.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1031",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "133598688",
+      "pid": 604,
+      "owner": "services.exe",
+      "created": null,
+      "local_addr": ":::1031",
+      "remote_addr": ":::0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "136515592",
+      "pid": 4,
+      "owner": "System",
+      "created": "2014-01-08T02:19:53+00:00",
+      "local_addr": "0.0.0.0:1701",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "136515592",
+      "pid": 4,
+      "owner": "System",
+      "created": "2014-01-08T02:19:53+00:00",
+      "local_addr": ":::1701",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "143048160",
+      "pid": 604,
+      "owner": "services.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1031",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "143048160",
+      "pid": 604,
+      "owner": "services.exe",
+      "created": null,
+      "local_addr": ":::1031",
+      "remote_addr": ":::0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "504276016",
+      "pid": 4,
+      "owner": "System",
+      "created": null,
+      "local_addr": "0.0.0.0:1723",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "504283144",
+      "pid": 4,
+      "owner": "System",
+      "created": "2014-01-08T02:19:53+00:00",
+      "local_addr": "0.0.0.0:1701",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "504283144",
+      "pid": 4,
+      "owner": "System",
+      "created": "2014-01-08T02:19:53+00:00",
+      "local_addr": ":::1701",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "504295432",
+      "pid": 1000,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:19:54+00:00",
+      "local_addr": "::1:65012",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "504314376",
+      "pid": 1000,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:19:54+00:00",
+      "local_addr": "::1:65011",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "504408184",
+      "pid": 4,
+      "owner": "System",
+      "created": "2014-01-08T17:29:33+00:00",
+      "local_addr": "192.168.119.191:137",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "504624888",
+      "pid": 4,
+      "owner": "System",
+      "created": null,
+      "local_addr": "0.0.0.0:445",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "504624888",
+      "pid": 4,
+      "owner": "System",
+      "created": null,
+      "local_addr": ":::445",
+      "remote_addr": ":::0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "504643088",
+      "pid": 1888,
+      "owner": "iexplore.exe",
+      "created": null,
+      "local_addr": null,
+      "remote_addr": "54.213.58.70:80",
+      "state": "CLOSED"
+    },
+    {
+      "offset": "504729608",
+      "pid": 4,
+      "owner": "System",
+      "created": null,
+      "local_addr": "192.168.119.191:139",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "504791048",
+      "pid": 1888,
+      "owner": "iexplore.exe",
+      "created": null,
+      "local_addr": null,
+      "remote_addr": "54.230.117.162:80",
+      "state": "CLOSED"
+    },
+    {
+      "offset": "504835120",
+      "pid": 1888,
+      "owner": "iexplore.exe",
+      "created": null,
+      "local_addr": null,
+      "remote_addr": "93.184.216.139:80",
+      "state": "CLOSED"
+    },
+    {
+      "offset": "504946192",
+      "pid": 1888,
+      "owner": "iexplore.exe",
+      "created": null,
+      "local_addr": null,
+      "remote_addr": "23.214.3.146:80",
+      "state": "CLOSED"
+    },
+    {
+      "offset": "505462864",
+      "pid": 1620,
+      "owner": "snmp.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": null,
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505462864",
+      "pid": 1620,
+      "owner": "snmp.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": null,
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505463424",
+      "pid": 1620,
+      "owner": "snmp.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": "0.0.0.0:52325",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505469368",
+      "pid": 1620,
+      "owner": "snmp.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": "0.0.0.0:161",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505469368",
+      "pid": 1620,
+      "owner": "snmp.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": ":::161",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505471944",
+      "pid": 1000,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": "0.0.0.0:4500",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505474624",
+      "pid": 1620,
+      "owner": "snmp.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": "0.0.0.0:161",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505479984",
+      "pid": 1000,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": "0.0.0.0:500",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505489376",
+      "pid": 1000,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": "0.0.0.0:500",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505489376",
+      "pid": 1000,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": ":::500",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505495384",
+      "pid": 1000,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": null,
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505498320",
+      "pid": 1000,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": null,
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505498320",
+      "pid": 1000,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": null,
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505600584",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": null,
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505613888",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": null,
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505613888",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": null,
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505626808",
+      "pid": 1576,
+      "owner": "svchost.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1029",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "505637648",
+      "pid": 1576,
+      "owner": "svchost.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1029",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "505637648",
+      "pid": 1576,
+      "owner": "svchost.exe",
+      "created": null,
+      "local_addr": ":::1029",
+      "remote_addr": ":::0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "505639616",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T17:29:36+00:00",
+      "local_addr": "0.0.0.0:3702",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505639616",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T17:29:36+00:00",
+      "local_addr": ":::3702",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505640848",
+      "pid": 4,
+      "owner": "System",
+      "created": null,
+      "local_addr": "0.0.0.0:5357",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "505640848",
+      "pid": 4,
+      "owner": "System",
+      "created": null,
+      "local_addr": ":::5357",
+      "remote_addr": ":::0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "505658616",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T17:29:36+00:00",
+      "local_addr": "0.0.0.0:3702",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505658616",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T17:29:36+00:00",
+      "local_addr": ":::3702",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505661160",
+      "pid": 1576,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:50+00:00",
+      "local_addr": null,
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505661160",
+      "pid": 1576,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:50+00:00",
+      "local_addr": null,
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505674464",
+      "pid": 1576,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:50+00:00",
+      "local_addr": null,
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505688072",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:50+00:00",
+      "local_addr": "0.0.0.0:56153",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505688072",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:50+00:00",
+      "local_addr": ":::56153",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505689232",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:50+00:00",
+      "local_addr": "0.0.0.0:56152",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505702688",
+      "pid": 1188,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T17:29:33+00:00",
+      "local_addr": null,
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505702688",
+      "pid": 1188,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T17:29:33+00:00",
+      "local_addr": null,
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505727080",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T17:29:36+00:00",
+      "local_addr": "0.0.0.0:3702",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "505729968",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T17:29:36+00:00",
+      "local_addr": "0.0.0.0:3702",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "506919328",
+      "pid": 1888,
+      "owner": "iexplore.exe",
+      "created": null,
+      "local_addr": null,
+      "remote_addr": "199.27.79.196:80",
+      "state": "CLOSED"
+    },
+    {
+      "offset": "507133792",
+      "pid": 1188,
+      "owner": "svchost.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:3389",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "507135824",
+      "pid": 1188,
+      "owner": "svchost.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:3389",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "507135824",
+      "pid": 1188,
+      "owner": "svchost.exe",
+      "created": null,
+      "local_addr": ":::3389",
+      "remote_addr": ":::0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "507992920",
+      "pid": 1888,
+      "owner": "iexplore.exe",
+      "created": null,
+      "local_addr": null,
+      "remote_addr": "199.27.79.196:80",
+      "state": "CLOSED"
+    },
+    {
+      "offset": "507997536",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T17:29:33+00:00",
+      "local_addr": "0.0.0.0:123",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "508003056",
+      "pid": 1888,
+      "owner": "iexplore.exe",
+      "created": "2014-01-08T03:20:34+00:00",
+      "local_addr": "127.0.0.1:50461",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "508025832",
+      "pid": 1188,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T17:29:33+00:00",
+      "local_addr": "0.0.0.0:5355",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "508051464",
+      "pid": 1888,
+      "owner": "iexplore.exe",
+      "created": null,
+      "local_addr": null,
+      "remote_addr": "199.27.77.184:80",
+      "state": "CLOSED"
+    },
+    {
+      "offset": "508380488",
+      "pid": 4,
+      "owner": "System",
+      "created": "2014-01-08T17:29:33+00:00",
+      "local_addr": "192.168.119.191:138",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "508449808",
+      "pid": 1888,
+      "owner": "iexplore.exe",
+      "created": null,
+      "local_addr": null,
+      "remote_addr": "69.194.244.13:80",
+      "state": "CLOSED"
+    },
+    {
+      "offset": "508506704",
+      "pid": 1888,
+      "owner": "iexplore.exe",
+      "created": null,
+      "local_addr": null,
+      "remote_addr": "199.27.77.184:80",
+      "state": "CLOSED"
+    },
+    {
+      "offset": "508524272",
+      "pid": 524,
+      "owner": "wininit.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1025",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "508639752",
+      "pid": 884,
+      "owner": "svchost.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1026",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "508639752",
+      "pid": 884,
+      "owner": "svchost.exe",
+      "created": null,
+      "local_addr": ":::1026",
+      "remote_addr": ":::0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "508715752",
+      "pid": 4,
+      "owner": "System",
+      "created": "2014-01-08T02:19:53+00:00",
+      "local_addr": "0.0.0.0:1701",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "509002632",
+      "pid": 1000,
+      "owner": "svchost.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1027",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "509008928",
+      "pid": 1000,
+      "owner": "svchost.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1027",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "509008928",
+      "pid": 1000,
+      "owner": "svchost.exe",
+      "created": null,
+      "local_addr": ":::1027",
+      "remote_addr": ":::0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "509496432",
+      "pid": 1480,
+      "owner": "dns.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": "127.0.0.1:53",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "509503776",
+      "pid": 1480,
+      "owner": "dns.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": "::1:53",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "509505752",
+      "pid": 1480,
+      "owner": "dns.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": "192.168.119.191:53",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "509506312",
+      "pid": 1480,
+      "owner": "dns.exe",
+      "created": "2014-01-08T17:29:33+00:00",
+      "local_addr": "0.0.0.0:51483",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "509506312",
+      "pid": 1480,
+      "owner": "dns.exe",
+      "created": "2014-01-08T17:29:33+00:00",
+      "local_addr": ":::51483",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "509509464",
+      "pid": 1480,
+      "owner": "dns.exe",
+      "created": "2014-01-08T02:17:49+00:00",
+      "local_addr": "::1:56149",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "509512232",
+      "pid": 1480,
+      "owner": "dns.exe",
+      "created": "2014-01-08T17:29:33+00:00",
+      "local_addr": "0.0.0.0:51482",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "509514328",
+      "pid": 1480,
+      "owner": "dns.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1028",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "509514496",
+      "pid": 1480,
+      "owner": "dns.exe",
+      "created": null,
+      "local_addr": "::1:53",
+      "remote_addr": ":::0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "509515496",
+      "pid": 1480,
+      "owner": "dns.exe",
+      "created": null,
+      "local_addr": "127.0.0.1:53",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "509516496",
+      "pid": 1480,
+      "owner": "dns.exe",
+      "created": null,
+      "local_addr": "192.168.119.191:53",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "509523384",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T17:29:33+00:00",
+      "local_addr": "0.0.0.0:123",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "509523384",
+      "pid": 1088,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T17:29:33+00:00",
+      "local_addr": ":::123",
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "509526992",
+      "pid": 1480,
+      "owner": "dns.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1028",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "509526992",
+      "pid": 1480,
+      "owner": "dns.exe",
+      "created": null,
+      "local_addr": ":::1028",
+      "remote_addr": ":::0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "509574312",
+      "pid": 1508,
+      "owner": "ftpbasicsvr.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:21",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "509579968",
+      "pid": 1508,
+      "owner": "ftpbasicsvr.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:8080",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "513175056",
+      "pid": 616,
+      "owner": "lsass.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1030",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "513175056",
+      "pid": 616,
+      "owner": "lsass.exe",
+      "created": null,
+      "local_addr": ":::1030",
+      "remote_addr": ":::0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "513175392",
+      "pid": 616,
+      "owner": "lsass.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1030",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "513570200",
+      "pid": 884,
+      "owner": "svchost.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1026",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "513774336",
+      "pid": 848,
+      "owner": "svchost.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:135",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "513774336",
+      "pid": 848,
+      "owner": "svchost.exe",
+      "created": null,
+      "local_addr": ":::135",
+      "remote_addr": ":::0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "513781600",
+      "pid": 848,
+      "owner": "svchost.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:135",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "513798472",
+      "pid": 524,
+      "owner": "wininit.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1025",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "513798472",
+      "pid": 524,
+      "owner": "wininit.exe",
+      "created": null,
+      "local_addr": ":::1025",
+      "remote_addr": ":::0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "527142744",
+      "pid": 1160,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:17:53+00:00",
+      "local_addr": null,
+      "remote_addr": "*:0",
+      "state": ""
+    },
+    {
+      "offset": "533087072",
+      "pid": 604,
+      "owner": "services.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1031",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "533097952",
+      "pid": 604,
+      "owner": "services.exe",
+      "created": null,
+      "local_addr": "0.0.0.0:1031",
+      "remote_addr": "0.0.0.0:0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "533097952",
+      "pid": 604,
+      "owner": "services.exe",
+      "created": null,
+      "local_addr": ":::1031",
+      "remote_addr": ":::0",
+      "state": "LISTENING"
+    },
+    {
+      "offset": "533122096",
+      "pid": 1000,
+      "owner": "svchost.exe",
+      "created": "2014-01-08T02:19:54+00:00",
+      "local_addr": "0.0.0.0:65013",
+      "remote_addr": "*:0",
+      "state": ""
+    }
+  ],
+  "malfind_hits": [
+    {
+      "pid": 2496,
+      "process_name": "explorer.exe",
+      "start": "24707072",
+      "end": "24715263",
+      "tag": "VadS",
+      "protection": "PAGE_EXECUTE_READWRITE",
+      "commit_charge": 2,
+      "private_memory": 1
+    },
+    {
+      "pid": 2496,
+      "process_name": "explorer.exe",
+      "start": "51970048",
+      "end": "51974143",
+      "tag": "VadS",
+      "protection": "PAGE_EXECUTE_READWRITE",
+      "commit_charge": 1,
+      "private_memory": 1
+    },
+    {
+      "pid": 2496,
+      "process_name": "explorer.exe",
+      "start": "97976320",
+      "end": "98238463",
+      "tag": "VadS",
+      "protection": "PAGE_EXECUTE_READWRITE",
+      "commit_charge": 1,
+      "private_memory": 1
+    },
+    {
+      "pid": 3920,
+      "process_name": "notepad.exe",
+      "start": "8650752",
+      "end": "8654847",
+      "tag": "VadS",
+      "protection": "PAGE_EXECUTE_READWRITE",
+      "commit_charge": 1,
+      "private_memory": 1
+    },
+    {
+      "pid": 1888,
+      "process_name": "iexplore.exe",
+      "start": "14024704",
+      "end": "14032895",
+      "tag": "VadS",
+      "protection": "PAGE_EXECUTE_READWRITE",
+      "commit_charge": 2,
+      "private_memory": 1
+    },
+    {
+      "pid": 1888,
+      "process_name": "iexplore.exe",
+      "start": "60424192",
+      "end": "60428287",
+      "tag": "VadS",
+      "protection": "PAGE_EXECUTE_READWRITE",
+      "commit_charge": 1,
+      "private_memory": 1
+    },
+    {
+      "pid": 1888,
+      "process_name": "iexplore.exe",
+      "start": "1878982656",
+      "end": "1879048191",
+      "tag": "VadS",
+      "protection": "PAGE_EXECUTE_READWRITE",
+      "commit_charge": 16,
+      "private_memory": 1
+    }
+  ]
+}

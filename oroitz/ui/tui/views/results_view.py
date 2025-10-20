@@ -154,13 +154,14 @@ class ResultsView(Screen):
         button_id = event.button.id
 
         if button_id == "home-button":
-            # Clear session and go back to home
+            # Clear session and go back to home - better navigation
             from .. import OroitzTUI
             if isinstance(self.app, OroitzTUI):
                 self.app.set_current_session(None)
-            self.app.pop_screen()
-            self.app.pop_screen()
-            self.app.pop_screen()  # Back to home
+            # Pop back to home screen (should be 3 screens back: results -> run -> wizard -> home)
+            for _ in range(3):
+                if self.app.screen_stack:
+                    self.app.pop_screen()
         elif button_id == "export-json":
             self._export_results("json")
         elif button_id == "export-csv":
@@ -173,15 +174,14 @@ class ResultsView(Screen):
             normalized_output = self.normalizer.normalize_quick_triage(self.results)
 
             # Export
-            output_path = Path()
             if format == "json":
                 output_path = Path(f"oroitz_results_{self.session.id}.json")
                 self.exporter.export_json(normalized_output, output_path)
+                self.notify(f"✅ Results exported to {output_path}", severity="information")
             elif format == "csv":
                 output_path = Path(f"oroitz_results_{self.session.id}.csv")
                 self.exporter.export_csv(normalized_output, output_path)
-
-            self.notify(f"Results exported to {output_path}", severity="information")
+                self.notify(f"✅ Results exported to {output_path}", severity="information")
 
         except Exception as e:
-            self.notify(f"Export failed: {str(e)}", severity="error")
+            self.notify(f"❌ Export failed: {str(e)}", severity="error")

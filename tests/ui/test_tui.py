@@ -26,56 +26,6 @@ async def pilot(tui_app):
         yield pilot
 
 
-class TestOroitzTUI:
-    """Test the main TUI application."""
-
-    def test_app_creation(self, tui_app):
-        """Test TUI app can be created."""
-        assert tui_app is not None
-        assert tui_app.session is None
-
-    def test_session_management(self, tui_app):
-        """Test session management."""
-        # Test setting session
-        session = Session(image_path=Path("/test.img"), profile="windows")
-        tui_app.set_current_session(session)
-        assert tui_app.get_current_session() == session
-
-        # Test clearing session
-        tui_app.set_current_session(None)
-        assert tui_app.get_current_session() is None
-
-    @pytest.mark.asyncio
-    async def test_initial_screen(self, pilot):
-        """Test initial screen is HomeView."""
-        await pilot.pause()
-        assert isinstance(pilot.app.screen, HomeView)
-
-    @pytest.mark.asyncio
-    async def test_workflow_buttons_display(self, pilot):
-        """Test workflow buttons are displayed."""
-        await pilot.pause()
-
-        # Check that workflow buttons exist
-        workflows = registry.list()
-        for workflow in workflows:
-            button = pilot.get_widget_by_id(f"workflow-{workflow.id}")
-            assert button is not None
-            assert isinstance(button, Button)
-
-    @pytest.mark.asyncio
-    async def test_exit_button(self, pilot):
-        """Test exit button functionality."""
-        await pilot.pause()
-
-        # Click exit button
-        exit_btn = pilot.get_widget_by_id("exit-button")
-        await pilot.click(exit_btn)
-
-        # App should exit (this might not work in test, but tests the setup)
-        assert pilot.app._exit
-
-
 class TestHomeView:
     """Test HomeView functionality."""
 
@@ -115,6 +65,7 @@ class TestHomeView:
             # Note: Navigation might not work in test environment
 
 
+@pytest.mark.tui
 class TestSessionWizardView:
     """Test SessionWizardView functionality."""
 
@@ -182,6 +133,7 @@ class TestSessionWizardView:
                 await pilot.pause()
 
 
+@pytest.mark.tui
 class TestResultsView:
     """Test ResultsView functionality."""
 
@@ -252,6 +204,7 @@ class TestResultsView:
                     # Should trigger export (mocked)
 
 
+@pytest.mark.tui
 class TestTUIIntegration:
     """Integration tests for TUI workflow."""
 

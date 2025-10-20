@@ -34,32 +34,128 @@ class LandingView(QWidget):
         """Setup the UI components."""
         layout = QVBoxLayout(self)
 
-        # Title
-        title = QLabel("Oroitz - Cross-platform Volatility 3 Wrapper")
-        title.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 20px;")
-        layout.addWidget(title)
+        # Welcome header with branding
+        header_layout = QVBoxLayout()
 
-        # Quick actions
-        actions_layout = QHBoxLayout()
+        title = QLabel("🕵️ Oroitz")
+        title.setStyleSheet("""
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        """)
+        header_layout.addWidget(title)
 
-        new_analysis_btn = QPushButton("New Analysis")
-        new_analysis_btn.setStyleSheet("font-size: 14px; padding: 10px;")
+        subtitle = QLabel("Cross-platform Volatility 3 Memory Analysis")
+        subtitle.setStyleSheet("""
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        """)
+        header_layout.addWidget(subtitle)
+
+        layout.addLayout(header_layout)
+
+        # Quick actions section
+        actions_group = QWidget()
+        actions_group.setStyleSheet("""
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        """)
+        actions_layout = QVBoxLayout(actions_group)
+
+        actions_title = QLabel("Get Started")
+        actions_title.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 15px;")
+        actions_layout.addWidget(actions_title)
+
+        new_analysis_btn = QPushButton("🔍 Start New Analysis")
+        new_analysis_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 14px;
+                padding: 12px;
+                background-color: #3498db;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                min-width: 200px;
+            }
+            QPushButton:hover {
+                background-color: #2980b9;
+            }
+            QPushButton:pressed {
+                background-color: #21618c;
+            }
+        """)
         new_analysis_btn.clicked.connect(self._on_new_analysis)
         actions_layout.addWidget(new_analysis_btn)
 
-        actions_layout.addStretch()
-        layout.addLayout(actions_layout)
+        help_btn = QPushButton("📚 Help & Documentation")
+        help_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 14px;
+                padding: 8px;
+                background-color: transparent;
+                color: #3498db;
+                border: 1px solid #3498db;
+                border-radius: 6px;
+                min-width: 200px;
+            }
+            QPushButton:hover {
+                background-color: #ebf5fb;
+            }
+        """)
+        help_btn.clicked.connect(self._on_help_clicked)
+        actions_layout.addWidget(help_btn)
 
-        # Recent sessions
-        sessions_label = QLabel("Recent Sessions")
-        sessions_label.setStyleSheet("font-size: 16px; font-weight: bold; margin-top: 20px;")
+        layout.addWidget(actions_group)
+
+        # Recent sessions section
+        sessions_label = QLabel("Recent Analysis Sessions")
+        sessions_label.setStyleSheet("""
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        """)
         layout.addWidget(sessions_label)
 
         self.sessions_list = QListWidget()
+        self.sessions_list.setStyleSheet("""
+            QListWidget {
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                padding: 5px;
+                background-color: white;
+            }
+            QListWidget::item {
+                padding: 8px;
+                border-bottom: 1px solid #eee;
+            }
+            QListWidget::item:hover {
+                background-color: #f8f9fa;
+            }
+            QListWidget::item:selected {
+                background-color: #e3f2fd;
+                color: #1976d2;
+            }
+        """)
         self.sessions_list.itemDoubleClicked.connect(self._on_session_double_clicked)
         layout.addWidget(self.sessions_list)
 
-        # Refresh sessions
+        # Status bar
+        self.status_label = QLabel("Ready to analyze memory images with Volatility 3")
+        self.status_label.setStyleSheet("""
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 15px;
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        """)
+        layout.addWidget(self.status_label)
+
         self.refresh_sessions()
 
     def refresh_sessions(self) -> None:
@@ -69,7 +165,7 @@ class LandingView(QWidget):
         sessions = self.session_manager.list_sessions()
         if not sessions:
             item = QListWidgetItem("No recent sessions")
-            item.setFlags(item.flags() & ~Qt.ItemIsSelectable)  # Make it non-selectable
+            item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsSelectable)  # Make it non-selectable
             self.sessions_list.addItem(item)
             return
 
@@ -79,15 +175,20 @@ class LandingView(QWidget):
                 display_text += f" - {session.image_path.name}"
 
             item = QListWidgetItem(display_text)
-            item.setData(Qt.UserRole, session)  # Store session object
+            item.setData(Qt.ItemDataRole.UserRole, session)  # Store session object
             self.sessions_list.addItem(item)
 
     def _on_new_analysis(self) -> None:
         """Handle new analysis button click."""
         self.new_analysis_requested.emit()
 
+    def _on_help_clicked(self) -> None:
+        """Handle help button click."""
+        # TODO: Open help/documentation dialog
+        pass
+
     def _on_session_double_clicked(self, item: QListWidgetItem) -> None:
         """Handle session double-click."""
-        session = item.data(Qt.UserRole)
+        session = item.data(Qt.ItemDataRole.UserRole)
         if session:
             self.session_selected.emit(session)

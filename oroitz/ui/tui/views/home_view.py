@@ -36,6 +36,7 @@ class HomeView(Screen):
                         )
 
                 yield Static("", id="spacer")
+                yield Static("💡 Tip: Use Tab/Shift+Tab to navigate, Enter to select, Esc to go back", classes="help-text")
                 yield Button("Provide Feedback", id="feedback-button", variant="default")
                 yield Button("Exit", id="exit-button", variant="error")
 

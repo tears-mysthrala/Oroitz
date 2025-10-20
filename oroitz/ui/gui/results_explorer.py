@@ -6,6 +6,7 @@ from typing import List
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QHeaderView,
+    QFileDialog,
     QLabel,
     QLineEdit,
     QPushButton,
@@ -231,9 +232,15 @@ class ResultsExplorer(QWidget):
         if not self.normalized_data:
             return
 
-        # TODO: Show file dialog for export location
-        export_path = Path.home() / "oroitz_results.json"
+        # Show file dialog for export location
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Export Results to JSON", "oroitz_results.json", "JSON Files (*.json);;All Files (*)"
+        )
+        
+        if not file_path:
+            return
 
+        export_path = Path(file_path)
         exporter = OutputExporter()
         exporter.export_json(self.normalized_data, export_path)
 
@@ -244,10 +251,16 @@ class ResultsExplorer(QWidget):
         if not self.normalized_data:
             return
 
-        # TODO: Show file dialog for export location
-        export_path = Path.home() / "oroitz_results.csv"
+        # Show directory dialog for export location (CSV creates multiple files)
+        directory = QFileDialog.getExistingDirectory(
+            self, "Select Directory for CSV Export", ""
+        )
+        
+        if not directory:
+            return
 
+        export_path = Path(directory) / "oroitz_results.csv"
         exporter = OutputExporter()
         exporter.export_csv(self.normalized_data, export_path)
 
-        NotificationCenter().show_success(f"Results exported to CSV files in {export_path.parent}", self)
+        NotificationCenter().show_success(f"Results exported to CSV files in {directory}", self)

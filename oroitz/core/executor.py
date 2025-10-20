@@ -1,5 +1,7 @@
 """Volatility 3 execution wrapper for Oroitz."""
 
+import json
+import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List, Optional, Union
@@ -10,21 +12,12 @@ from oroitz.core.cache import cache
 from oroitz.core.config import config
 from oroitz.core.telemetry import log_event, logger
 
-# Volatility 3 imports
+# Volatility 3 imports - only for checking availability
 VOLATILITY_AVAILABLE = True
 try:
-    import volatility3.plugins
-    from volatility3.framework import constants, contexts, import_files
-    from volatility3.framework.automagic import available, run
+    import volatility3
 except ImportError:
     VOLATILITY_AVAILABLE = False
-    # Create dummy objects to avoid NameError
-    contexts = None
-    automagic = None
-    constants = None
-    import_files = None
-    list_plugins = None
-    format_hints = None
     volatility3 = None
 
 
@@ -45,111 +38,117 @@ class Executor:
     def __init__(self) -> None:
         self.max_concurrency = config.max_concurrency
         self.executor = ThreadPoolExecutor(max_workers=self.max_concurrency)
-        # Initialize Volatility 3 context and plugins
-        self._vol_context = None
-        self._plugins = {}
-        self._initialize_volatility()
+        # Check if volatility3 CLI is available
+        self._volatility_available = self._check_volatility_cli()
 
-    def _initialize_volatility(self) -> None:
-        """Initialize Volatility 3 context and load plugins."""
-        if not VOLATILITY_AVAILABLE:
-            logger.info("Volatility 3 not available, using mock data mode")
-            self._vol_context = None
-            self._plugins = {}
-            return
-
+    def _check_volatility_cli(self) -> bool:
+        """Check if volatility3 CLI is available."""
         try:
-            # Create base context
-            self._vol_context = contexts.Context()
-
-            # Import plugins
-            import_files(volatility3.plugins, True)
-
-            # For now, don't list plugins, assume they can be loaded dynamically
-            self._plugins = {}  # We'll check existence when running
-
-            logger.info("Initialized Volatility 3 successfully")
-
-        except Exception as e:
-            logger.warning(f"Failed to initialize Volatility 3: {e}. Using mock data fallback.")
-            self._vol_context = None
-            self._plugins = {}
+            # Try using poetry run vol first
+            result = subprocess.run(
+                ["poetry", "run", "vol"],
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+            if result.returncode == 2:  # 2 means help/usage shown, which means vol is available
+                self._vol_command = ["poetry", "run", "vol"]
+                return True
+            
+            # Fallback to just vol
+            result = subprocess.run(
+                ["vol"],
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+            if result.returncode == 2:
+                self._vol_command = ["vol"]
+                return True
+                
+            return False
+        except (subprocess.TimeoutExpired, FileNotFoundError):
+            return False
 
     def _execute_volatility_plugin(
         self, plugin_name: str, image_path: str, profile: str, **kwargs: Any
     ) -> Optional[List[Dict[str, Any]]]:
-        """Execute a Volatility 3 plugin and return normalized output."""
-        if not self._vol_context:
-            logger.warning("Volatility context not available, falling back to mock data")
+        """Execute a Volatility 3 plugin using CLI and return normalized output."""
+        if not self._volatility_available:
+            logger.warning("Volatility 3 CLI not available, falling back to mock data")
             return self._get_mock_data(plugin_name)
 
         try:
-            # Create a fresh context for this execution
-            ctx = contexts.Context()
-            import_files(volatility3.plugins, True)
+            # Build command
+            cmd = self._vol_command + ["-f", image_path, "-r", "json"]
 
-            # Try to get the plugin class dynamically
-            plugin_parts = plugin_name.split(".")
-            plugin_module_name = f"volatility3.plugins.{'.'.join(plugin_parts[:-1])}"
-            plugin_class_name = plugin_parts[-1]
-
-            try:
-                plugin_module = __import__(plugin_module_name, fromlist=[plugin_class_name])
-                # Try different capitalizations
-                for class_name in [
-                    plugin_class_name,
-                    plugin_class_name.capitalize(),
-                    plugin_class_name.title(),
-                    "".join(word.capitalize() for word in plugin_class_name.split("_")),
-                ]:
-                    try:
-                        plugin_class = getattr(plugin_module, class_name)
-                        break
-                    except AttributeError:
-                        continue
+            # Add profile if specified
+            if profile:
+                # Try different profile formats
+                profile_options = []
+                if profile.startswith("Win"):
+                    profile_options = [f"--profile={profile}"]
+                elif profile.startswith("Lin"):
+                    profile_options = [f"--profile={profile}"]
                 else:
-                    raise AttributeError(f"No class found for {plugin_class_name}")
-            except (ImportError, AttributeError):
-                logger.warning(f"Plugin {plugin_name} not found, falling back to mock data")
+                    # Generic profile specification
+                    profile_options = [f"--profile={profile}"]
+
+                # For now, try without explicit profile and let Volatility auto-detect
+                cmd.extend([])  # No profile specification
+
+            # Add plugin name
+            cmd.append(plugin_name)
+
+            # Add any additional parameters
+            for key, value in kwargs.items():
+                if isinstance(value, bool):
+                    if value:
+                        cmd.append(f"--{key}")
+                else:
+                    cmd.append(f"--{key}={value}")
+
+            logger.info(f"Running command: {' '.join(cmd)}")
+
+            # Execute command
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=300,  # 5 minute timeout
+                cwd=None  # Use current directory
+            )
+
+            if result.returncode != 0:
+                logger.warning(f"Volatility plugin {plugin_name} failed: {result.stderr}")
                 return self._get_mock_data(plugin_name)
 
-            # Configure the plugin
-            plugin_config_path = f"plugins.{plugin_name}"
-            # ctx.config[plugin_config_path] = {}  # Remove this, let automagic handle it
+            # Parse JSON output
+            try:
+                output_data = json.loads(result.stdout)
+                # Volatility 3 JSON output is usually wrapped in a structure
+                # Extract the actual data
+                if isinstance(output_data, dict):
+                    # Find the data array - it might be under different keys
+                    for key, value in output_data.items():
+                        if isinstance(value, list) and value and isinstance(value[0], dict):
+                            return value
+                    # If no list found, return empty list
+                    return []
+                elif isinstance(output_data, list):
+                    return output_data
+                else:
+                    logger.warning(f"Unexpected output format from {plugin_name}")
+                    return self._get_mock_data(plugin_name)
 
-            # Set up basic configuration
-            ctx.config[f"{plugin_config_path}.image"] = image_path
-            ctx.config[f"{plugin_config_path}.profile"] = profile
+            except json.JSONDecodeError as e:
+                logger.warning(f"Failed to parse JSON output from {plugin_name}: {e}")
+                logger.debug(f"Raw output: {result.stdout[:500]}")
+                return self._get_mock_data(plugin_name)
 
-            # Add any additional kwargs as config
-            for key, value in kwargs.items():
-                ctx.config[f"{plugin_config_path}.{key}"] = value
-
-            # Get available automagics
-            automagics = available(ctx)
-
-            # Run automagics to set up the context
-            run(automagics, ctx, plugin_class, plugin_config_path, None)
-
-            # Create and run the plugin
-            plugin = plugin_class(ctx, plugin_config_path)
-
-            # Run the plugin and collect results
-            results = []
-            tree_grid = plugin.run()
-
-            # Convert TreeGrid to list of dictionaries
-            if tree_grid and hasattr(tree_grid, "_rows"):
-                headers = [col.name for col in tree_grid._columns]
-                for row in tree_grid._rows:
-                    result_dict = {}
-                    for i, value in enumerate(row):
-                        if i < len(headers):
-                            result_dict[headers[i]] = value
-                    results.append(result_dict)
-
-            return results if results else []
-
+        except subprocess.TimeoutExpired:
+            logger.error(f"Volatility plugin {plugin_name} timed out")
+            return self._get_mock_data(plugin_name)
         except Exception as e:
             logger.error(f"Failed to execute Volatility plugin {plugin_name}: {e}")
             return self._get_mock_data(plugin_name)

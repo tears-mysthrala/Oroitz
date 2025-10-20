@@ -50,6 +50,8 @@ class SessionWizardView(Screen):
                     yield Button("Back", id="back-button", variant="default")
                     yield Button("Start Analysis", id="start-button", variant="primary")
 
+                yield Static("💡 Use Tab to navigate fields, Enter to select, Esc to go back", classes="help-text")
+
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle button presses."""
         button_id = event.button.id

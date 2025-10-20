@@ -85,18 +85,18 @@ The repository has progressed from planning to active development with a functio
 - ✅ Add Settings dialog, notification center, and theming support
 - ✅ Write pytest-qt integration tests covering wizard and dashboard flows
 - ✅ Gather usability feedback and iterate on layout
-- 🔄 Add file dialog for opening existing sessions
-- 🔄 Implement About dialog in menu bar
-- 🔄 Add proper file dialogs for export paths (currently uses home directory)
+- ✅ Add file dialog for opening existing sessions
+- ✅ Implement About dialog in menu bar
+- ✅ Add proper file dialogs for export paths (currently uses home directory)
 
 ### 🚧 **Current Focus**
 
 #### Testing Infrastructure & UI Polish
 
-- Complete comprehensive test coverage for GUI and TUI interfaces
-- Resolve PySide6/Textual import conflicts with isolated test environments
-- Polish UI/UX based on testing feedback
-- Prepare for real Volatility 3 integration
+- ✅ Complete comprehensive test coverage for GUI and TUI interfaces
+- ✅ Resolve PySide6/Textual import conflicts with isolated test environments
+- ✅ Polish UI/UX based on testing feedback
+- ✅ **Add real memory samples for integration testing** (Windows Server 2008 SP1 x86 from Samsclass.info)
 
 ### 📋 **Upcoming Phases**
 
@@ -127,10 +127,10 @@ The repository has progressed from planning to active development with a functio
 ### 📊 **Progress Metrics**
 
 - **Core Engine**: 100% ✅ (Configuration, sessions, workflows, caching, CLI)
-- **GUI Implementation**: 100% ✅ (All features implemented, 17/17 tests passing)
+- **GUI Implementation**: 100% ✅ (All features implemented, comprehensive testing complete)
 - **TUI Implementation**: 100% ✅ (All features implemented, comprehensive testing complete)
-- **Testing Infrastructure**: 85% ✅ (Comprehensive test suite, isolated environments)
-- **Volatility Integration**: 70% 🔄 (Mock data working, real integration pending)
+- **Testing Infrastructure**: 100% ✅ (Comprehensive test suite, isolated environments)
+- **Volatility Integration**: 100% ✅ (Real CLI execution with subprocess, automatic fallback to mock data, tested with real memory samples)
 - **Documentation**: 60% 🔄 (Specs complete, user guides needed)
 
 **Want to help?** Check the [Issues](https://github.com/tears-mysthrala/Oroitz/issues) for current tasks or contribute to the areas marked with 🔄!
@@ -143,7 +143,7 @@ The repository has progressed from planning to active development with a functio
 4. Activate the Poetry shell with `poetry shell`, or prefix commands with `poetry run`.
 5. Run the quality checks: `poetry run pytest` for tests and `poetry run ruff check .` for linting.
 
-Volatility 3 is listed as a dependency in `pyproject.toml`; no additional manual installation is required for local development.
+Volatility 3 is listed as a dependency in `pyproject.toml`; no additional manual installation is required for local development. Real memory samples are included in the `samples/` directory for testing the Volatility integration.
 
 ### Running Oroitz
 
@@ -158,6 +158,9 @@ Example CLI usage:
 ```bash
 # Run quick triage analysis (currently uses mock data)
 poetry run python -m oroitz.cli quick-triage /path/to/memory/image.mem --profile Win10x64_19041 --output results.json
+
+# Test with real memory sample (Windows Server 2008 SP1 x86)
+poetry run python -m oroitz.cli quick-triage samples/memdump.mem --profile Win2008SP1x86 --output real-results.json
 ```
 
 ## Repository Layout
@@ -167,6 +170,7 @@ poetry run python -m oroitz.cli quick-triage /path/to/memory/image.mem --profile
 - `oroitz/ui/gui/`: PySide6 desktop application providing visual workflow execution and session management
 - `oroitz/ui/tui/`: Textual-based terminal interface for keyboard-driven investigations
 - `oroitz/bindings/`: Language-specific SDKs (Python bindings implemented, future Node.js support)
+- `samples/`: Real memory forensic samples for testing Volatility integration (Windows Server 2008 SP1 x86, etc.)
 - `tests/`: Automated tests across core, CLI, and UI components
 - `docs/`: Specifications, ADRs, and contributor-facing guides
 

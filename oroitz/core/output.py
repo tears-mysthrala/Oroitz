@@ -86,17 +86,17 @@ class OutputNormalizer:
         """Normalize pslist output."""
         normalized: List[ProcessInfo] = []
         for item in raw_output:
-            # Basic normalization - in real implementation, would handle various formats
+            # Map Volatility 3 field names to our schema
             process = ProcessInfo(
-                pid=int(item.get("pid", 0)),
-                name=str(item.get("name", "")),
-                ppid=item.get("ppid"),
-                threads=item.get("threads"),
-                handles=item.get("handles"),
-                session=item.get("session"),
-                wow64=item.get("wow64"),
-                create_time=item.get("create_time"),
-                exit_time=item.get("exit_time"),
+                pid=int(item.get("PID", 0)),
+                name=str(item.get("ImageFileName", "")),
+                ppid=item.get("PPID"),
+                threads=item.get("Threads"),
+                handles=item.get("Handles"),
+                session=item.get("SessionId"),
+                wow64=item.get("Wow64"),
+                create_time=item.get("CreateTime"),
+                exit_time=item.get("ExitTime"),
             )
             normalized.append(process)
         return normalized
@@ -106,13 +106,13 @@ class OutputNormalizer:
         normalized: List[NetworkConnection] = []
         for item in raw_output:
             conn = NetworkConnection(
-                offset=item.get("offset"),
-                pid=item.get("pid"),
-                owner=item.get("owner"),
-                created=item.get("created"),
-                local_addr=item.get("local_addr"),
-                remote_addr=item.get("remote_addr"),
-                state=item.get("state"),
+                offset=str(item.get("Offset")) if item.get("Offset") is not None else None,
+                pid=item.get("PID"),
+                owner=item.get("Owner"),
+                created=item.get("Created"),
+                local_addr=f"{item.get('LocalAddr')}:{item.get('LocalPort')}" if item.get('LocalAddr') and item.get('LocalPort') else None,
+                remote_addr=f"{item.get('ForeignAddr')}:{item.get('ForeignPort')}" if item.get('ForeignAddr') is not None and item.get('ForeignPort') is not None else None,
+                state=item.get("State"),
             )
             normalized.append(conn)
         return normalized
@@ -122,14 +122,14 @@ class OutputNormalizer:
         normalized: List[MalfindHit] = []
         for item in raw_output:
             hit = MalfindHit(
-                pid=item.get("pid"),
-                process_name=item.get("process_name"),
-                start=item.get("start"),
-                end=item.get("end"),
-                tag=item.get("tag"),
-                protection=item.get("protection"),
-                commit_charge=item.get("commit_charge"),
-                private_memory=item.get("private_memory"),
+                pid=item.get("PID"),
+                process_name=item.get("Process"),
+                start=str(item.get("Start VPN")) if item.get("Start VPN") is not None else None,
+                end=str(item.get("End VPN")) if item.get("End VPN") is not None else None,
+                tag=item.get("Tag"),
+                protection=item.get("Protection"),
+                commit_charge=item.get("CommitCharge"),
+                private_memory=item.get("PrivateMemory"),
             )
             normalized.append(hit)
         return normalized

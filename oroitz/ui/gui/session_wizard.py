@@ -38,7 +38,7 @@ class SessionWizard(QWizard):
         self.selected_workflow_id = None
 
         self.setWindowTitle("New Analysis Session")
-        self.setWizardStyle(QWizard.ModernStyle)
+        self.setWizardStyle(QWizard.WizardStyle.ModernStyle)
 
         # Add pages
         self.workflow_page = WorkflowSelectionPage()
@@ -53,7 +53,7 @@ class SessionWizard(QWizard):
 
     def _on_finished(self, result: int) -> None:
         """Handle wizard completion."""
-        if result == QWizard.Accepted:
+        if result == QWizard.DialogCode.Accepted:
             # Create session from wizard data
             session_name = self.field("sessionName")
             image_path = self.field("imagePath")
@@ -92,9 +92,26 @@ class SessionInfoPage(QWizardPage):
         """Setup the UI."""
         layout = QFormLayout(self)
 
+        # Session name with validation
         name_edit = QLineEdit("New Analysis Session")
+        name_edit.setStyleSheet("""
+            QLineEdit {
+                padding: 8px;
+                border: 2px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+            QLineEdit:focus {
+                border-color: #3498db;
+            }
+        """)
         self.registerField("sessionName*", name_edit)
         layout.addRow("Session Name:", name_edit)
+
+        # Add validation hint
+        name_hint = QLabel("Choose a descriptive name for your analysis session")
+        name_hint.setStyleSheet("color: #7f8c8d; font-size: 12px; margin-bottom: 10px;")
+        layout.addRow("", name_hint)
 
 
 class ImageSelectionPage(QWizardPage):
@@ -112,24 +129,74 @@ class ImageSelectionPage(QWizardPage):
         """Setup the UI."""
         layout = QFormLayout(self)
 
-        # Image path selection
+        # Image path selection with better styling
         image_layout = QHBoxLayout()
         self.image_edit = QLineEdit()
-        self.image_edit.setPlaceholderText("Select memory image file...")
+        self.image_edit.setPlaceholderText("Select memory image file (.raw, .mem, .dmp)...")
+        self.image_edit.setStyleSheet("""
+            QLineEdit {
+                padding: 8px;
+                border: 2px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+                min-width: 300px;
+            }
+            QLineEdit:focus {
+                border-color: #3498db;
+            }
+        """)
         self.registerField("imagePath*", self.image_edit)
 
         browse_btn = QPushButton("Browse...")
+        browse_btn.setStyleSheet("""
+            QPushButton {
+                padding: 8px 16px;
+                background-color: #95a5a6;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background-color: #7f8c8d;
+            }
+        """)
         browse_btn.clicked.connect(self._browse_image)
         image_layout.addWidget(self.image_edit)
         image_layout.addWidget(browse_btn)
 
         layout.addRow("Memory Image:", image_layout)
 
-        # Profile selection
+        # Add validation hint
+        image_hint = QLabel("Supported formats: .raw, .mem, .dmp, .vmem")
+        image_hint.setStyleSheet("color: #7f8c8d; font-size: 12px; margin-bottom: 10px;")
+        layout.addRow("", image_hint)
+
+        # Profile selection with better styling
         profile_combo = QComboBox()
         profile_combo.addItems(["Win10x64_19041", "Win10x64_2004", "Win7SP1x64", "Linux"])
+        profile_combo.setStyleSheet("""
+            QComboBox {
+                padding: 8px;
+                border: 2px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+                min-width: 200px;
+            }
+            QComboBox:focus {
+                border-color: #3498db;
+            }
+            QComboBox::drop-down {
+                border: none;
+            }
+        """)
         self.registerField("profile", profile_combo, "currentText")
         layout.addRow("Profile:", profile_combo)
+
+        # Profile hint
+        profile_hint = QLabel("Select the OS profile that matches your memory image")
+        profile_hint.setStyleSheet("color: #7f8c8d; font-size: 12px;")
+        layout.addRow("", profile_hint)
 
     def _browse_image(self) -> None:
         """Open file dialog to select memory image."""

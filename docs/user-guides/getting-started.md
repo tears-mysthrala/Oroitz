@@ -47,7 +47,7 @@ All interfaces share the same core engine, ensuring consistent results across pl
 1. **Run quick triage on a memory sample:**
 
    ```bash
-   poetry run python -m oroitz.cli quick-triage samples/memdump.mem --profile Win2008SP1x86 --output results.json
+   poetry run python -m oroitz.cli quick-triage samples/memdump.mem --output results.json
    ```
 
 2. **View the results:**
@@ -69,8 +69,7 @@ All interfaces share the same core engine, ensuring consistent results across pl
    - Click "New Session" on the landing page
    - Select "Quick Triage" workflow
    - Choose your memory image file
-   - Select the appropriate Volatility profile
-   - Click "Start Analysis"
+   - Click "Start Analysis" (Volatility 3 auto-detects the appropriate symbol tables)
 
 3. **Explore results:**
    - View process listings in the dashboard
@@ -88,7 +87,7 @@ All interfaces share the same core engine, ensuring consistent results across pl
 2. **Navigate with keyboard:**
    - Use arrow keys to select workflows
    - Press Enter to choose "Quick Triage"
-   - Fill in the session wizard (image path, profile)
+   - Fill in the session wizard (image path only - Volatility 3 auto-detects symbol tables)
    - View results in the data table
    - Press 'e' to export results
 

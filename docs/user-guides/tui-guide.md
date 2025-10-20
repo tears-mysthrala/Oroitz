@@ -55,15 +55,9 @@ The session wizard will guide you through:
    - Type or paste the full path to your memory dump
    - Use Tab to move to the next field
    - Supported formats: `.mem`, `.raw`, `.vmem`
+   - Volatility 3 will automatically detect the appropriate symbol tables
 
-2. **Volatility Profile**:
-   - Use arrow keys to select from available profiles
-   - Common options:
-     - `Win10x64_19041` (Windows 10)
-     - `Win7SP1x64` (Windows 7)
-     - `LinuxUbuntu1804x64` (Ubuntu Linux)
-
-3. **Confirm and Start**:
+2. **Confirm and Start**:
    - Review your settings
    - Press Enter on "Start Analysis"
 
@@ -217,7 +211,7 @@ Press **':'** to enter command mode for advanced operations:
 **Solutions**:
 
 - Verify memory image file exists and is readable
-- Check Volatility profile matches the image
+- Ensure Volatility 3 is properly installed
 - Review logs for error messages
 
 #### Slow Performance
@@ -248,16 +242,6 @@ Press **':'** to enter command mode for advanced operations:
 - **Background**: Avoid running other intensive processes
 
 ### Error Messages
-
-#### Profile not supported
-
-- Choose a different Volatility profile
-- Verify profile matches your memory image OS
-
-#### File not found
-
-- Check the memory image path is correct
-- Ensure file permissions allow reading
 
 #### Analysis failed
 
@@ -318,7 +302,7 @@ print(f"Found {len(results)} suspicious processes")
 ## Best Practices
 
 1. **Start Simple**: Begin with Quick Triage to understand the system
-2. **Use Appropriate Profiles**: Match profile to memory image characteristics
+2. **Verify Images**: Ensure memory images are from supported OS versions
 3. **Export Regularly**: Save results before navigating away
 4. **Learn Shortcuts**: Keyboard navigation becomes faster with practice
 5. **Check Logs**: Review execution logs for warnings or errors

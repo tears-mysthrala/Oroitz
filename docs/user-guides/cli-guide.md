@@ -17,14 +17,17 @@ python -m oroitz.cli --help
 The most common operation is running a quick triage analysis:
 
 ```bash
-python -m oroitz.cli quick-triage /path/to/memory.dump --profile Win10x64_19041 --output results.json
+python -m oroitz.cli quick-triage /path/to/memory.dump --output results.json
 ```
 
 ### Command Options
 
-- `--profile`: Volatility profile (e.g., `Win10x64_19041`, `Win2008SP1x86`, `LinuxUbuntu1804x64`)
 - `--output`: Optional JSON output file path
 - `--help`: Show help information
+
+### Volatility 3 Auto-Detection
+
+Oroitz uses Volatility 3, which automatically detects the appropriate symbol tables for your memory image. Unlike Volatility 2, you don't need to specify profiles manually - Volatility 3 analyzes the memory image and determines the correct OS version and architecture automatically.
 
 ### Example Output
 
@@ -112,7 +115,6 @@ jq -r '.network_connections[] | [.pid, .owner, .local_addr, .remote_addr, .state
 
 IMAGES_DIR="/path/to/memory/images"
 OUTPUT_DIR="./results"
-PROFILE="Win10x64_19041"
 
 mkdir -p "$OUTPUT_DIR"
 
@@ -121,7 +123,7 @@ for image in "$IMAGES_DIR"/*.mem; do
     output="$OUTPUT_DIR/${basename}_triage.json"
 
     echo "Processing $image..."
-    python -m oroitz.cli quick-triage "$image" --profile "$PROFILE" --output "$output"
+    python -m oroitz.cli quick-triage "$image" --output "$output"
 
     # Quick summary
     process_count=$(jq '.processes | length' "$output")
@@ -162,36 +164,29 @@ EOF
 
 The CLI provides clear error messages for common issues:
 
-### Invalid Profile
+### Invalid Image File
 
 ```bash
-python -m oroitz.cli quick-triage memory.dump --profile InvalidProfile
-# Error: Profile 'InvalidProfile' is not supported
-```
-
-### Missing Image File
-
-```bash
-python -m oroitz.cli quick-triage nonexistent.dump --profile Win10x64_19041
+python -m oroitz.cli quick-triage nonexistent.dump
 # Error: File 'nonexistent.dump' does not exist
 ```
 
 ### Volatility Execution Issues
 
 ```bash
-python -m oroitz.cli quick-triage memory.dump --profile Win10x64_19041
+python -m oroitz.cli quick-triage memory.dump
 # Falls back to mock data with warning if Volatility 3 is not available
 ```
 
 ## Advanced Usage
 
-### Custom Profiles
+### Volatility 3 Architecture
 
-Oroitz supports standard Volatility 3 profiles:
+Oroitz leverages Volatility 3's modern architecture:
 
-- Windows: `Win7SP1x64`, `Win10x64_19041`, `Win2008SP1x86`
-- Linux: `LinuxUbuntu1804x64`, `LinuxCentOS7x64`
-- macOS: `Mac10_15_7ARM`, `Mac10_14_6x64`
+- **Automatic Symbol Detection**: Volatility 3 analyzes memory images to automatically determine OS version, architecture, and required symbol tables
+- **Plugin-Based**: Uses modern Python plugins instead of legacy profiles
+- **JSON Output**: Native JSON support for programmatic analysis
 
 ### Memory Image Requirements
 
@@ -199,6 +194,7 @@ Oroitz supports standard Volatility 3 profiles:
 - VMware memory files (`.vmem`)
 - VirtualBox memory files
 - Hyper-V memory files
+- Volatility 3 supports automatic detection for most common formats
 
 ### Performance Considerations
 
@@ -215,10 +211,11 @@ Oroitz supports standard Volatility 3 profiles:
 - Ensure Volatility 3 is installed: `pip install volatility3`
 - Or use the provided mock data fallback
 
-#### Profile not supported
+#### Unsupported Memory Image
 
-- Check available profiles: `python -m oroitz.cli quick-triage --help`
-- Verify the profile matches your memory image OS/version
+- Verify the memory image is from a supported OS (Windows, Linux, macOS)
+- Check that the image file is not corrupted
+- Volatility 3 may not support very old or uncommon OS versions
 
 #### Permission denied
 

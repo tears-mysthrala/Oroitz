@@ -93,31 +93,33 @@ poetry run python -m oroitz.cli --help
 ls -la memory.dump
 
 # Use absolute path
-python -m oroitz.cli quick-triage /full/path/to/memory.dump --profile Win10x64_19041
+python -m oroitz.cli quick-triage /full/path/to/memory.dump
 
 # Check file permissions
 stat memory.dump
 ```
 
-### Invalid Volatility Profile
+### Unsupported Memory Image
 
-**Error**: `Profile 'InvalidProfile' is not supported`
+**Error**: `Analysis failed - unsupported OS or corrupted image`
 
-**Common Profiles**:
+**Supported Systems**:
 
-- Windows 10: `Win10x64_19041`, `Win10x64_1903`
-- Windows 7: `Win7SP1x64`, `Win7SP0x64`
-- Linux: `LinuxUbuntu1804x64`, `LinuxCentOS7x64`
-- macOS: `Mac10_15_7ARM`, `Mac10_14_6x64`
+- Windows (7, 8, 10, 11, Server variants)
+- Linux (most distributions with kernel 3.0+)
+- macOS (10.14+)
 
 **Solution**:
 
 ```bash
-# List common profiles
-python -m oroitz.cli quick-triage --help
+# Check image format
+file memory.dump
 
-# Try auto-detection (leave profile empty)
-python -m oroitz.cli quick-triage memory.dump
+# Try with known good sample
+python -m oroitz.cli quick-triage samples/memdump.mem
+
+# Verify Volatility 3 can read the image
+volatility3 -f memory.dump imageinfo
 ```
 
 ### Analysis Takes Too Long
@@ -129,7 +131,7 @@ python -m oroitz.cli quick-triage memory.dump
 - Check system resources (RAM, CPU)
 - Try smaller memory image for testing
 - Use `top` or `htop` to monitor resource usage
-- Kill and restart with different profile
+- Kill and restart if needed
 
 ### Mock Data Warning
 
@@ -142,7 +144,7 @@ python -m oroitz.cli quick-triage memory.dump
 pip install volatility3
 
 # Or use the provided memory samples
-python -m oroitz.cli quick-triage samples/memdump.mem --profile Win2008SP1x86
+python -m oroitz.cli quick-triage samples/memdump.mem
 ```
 
 ## GUI Issues
@@ -237,21 +239,18 @@ echo $TERM
 
 **Causes**:
 
-- Wrong Volatility profile
 - Corrupted memory image
-- Profile/OS version mismatch
+- Unsupported OS version
+- Volatility 3 installation issues
 
 **Solutions**:
 
 ```bash
-# Try different profile
-python -m oroitz.cli quick-triage memory.dump --profile Win10x64_19041
-
 # Verify image integrity
 file memory.dump
 stat memory.dump
 
-# Check with different tool
+# Check with Volatility 3 directly
 volatility3 -f memory.dump imageinfo
 ```
 
@@ -283,7 +282,6 @@ volatility3 -f memory.dump imageinfo
 # Use faster storage (SSD preferred)
 # Ensure adequate RAM (8GB+ recommended)
 # Close unnecessary applications
-# Use appropriate profile for your image
 ```
 
 ### Reduce Memory Usage
@@ -324,10 +322,10 @@ Oroitz logs to console by default. For more detailed logging:
 
 ```bash
 # Enable debug logging
-python -m oroitz.cli --log-level DEBUG quick-triage memory.dump --profile Win10x64_19041
+python -m oroitz.cli --log-level DEBUG quick-triage memory.dump
 
 # Redirect logs to file
-python -m oroitz.cli quick-triage memory.dump --profile Win10x64_19041 2>&1 | tee analysis.log
+python -m oroitz.cli quick-triage memory.dump 2>&1 | tee analysis.log
 ```
 
 ### Community Support

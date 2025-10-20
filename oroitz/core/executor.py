@@ -71,7 +71,7 @@ class Executor:
             return False
 
     def _execute_volatility_plugin(
-        self, plugin_name: str, image_path: str, profile: str, **kwargs: Any
+        self, plugin_name: str, image_path: str, profile: str = "", **kwargs: Any
     ) -> Optional[List[Dict[str, Any]]]:
         """Execute a Volatility 3 plugin using CLI and return normalized output."""
         if not self._volatility_available:
@@ -79,23 +79,8 @@ class Executor:
             return self._get_mock_data(plugin_name)
 
         try:
-            # Build command
+            # Build command - Volatility 3 auto-detects symbol tables
             cmd = self._vol_command + ["-f", image_path, "-r", "json"]
-
-            # Add profile if specified
-            if profile:
-                # Try different profile formats
-                profile_options = []
-                if profile.startswith("Win"):
-                    profile_options = [f"--profile={profile}"]
-                elif profile.startswith("Lin"):
-                    profile_options = [f"--profile={profile}"]
-                else:
-                    # Generic profile specification
-                    profile_options = [f"--profile={profile}"]
-
-                # For now, try without explicit profile and let Volatility auto-detect
-                cmd.extend([])  # No profile specification
 
             # Add plugin name
             cmd.append(plugin_name)
@@ -168,7 +153,7 @@ class Executor:
         self,
         plugin_name: str,
         image_path: str,
-        profile: str,
+        profile: str = "",
         session_id: Optional[str] = None,
         **kwargs: Any,
     ) -> ExecutionResult:
@@ -227,13 +212,13 @@ class Executor:
         )
 
     def execute_workflow(
-        self, workflow_spec: Any, image_path: str, profile: str
+        self, workflow_spec: Any, image_path: str
     ) -> List[ExecutionResult]:
         """Execute all plugins in a workflow."""
         results: List[ExecutionResult] = []
 
         for plugin in workflow_spec.plugins:
-            result = self.execute_plugin(plugin.name, image_path, profile, **plugin.parameters)
+            result = self.execute_plugin(plugin.name, image_path, "", **plugin.parameters)
             results.append(result)
 
         return results

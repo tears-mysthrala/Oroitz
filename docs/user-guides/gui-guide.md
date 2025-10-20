@@ -36,10 +36,7 @@ The GUI consists of several key components:
 2. **Choose Memory Image**:
    - Click "Browse" to select your memory dump file
    - Supported formats: `.mem`, `.raw`, `.vmem`, `.img`
-3. **Select Profile**: Choose the appropriate Volatility profile:
-   - Windows: `Win10x64_19041`, `Win7SP1x64`, `Win2008SP1x86`
-   - Linux: `LinuxUbuntu1804x64`, `LinuxCentOS7x64`
-   - macOS: `Mac10_15_7ARM`, `Mac10_14_6x64`
+   - Volatility 3 will automatically detect the appropriate symbol tables for your image
 
 ### Step 3: Run Analysis
 
@@ -175,8 +172,8 @@ The GUI consists of several key components:
 **Solutions**:
 
 - Verify the memory image is valid and not corrupted
-- Check that the correct Volatility profile is selected
-- Try a different profile if unsure
+- Ensure Volatility 3 is properly installed and accessible
+- Check the GUI logs for specific error messages
 
 #### GUI Freezes During Analysis
 
@@ -238,7 +235,7 @@ print(f"Found {len(suspicious)} processes with high handle counts")
 ## Best Practices
 
 1. **Start Small**: Begin with Quick Triage to understand the system
-2. **Use Appropriate Profiles**: Match the profile to your memory image OS/version
+2. **Verify Images**: Ensure memory images are valid and from supported OS versions
 3. **Export Early**: Save results before closing sessions
 4. **Regular Backups**: Keep copies of important analysis results
 5. **Version Control**: Track changes in analysis approaches

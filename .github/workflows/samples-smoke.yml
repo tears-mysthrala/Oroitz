@@ -1,52 +1,61 @@
-name: Sample smoke benchmark
+name: Sample smoke benchmark (auto)
 
 on:
-    workflow_dispatch: {}
+  push:
+    branches: [ main ]
+  pull_request:
+  schedule:
+    - cron: '0 3 * * 1' # Weekly on Monday at 03:00 UTC
 
 jobs:
-    smoke:
-        name: Fetch sample and run smoke benchmark
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
+  benchmark:
+    name: Prepare sample (cache) and run benchmark
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            - name: Set up Python 3.11
-              uses: actions/setup-python@v4
-              with:
-                  python-version: "3.11"
+      - name: Restore cached samples
+        id: restore-sample-cache
+        uses: actions/cache@v4
+        with:
+          path: ci/cached_samples
+          key: sample-memdump-v1
 
-            - name: Install Poetry
-              run: |
-                  python -m pip install --upgrade pip
-                  python -m pip install poetry
+      - name: Ensure sample archive is available
+        run: |
+          mkdir -p ci/cached_samples
+          if [ -f ci/cached_samples/memdump.7z ]; then
+            echo "Using cached sample"
+            cp ci/cached_samples/memdump.7z samples/
+          else
+            echo "Cached sample not found: fetching using helper"
+            python3 scripts/fetch_samples.py --id samsclass-memdump --yes
+            if [ -f samples/memdump.7z ]; then
+              mv samples/memdump.7z ci/cached_samples/memdump.7z
+            else
+              echo "Failed to obtain sample; aborting"
+              exit 1
+            fi
+          fi
 
-            - name: Install dependencies (system-wide for job)
-              run: |
-                  poetry config virtualenvs.create false
-                  poetry install --no-interaction --no-ansi
+      - name: Install 7zip for extraction
+        run: sudo apt-get update && sudo apt-get install -y p7zip-full
 
-            - name: Fetch a small approved sample (samsclass-memdump)
-              run: python scripts/fetch_samples.py --id samsclass-memdump --yes
+      - name: Extract sample
+        run: 7z x ci/cached_samples/memdump.7z -o samples/ -y
 
-            - name: Ensure 7zip is available for archive extraction
-              run: sudo apt-get update && sudo apt-get install -y p7zip-full
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
-            - name: Extract sample archive if present
-              run: |
-                  if [ -f samples/memdump.7z ]; then
-                    7z x samples/memdump.7z -o samples/
-                  fi
+      - name: Run quick_triage benchmark
+        run: |
+          python tools/benchmark.py --sample samples/memdump.mem --output results/benchmark_report.json
 
-            - name: Run quick_triage smoke benchmark
-              run: |
-                  # Attempt to run the benchmark against the downloaded sample. The
-                  # Executor will fall back to mock data if Volatility is not
-                  # available in the runner.
-                  python tools/benchmark.py --sample samples/memdump.mem --output results/smoke-benchmark.json
-
-            - name: Upload benchmark result
-              uses: actions/upload-artifact@v3
-              with:
-                  name: smoke-benchmark
-                  path: results/smoke-benchmark.json
+      - name: Upload benchmark report
+        uses: actions/upload-artifact@v3
+        with:
+          name: benchmark-report
+          path: results/benchmark_report.json

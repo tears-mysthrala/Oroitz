@@ -10,7 +10,7 @@
             "recommended_filename": "memdump.7z",
             "notes": "Suitable for quick CI smoke runs; compressed archive.",
             "sha256": "417159701506d4938e311b97f58fd9a50c6c15405fb1aaf2ad7e5349b7ca1bfe",
-            "release_asset_url": ""
+            "release_asset_url": "https://github.com/tears-mysthrala/Oroitz/releases/download/samples-v1/memdump.7z"
         },
         {
             "id": "volatility-win7-sp1-x64",

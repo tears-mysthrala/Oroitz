@@ -105,6 +105,24 @@ PY
             - name: Extract sample
               run: 7z x ci/cached_samples/memdump.7z -o samples/ -y
 
+            - name: Verify extracted sample
+              run: |
+                  if [ ! -f samples/memdump.mem ]; then
+                    echo "Extracted file not found"
+                    exit 1
+                  fi
+                  size=$(stat -c%s samples/memdump.mem)
+                  if [ "$size" -lt 536870912 ]; then
+                    echo "File too small: $size bytes"
+                    exit 1
+                  fi
+                  file_output=$(file samples/memdump.mem)
+                  if ! echo "$file_output" | grep -q "data"; then
+                    echo "Unexpected file type: $file_output"
+                    exit 1
+                  fi
+                  echo "Extracted file verified: $size bytes, type: $file_output"
+
             - name: Set up Python 3.11
               uses: actions/setup-python@v4
               with:

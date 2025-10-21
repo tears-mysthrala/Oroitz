@@ -4,7 +4,6 @@ from typing import Optional
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
-    QHBoxLayout,
     QLabel,
     QListWidget,
     QListWidgetItem,
@@ -38,32 +37,38 @@ class LandingView(QWidget):
         header_layout = QVBoxLayout()
 
         title = QLabel("🕵️ Oroitz")
-        title.setStyleSheet("""
+        title.setStyleSheet(
+            """
             font-size: 24px;
             font-weight: bold;
             color: #2c3e50;
             margin-bottom: 5px;
-        """)
+        """
+        )
         header_layout.addWidget(title)
 
         subtitle = QLabel("Cross-platform Volatility 3 Memory Analysis")
-        subtitle.setStyleSheet("""
+        subtitle.setStyleSheet(
+            """
             font-size: 14px;
             color: #7f8c8d;
             margin-bottom: 20px;
-        """)
+        """
+        )
         header_layout.addWidget(subtitle)
 
         layout.addLayout(header_layout)
 
         # Quick actions section
         actions_group = QWidget()
-        actions_group.setStyleSheet("""
+        actions_group.setStyleSheet(
+            """
             background-color: #f8f9fa;
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
-        """)
+        """
+        )
         actions_layout = QVBoxLayout(actions_group)
 
         actions_title = QLabel("Get Started")
@@ -71,7 +76,8 @@ class LandingView(QWidget):
         actions_layout.addWidget(actions_title)
 
         new_analysis_btn = QPushButton("🔍 Start New Analysis")
-        new_analysis_btn.setStyleSheet("""
+        new_analysis_btn.setStyleSheet(
+            """
             QPushButton {
                 font-size: 14px;
                 padding: 12px;
@@ -87,12 +93,14 @@ class LandingView(QWidget):
             QPushButton:pressed {
                 background-color: #21618c;
             }
-        """)
+        """
+        )
         new_analysis_btn.clicked.connect(self._on_new_analysis)
         actions_layout.addWidget(new_analysis_btn)
 
         help_btn = QPushButton("📚 Help & Documentation")
-        help_btn.setStyleSheet("""
+        help_btn.setStyleSheet(
+            """
             QPushButton {
                 font-size: 14px;
                 padding: 8px;
@@ -105,7 +113,8 @@ class LandingView(QWidget):
             QPushButton:hover {
                 background-color: #ebf5fb;
             }
-        """)
+        """
+        )
         help_btn.clicked.connect(self._on_help_clicked)
         actions_layout.addWidget(help_btn)
 
@@ -113,16 +122,19 @@ class LandingView(QWidget):
 
         # Recent sessions section
         sessions_label = QLabel("Recent Analysis Sessions")
-        sessions_label.setStyleSheet("""
+        sessions_label.setStyleSheet(
+            """
             font-size: 16px;
             font-weight: bold;
             margin-top: 20px;
             margin-bottom: 10px;
-        """)
+        """
+        )
         layout.addWidget(sessions_label)
 
         self.sessions_list = QListWidget()
-        self.sessions_list.setStyleSheet("""
+        self.sessions_list.setStyleSheet(
+            """
             QListWidget {
                 border: 1px solid #ddd;
                 border-radius: 6px;
@@ -140,20 +152,23 @@ class LandingView(QWidget):
                 background-color: #e3f2fd;
                 color: #1976d2;
             }
-        """)
+        """
+        )
         self.sessions_list.itemDoubleClicked.connect(self._on_session_double_clicked)
         layout.addWidget(self.sessions_list)
 
         # Status bar
         self.status_label = QLabel("Ready to analyze memory images with Volatility 3")
-        self.status_label.setStyleSheet("""
+        self.status_label.setStyleSheet(
+            """
             font-size: 12px;
             color: #7f8c8d;
             margin-top: 15px;
             padding: 8px;
             background-color: #f8f9fa;
             border-radius: 4px;
-        """)
+        """
+        )
         layout.addWidget(self.status_label)
 
         self.refresh_sessions()

@@ -24,7 +24,12 @@ class SettingsView(Screen):
                 yield Static("General", classes="section-header")
                 yield Label("Log Level:")
                 yield Select(
-                    [("DEBUG", "Debug"), ("INFO", "Info"), ("WARNING", "Warning"), ("ERROR", "Error")],
+                    [
+                        ("DEBUG", "Debug"),
+                        ("INFO", "Info"),
+                        ("WARNING", "Warning"),
+                        ("ERROR", "Error"),
+                    ],
                     id="log-level-select",
                 )
 

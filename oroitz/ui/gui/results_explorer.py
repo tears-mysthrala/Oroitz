@@ -4,9 +4,9 @@ from pathlib import Path
 from typing import List
 
 from PySide6.QtWidgets import (
+    QFileDialog,
     QHBoxLayout,
     QHeaderView,
-    QFileDialog,
     QLabel,
     QLineEdit,
     QPushButton,
@@ -234,9 +234,12 @@ class ResultsExplorer(QWidget):
 
         # Show file dialog for export location
         file_path, _ = QFileDialog.getSaveFileName(
-            self, "Export Results to JSON", "oroitz_results.json", "JSON Files (*.json);;All Files (*)"
+            self,
+            "Export Results to JSON",
+            "oroitz_results.json",
+            "JSON Files (*.json);;All Files (*)",
         )
-        
+
         if not file_path:
             return
 
@@ -252,10 +255,8 @@ class ResultsExplorer(QWidget):
             return
 
         # Show directory dialog for export location (CSV creates multiple files)
-        directory = QFileDialog.getExistingDirectory(
-            self, "Select Directory for CSV Export", ""
-        )
-        
+        directory = QFileDialog.getExistingDirectory(self, "Select Directory for CSV Export", "")
+
         if not directory:
             return
 

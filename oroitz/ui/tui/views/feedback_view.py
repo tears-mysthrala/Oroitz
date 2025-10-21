@@ -1,7 +1,7 @@
 """Feedback Collection View for Oroitz TUI."""
 
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict
 
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal, Vertical, VerticalScroll
@@ -142,7 +142,7 @@ class FeedbackView(Screen):
                 for key, value in self.feedback_data.items():
                     if value.strip():  # Only write non-empty values
                         f.write(f"{key}: {value}\n")
-                f.write("\n" + "="*50 + "\n\n")
+                f.write("\n" + "=" * 50 + "\n\n")
 
             self.notify(f"Feedback saved to {feedback_file}", severity="information")
 
@@ -179,21 +179,38 @@ class FeedbackView(Screen):
 
         # Ratings
         overall_rating = self.query_one("#overall-rating", RadioSet)
-        self.feedback_data["Overall Rating"] = overall_rating.pressed_button.label if overall_rating.pressed_button else ""
+        self.feedback_data["Overall Rating"] = (
+            overall_rating.pressed_button.label if overall_rating.pressed_button else ""
+        )
 
         # Feature ratings
-        features = ["navigation", "performance", "usability", "visual", "functionality", "error_handling"]
+        features = [
+            "navigation",
+            "performance",
+            "usability",
+            "visual",
+            "functionality",
+            "error_handling",
+        ]
         for feature in features:
             rating_set = self.query_one(f"#rating-{feature}", RadioSet)
-            self.feedback_data[f"{feature.title()} Rating"] = rating_set.pressed_button.label if rating_set.pressed_button else ""
+            self.feedback_data[f"{feature.title()} Rating"] = (
+                rating_set.pressed_button.label if rating_set.pressed_button else ""
+            )
 
         # Issues
         issues_found = self.query_one("#issues-found", RadioSet)
-        self.feedback_data["Issues Found"] = issues_found.pressed_button.label if issues_found.pressed_button else ""
-        self.feedback_data["Issues Description"] = self.query_one("#issues-description", TextArea).text
+        self.feedback_data["Issues Found"] = (
+            issues_found.pressed_button.label if issues_found.pressed_button else ""
+        )
+        self.feedback_data["Issues Description"] = self.query_one(
+            "#issues-description", TextArea
+        ).text
 
         # Suggestions
-        self.feedback_data["Feature Suggestions"] = self.query_one("#feature-suggestions", TextArea).text
+        self.feedback_data["Feature Suggestions"] = self.query_one(
+            "#feature-suggestions", TextArea
+        ).text
         self.feedback_data["General Comments"] = self.query_one("#general-comments", TextArea).text
 
         # Testing scenarios
@@ -216,4 +233,5 @@ class FeedbackView(Screen):
     def _get_timestamp(self) -> str:
         """Get current timestamp."""
         from datetime import datetime
+
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")

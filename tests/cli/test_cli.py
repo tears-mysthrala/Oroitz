@@ -18,11 +18,9 @@ def test_cli_quick_triage():
 
     try:
         # Run quick_triage command
-        result = runner.invoke(cli, [
-            "quick-triage",
-            str(fake_image),
-            "--profile", "Win10x64_19041"
-        ])
+        result = runner.invoke(
+            cli, ["quick-triage", str(fake_image), "--profile", "Win10x64_19041"]
+        )
 
         # Should succeed (mock data)
         assert result.exit_code == 0
@@ -47,12 +45,17 @@ def test_cli_quick_triage_with_output():
 
     try:
         # Run quick_triage command with output
-        result = runner.invoke(cli, [
-            "quick-triage",
-            str(fake_image),
-            "--profile", "Win10x64_19041",
-            "--output", str(output_file)
-        ])
+        result = runner.invoke(
+            cli,
+            [
+                "quick-triage",
+                str(fake_image),
+                "--profile",
+                "Win10x64_19041",
+                "--output",
+                str(output_file),
+            ],
+        )
 
         # Should succeed
         assert result.exit_code == 0
@@ -75,11 +78,9 @@ def test_cli_quick_triage_invalid_image():
     runner = CliRunner()
 
     # Run with non-existent image
-    result = runner.invoke(cli, [
-        "quick-triage",
-        "/nonexistent/image.dmp",
-        "--profile", "Win10x64_19041"
-    ])
+    result = runner.invoke(
+        cli, ["quick-triage", "/nonexistent/image.dmp", "--profile", "Win10x64_19041"]
+    )
 
     # Should fail due to missing file
     assert result.exit_code != 0

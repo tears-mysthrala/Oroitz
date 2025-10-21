@@ -36,7 +36,10 @@ class HomeView(Screen):
                         )
 
                 yield Static("", id="spacer")
-                yield Static("💡 Tip: Use Tab/Shift+Tab to navigate, Enter to select, Esc to go back", classes="help-text")
+                yield Static(
+                    "💡 Tip: Use Tab/Shift+Tab to navigate, Enter to select, Esc to go back",
+                    classes="help-text",
+                )
                 yield Button("Provide Feedback", id="feedback-button", variant="default")
                 yield Button("Exit", id="exit-button", variant="error")
 
@@ -48,10 +51,12 @@ class HomeView(Screen):
             self.app.exit()
         elif button_id == "feedback-button":
             from .feedback_view import FeedbackView
+
             self.app.push_screen(FeedbackView())
         elif button_id and button_id.startswith("workflow-"):
             workflow_id = button_id.replace("workflow-", "")
             workflow = registry.get(workflow_id)
             if workflow:
                 from .session_wizard_view import SessionWizardView
+
                 self.app.push_screen(SessionWizardView(workflow))

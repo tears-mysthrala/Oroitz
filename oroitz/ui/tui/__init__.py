@@ -68,6 +68,7 @@ class OroitzTUI(App):
     def action_settings(self) -> None:
         """Open settings."""
         from .views.settings_view import SettingsView
+
         self.push_screen(SettingsView())
 
     def action_pause(self) -> None:
@@ -83,4 +84,5 @@ class OroitzTUI(App):
     def action_feedback(self) -> None:
         """Open feedback collection form."""
         from .views.feedback_view import FeedbackView
+
         self.push_screen(FeedbackView())

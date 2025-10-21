@@ -8,7 +8,8 @@
             "description": "Small Windows Server 2008 SP1 x86 memdump used for quick triage examples.",
             "download_url": "https://samsclass.info/121/proj/memdump.7z",
             "recommended_filename": "memdump.7z",
-            "notes": "Suitable for quick CI smoke runs; compressed archive."
+            "notes": "Suitable for quick CI smoke runs; compressed archive.",
+            "sha256": "417159701506d4938e311b97f58fd9a50c6c15405fb1aaf2ad7e5349b7ca1bfe"
         },
         {
             "id": "volatility-win7-sp1-x64",

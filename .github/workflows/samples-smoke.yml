@@ -19,20 +19,37 @@ jobs:
               id: restore-sample-cache
               run: |
                   mkdir -p ci/cached_samples
+                  # Try to read expected sha from assets metadata
+                  expected=$(python3 - <<'PY'
+import json
+print(json.load(open('assets/samples.json'))['recommended_samples'][0].get('sha256',''))
+PY
+)
+                  echo "expected-sha=$expected" >> $GITHUB_OUTPUT
                   # If a local sample exists (for fork testing), compute its sha and export
                   if [ -f samples/memdump.7z ]; then
                     sha=$(sha256sum samples/memdump.7z | awk '{print $1}')
                     echo "sample-sha=$sha" >> $GITHUB_OUTPUT
                   else
-                    # Hard-code the vetted sample sha as fallback (keeps cache predictable)
-                    echo "sample-sha=417159701506d4938e311b97f58fd9a50c6c15405fb1aaf2ad7e5349b7ca1bfe" >> $GITHUB_OUTPUT
+                    # Use expected sha as the cache key when no local file is present
+                    echo "sample-sha=$expected" >> $GITHUB_OUTPUT
                   fi
 
             - name: Restore cache by sample sha
+              id: cache-restore
               uses: actions/cache@v4
               with:
                   path: ci/cached_samples
                   key: sample-memdump-${{ steps.restore-sample-cache.outputs.sample-sha }}
+
+            - name: Log cache key and status
+              run: |
+                  echo "Cache key used: sample-memdump-${{ steps.restore-sample-cache.outputs.sample-sha }}"
+                  if [ -d ci/cached_samples ] && [ -f ci/cached_samples/memdump.7z ]; then
+                    echo "Cache hit: cached archive present"
+                  else
+                    echo "Cache miss: no cached archive present"
+                  fi
 
             - name: Ensure sample archive is available
               run: |

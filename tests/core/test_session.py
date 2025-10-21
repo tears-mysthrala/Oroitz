@@ -46,11 +46,7 @@ def test_session_run_quick_triage():
     seed_workflows()
 
     # Create session with image and profile
-    session = Session(
-        name="Test Session",
-        image_path=Path("/fake/image.dmp"),
-        profile="windows"
-    )
+    session = Session(name="Test Session", image_path=Path("/fake/image.dmp"), profile="windows")
 
     # Run quick_triage
     result = session.run("quick_triage")
@@ -78,11 +74,7 @@ def test_session_run_with_caching():
     seed_workflows()
 
     # Create session with image and profile
-    session = Session(
-        name="Test Session",
-        image_path=Path("/fake/image.dmp"),
-        profile="windows"
-    )
+    session = Session(name="Test Session", image_path=Path("/fake/image.dmp"), profile="windows")
 
     # Run quick_triage twice
     result1 = session.run("quick_triage")

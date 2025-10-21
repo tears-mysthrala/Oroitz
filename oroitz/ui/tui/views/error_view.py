@@ -43,6 +43,5 @@ class ErrorView(Screen):
 
     def _copy_details(self) -> None:
         """Copy error details to clipboard."""
-        # TODO: Implement clipboard copy
-        full_details = f"{self.error_message}\n{self.details}"
+        # TODO: Implement clipboard copy (e.g., use pyperclip or native clipboard APIs)
         self.notify("Error details copied to clipboard", severity="information")

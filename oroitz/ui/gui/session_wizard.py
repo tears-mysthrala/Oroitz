@@ -94,7 +94,8 @@ class SessionInfoPage(QWizardPage):
 
         # Session name with validation
         name_edit = QLineEdit("New Analysis Session")
-        name_edit.setStyleSheet("""
+        name_edit.setStyleSheet(
+            """
             QLineEdit {
                 padding: 8px;
                 border: 2px solid #ddd;
@@ -104,7 +105,8 @@ class SessionInfoPage(QWizardPage):
             QLineEdit:focus {
                 border-color: #3498db;
             }
-        """)
+        """
+        )
         self.registerField("sessionName*", name_edit)
         layout.addRow("Session Name:", name_edit)
 
@@ -133,7 +135,8 @@ class ImageSelectionPage(QWizardPage):
         image_layout = QHBoxLayout()
         self.image_edit = QLineEdit()
         self.image_edit.setPlaceholderText("Select memory image file (.raw, .mem, .dmp)...")
-        self.image_edit.setStyleSheet("""
+        self.image_edit.setStyleSheet(
+            """
             QLineEdit {
                 padding: 8px;
                 border: 2px solid #ddd;
@@ -144,11 +147,13 @@ class ImageSelectionPage(QWizardPage):
             QLineEdit:focus {
                 border-color: #3498db;
             }
-        """)
+        """
+        )
         self.registerField("imagePath*", self.image_edit)
 
         browse_btn = QPushButton("Browse...")
-        browse_btn.setStyleSheet("""
+        browse_btn.setStyleSheet(
+            """
             QPushButton {
                 padding: 8px 16px;
                 background-color: #95a5a6;
@@ -160,7 +165,8 @@ class ImageSelectionPage(QWizardPage):
             QPushButton:hover {
                 background-color: #7f8c8d;
             }
-        """)
+        """
+        )
         browse_btn.clicked.connect(self._browse_image)
         image_layout.addWidget(self.image_edit)
         image_layout.addWidget(browse_btn)
@@ -175,7 +181,8 @@ class ImageSelectionPage(QWizardPage):
         # Profile selection with better styling
         profile_combo = QComboBox()
         profile_combo.addItems(["Win10x64_19041", "Win10x64_2004", "Win7SP1x64", "Linux"])
-        profile_combo.setStyleSheet("""
+        profile_combo.setStyleSheet(
+            """
             QComboBox {
                 padding: 8px;
                 border: 2px solid #ddd;
@@ -189,7 +196,8 @@ class ImageSelectionPage(QWizardPage):
             QComboBox::drop-down {
                 border: none;
             }
-        """)
+        """
+        )
         self.registerField("profile", profile_combo, "currentText")
         layout.addRow("Profile:", profile_combo)
 

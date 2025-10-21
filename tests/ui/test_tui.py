@@ -10,7 +10,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from textual.widgets import Button, DataTable, Input, Select
+from textual.widgets import DataTable, Input, Select
 
 from oroitz.core.executor import ExecutionResult
 from oroitz.core.session import Session

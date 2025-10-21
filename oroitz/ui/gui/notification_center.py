@@ -26,12 +26,18 @@ class NotificationCenter:
         return cls._instance
 
     def __init__(self):
-        if not hasattr(self, '_initialized'):
+        if not hasattr(self, "_initialized"):
             self._initialized = True
             self._queue = []
 
-    def show_notification(self, message: str, notification_type: NotificationType = NotificationType.INFO,
-                         parent: QWidget = None, auto_close: bool = True, duration: int = 3000) -> None:
+    def show_notification(
+        self,
+        message: str,
+        notification_type: NotificationType = NotificationType.INFO,
+        parent: QWidget = None,
+        auto_close: bool = True,
+        duration: int = 3000,
+    ) -> None:
         """Show a notification to the user."""
         if notification_type == NotificationType.ERROR:
             self._show_error_dialog(message, parent)
@@ -41,8 +47,14 @@ class NotificationCenter:
             # For info and success, use a simple message box that auto-closes
             self._show_info_dialog(message, notification_type, parent, auto_close, duration)
 
-    def _show_info_dialog(self, message: str, notification_type: NotificationType,
-                         parent: QWidget, auto_close: bool, duration: int) -> None:
+    def _show_info_dialog(
+        self,
+        message: str,
+        notification_type: NotificationType,
+        parent: QWidget,
+        auto_close: bool,
+        duration: int,
+    ) -> None:
         """Show an info/success dialog."""
         icon = QMessageBox.Icon.Information
         title = "Information"

@@ -58,11 +58,13 @@ class SettingsDialog(QDialog):
 
         # Button box
         button_box = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel | QDialogButtonBox.Apply
+            QDialogButtonBox.StandardButton.Ok
+            | QDialogButtonBox.StandardButton.Cancel
+            | QDialogButtonBox.StandardButton.Apply
         )
         button_box.accepted.connect(self._accept)
         button_box.rejected.connect(self.reject)
-        button_box.button(QDialogButtonBox.Apply).clicked.connect(self._apply)
+        button_box.button(QDialogButtonBox.StandardButton.Apply).clicked.connect(self._apply)
         layout.addWidget(button_box)
 
     def _create_general_tab(self) -> QWidget:

@@ -14,9 +14,9 @@ from PySide6.QtWidgets import (
 
 from oroitz.core.session import Session, SessionManager
 from oroitz.core.workflow import seed_workflows
+from oroitz.ui.gui.about_dialog import AboutDialog
 from oroitz.ui.gui.landing_view import LandingView
 from oroitz.ui.gui.session_dashboard import SessionDashboard
-from oroitz.ui.gui.about_dialog import AboutDialog
 from oroitz.ui.gui.session_wizard import SessionWizard
 from oroitz.ui.gui.settings_dialog import SettingsDialog
 
@@ -155,26 +155,30 @@ class MainWindow(QMainWindow):
     def _open_session(self) -> None:
         """Open an existing session file."""
         file_path, _ = QFileDialog.getOpenFileName(
-            self, "Open Session", str(self.session_manager.sessions_dir), "Session Files (*.json);;All Files (*)"
+            self,
+            "Open Session",
+            str(self.session_manager.sessions_dir),
+            "Session Files (*.json);;All Files (*)",
         )
-        
+
         if not file_path:
             return
-        
+
         try:
             # Load the session from file
             session = Session.load(Path(file_path))
-            
+
             # Add to session manager if not already present
             if session.id not in self.session_manager._sessions:
                 self.session_manager._sessions[session.id] = session
-            
+
             # Show the session dashboard
             self.show_session_dashboard(session)
-            
+
         except Exception as e:
             # Show error notification
             from oroitz.ui.gui.notification_center import NotificationCenter
+
             NotificationCenter().show_error(f"Failed to open session: {str(e)}", self)
 
     def _show_about(self) -> None:

@@ -156,6 +156,7 @@ class ResultsView(Screen):
         if button_id == "home-button":
             # Clear session and go back to home - better navigation
             from .. import OroitzTUI
+
             if isinstance(self.app, OroitzTUI):
                 self.app.set_current_session(None)
             # Pop back to home screen (should be 3 screens back: results -> run -> wizard -> home)

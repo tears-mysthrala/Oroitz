@@ -78,7 +78,7 @@ class Session(BaseModel):
                     output=cached,
                     error=None,
                     duration=0.0,
-                    timestamp=0.0  # Not cached
+                    timestamp=0.0,  # Not cached
                 )
             else:
                 result = executor.execute_plugin(
@@ -86,7 +86,7 @@ class Session(BaseModel):
                     str(self.image_path),
                     self.profile,
                     session_id=self.id,
-                    **plugin_spec.parameters
+                    **plugin_spec.parameters,
                 )
                 if result.success:
                     cache.set(self.id, plugin_spec.name, plugin_spec.parameters, result.output)
@@ -126,14 +126,11 @@ class SessionManager:
         name: str = "Untitled Session",
         image_path: Optional[Path] = None,
         profile: Optional[str] = None,
-        workflow_id: Optional[str] = None
+        workflow_id: Optional[str] = None,
     ) -> Session:
         """Create a new session."""
         session = Session(
-            name=name,
-            image_path=image_path,
-            profile=profile,
-            workflow_id=workflow_id
+            name=name, image_path=image_path, profile=profile, workflow_id=workflow_id
         )
         self._sessions[session.id] = session
         return session

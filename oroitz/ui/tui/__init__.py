@@ -3,7 +3,7 @@
 from typing import Optional
 
 from textual.app import App, ComposeResult
-from textual.command import CommandPalette, Hit, Hits, Provider
+from textual.command import CommandPalette
 from textual.widgets import Footer, Header
 
 from oroitz.core.executor import Executor
@@ -13,6 +13,8 @@ from oroitz.core.telemetry import setup_logging
 
 from .views import HomeView
 from .widgets import Breadcrumb
+
+__all__ = ["OroitzTUI", "HomeView", "Breadcrumb"]
 
 
 class OroitzTUI(App):
@@ -68,6 +70,7 @@ class OroitzTUI(App):
     def action_settings(self) -> None:
         """Open settings."""
         from .views.settings_view import SettingsView
+
         self.push_screen(SettingsView())
 
     def action_pause(self) -> None:
@@ -83,4 +86,5 @@ class OroitzTUI(App):
     def action_feedback(self) -> None:
         """Open feedback collection form."""
         from .views.feedback_view import FeedbackView
+
         self.push_screen(FeedbackView())

@@ -55,6 +55,7 @@ markers = [
     "gui: marks tests that require PySide6 (GUI tests)",
     "tui: marks tests that require Textual (TUI tests)",
 ]
+qt_api = "pyside6"
 
 [build-system]
 requires = ["poetry-core>=1.8.0"]

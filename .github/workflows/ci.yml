@@ -27,7 +27,9 @@ jobs:
       - name: Install dependencies
         run: poetry install
       - name: Run tests (excluding TUI)
-        run: poetry run pytest tests/ --ignore=tests/ui/test_tui.py -q
+        run: |
+          export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+          poetry run pytest tests/ --ignore=tests/ui/test_tui.py -q
       - name: Run benchmark (optional)
         run: |
           poetry run python tools/benchmark.py

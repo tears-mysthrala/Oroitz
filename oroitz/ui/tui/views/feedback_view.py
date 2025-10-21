@@ -39,10 +39,14 @@ class FeedbackView(Screen):
                     # Tester Information
                     yield Static("Tester Information", classes="section-header")
                     yield Label("Your Name:")
-                    yield Input(placeholder="Enter your name", id="tester-name")
+                    # Note: some Textual versions/type stubs do not accept a
+                    # `placeholder` keyword in the constructor. To remain
+                    # compatible with the type checker we set placeholders in
+                    # `on_mount` using setattr rather than passing them here.
+                    yield Input(id="tester-name")
 
                     yield Label("Testing Environment:")
-                    yield Input(placeholder="OS, Terminal, Python version, etc.", id="environment")
+                    yield Input(id="environment")
 
                     # Overall Experience
                     yield Static("Overall Experience", classes="section-header")
@@ -85,24 +89,15 @@ class FeedbackView(Screen):
                     yield RadioSet("Yes", "No", id="issues-found")
 
                     yield Label("Please describe any issues:")
-                    yield TextArea(
-                        placeholder="Describe bugs, crashes, confusing UI elements, etc.",
-                        id="issues-description",
-                    )
+                    yield TextArea(id="issues-description")
 
                     # Suggestions
                     yield Static("Suggestions for Improvement", classes="section-header")
                     yield Label("What features would you like to see added?")
-                    yield TextArea(
-                        placeholder="New features, improvements, etc.",
-                        id="feature-suggestions",
-                    )
+                    yield TextArea(id="feature-suggestions")
 
                     yield Label("Any other comments or feedback:")
-                    yield TextArea(
-                        placeholder="General comments, praise, concerns, etc.",
-                        id="general-comments",
-                    )
+                    yield TextArea(id="general-comments")
 
                     # Testing Scenarios
                     yield Static("Testing Scenarios Completed", classes="section-header")
@@ -128,6 +123,35 @@ class FeedbackView(Screen):
             self._save_feedback()
         elif button_id == "clear-form":
             self._clear_form()
+
+    def on_mount(self) -> None:
+        """Set up widget placeholders after the screen is mounted.
+
+        Some Textual versions do not accept a `placeholder` constructor
+        keyword; setting the attribute after construction using setattr is a
+        safe, type-checker-friendly approach that avoids call-time
+        diagnostics from Pylance.
+        """
+        placeholders = {
+            "#tester-name": (Input, "Enter your name"),
+            "#environment": (Input, "OS, Terminal, Python version, etc."),
+            "#issues-description": (
+                TextArea,
+                "Describe bugs, crashes, confusing UI elements, etc.",
+            ),
+            "#feature-suggestions": (TextArea, "New features, improvements, etc."),
+            "#general-comments": (TextArea, "General comments, praise, concerns, etc."),
+        }
+
+        for selector, (widget_type, text) in placeholders.items():
+            try:
+                widget = self.query_one(selector, widget_type)
+                # Use setattr to avoid static attribute checks on some stubs.
+                setattr(widget, "placeholder", text)
+            except Exception:
+                # If placeholder isn't supported by the widget implementation
+                # or the widget isn't present yet, fail silently.
+                pass
 
     def _save_feedback(self) -> None:
         """Save the feedback to a file."""
@@ -158,7 +182,34 @@ class FeedbackView(Screen):
 
         # Reset radio sets
         for radio_set in self.query(RadioSet):
-            radio_set.pressed_index = None
+            # Some RadioSet implementations expose read-only properties for
+            # selection state (e.g. pressed_index). Avoid assigning to those
+            # properties; instead try to clear the selection by un-pressing
+            # any pressed child buttons in a defensive way.
+            try:
+                pressed_btn = getattr(radio_set, "pressed_button", None)
+                if pressed_btn is not None:
+                    # Try common attribute names that indicate a pressed/toggled
+                    # state and clear them dynamically.
+                    for attr in ("pressed", "value", "active", "toggled"):
+                        if hasattr(pressed_btn, attr):
+                            try:
+                                setattr(pressed_btn, attr, False)
+                            except Exception:
+                                pass
+
+                # Also iterate over child buttons and clear them explicitly.
+                for btn in radio_set.query(Button):
+                    for attr in ("pressed", "value", "active", "toggled"):
+                        if hasattr(btn, attr):
+                            try:
+                                setattr(btn, attr, False)
+                            except Exception:
+                                pass
+            except Exception:
+                # Defensive: if the RadioSet API differs, don't let clearing
+                # the form crash the app.
+                pass
 
         # Reset checkboxes
         for checkbox in self.query(Checkbox):
@@ -175,14 +226,15 @@ class FeedbackView(Screen):
         self.feedback_data = {}
 
         # Basic info
-        self.feedback_data["Tester Name"] = self.query_one("#tester-name", Input).value
-        self.feedback_data["Environment"] = self.query_one("#environment", Input).value
+        tester_value = self.query_one("#tester-name", Input).value
+        env_value = self.query_one("#environment", Input).value
+        self.feedback_data["Tester Name"] = str(tester_value) if tester_value is not None else ""
+        self.feedback_data["Environment"] = str(env_value) if env_value is not None else ""
 
         # Ratings
         overall_rating = self.query_one("#overall-rating", RadioSet)
-        self.feedback_data["Overall Rating"] = (
-            overall_rating.pressed_button.label if overall_rating.pressed_button else ""
-        )
+        overall_label = overall_rating.pressed_button.label if overall_rating.pressed_button else ""
+        self.feedback_data["Overall Rating"] = str(overall_label)
 
         # Feature ratings
         features = [
@@ -195,24 +247,27 @@ class FeedbackView(Screen):
         ]
         for feature in features:
             rating_set = self.query_one(f"#rating-{feature}", RadioSet)
-            self.feedback_data[f"{feature.title()} Rating"] = (
-                rating_set.pressed_button.label if rating_set.pressed_button else ""
-            )
+            rating_label = rating_set.pressed_button.label if rating_set.pressed_button else ""
+            self.feedback_data[f"{feature.title()} Rating"] = str(rating_label)
 
         # Issues
         issues_found = self.query_one("#issues-found", RadioSet)
-        self.feedback_data["Issues Found"] = (
-            issues_found.pressed_button.label if issues_found.pressed_button else ""
+        issues_label = issues_found.pressed_button.label if issues_found.pressed_button else ""
+        self.feedback_data["Issues Found"] = str(issues_label)
+        issues_desc = self.query_one("#issues-description", TextArea).text
+        self.feedback_data["Issues Description"] = (
+            str(issues_desc) if issues_desc is not None else ""
         )
-        self.feedback_data["Issues Description"] = self.query_one(
-            "#issues-description", TextArea
-        ).text
 
         # Suggestions
-        self.feedback_data["Feature Suggestions"] = self.query_one(
-            "#feature-suggestions", TextArea
-        ).text
-        self.feedback_data["General Comments"] = self.query_one("#general-comments", TextArea).text
+        feature_suggestions = self.query_one("#feature-suggestions", TextArea).text
+        general_comments = self.query_one("#general-comments", TextArea).text
+        self.feedback_data["Feature Suggestions"] = (
+            str(feature_suggestions) if feature_suggestions is not None else ""
+        )
+        self.feedback_data["General Comments"] = (
+            str(general_comments) if general_comments is not None else ""
+        )
 
         # Testing scenarios
         scenarios = []

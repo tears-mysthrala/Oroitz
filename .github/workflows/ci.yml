@@ -19,7 +19,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libegl1-mesa libgl1-mesa-glx
+          sudo apt-get install -y --no-install-recommends libegl-mesa0 libgl1-mesa-dri libglu1-mesa || true
       - name: Install Poetry
         run: |
           python -m pip install --upgrade pip

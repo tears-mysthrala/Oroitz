@@ -29,7 +29,7 @@ jobs:
       - name: Run tests (excluding GUI & TUI)
         run: |
           export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
-          poetry run pytest tests/ --ignore=tests/ui/test_tui.py -q -m "not gui"
+          poetry run pytest tests/ --ignore=tests/ui/test_tui.py --ignore=tests/ui/test_gui.py -q -m "not gui"
       - name: Run benchmark (optional)
         run: |
           poetry run python tools/benchmark.py

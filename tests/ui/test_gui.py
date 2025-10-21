@@ -1,11 +1,13 @@
 """Tests for the PySide6 GUI application."""
 
 import pytest
+# Skip importing the GUI test module if PySide6 is not installed. This allows
+# the main (non-GUI) CI job to run without installing GUI deps and avoids
+# ModuleNotFoundError during test collection.
+pytest.importorskip("PySide6")
 
 from pathlib import Path
 from unittest.mock import patch
-
-import pytest
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QComboBox, QLineEdit, QPushButton, QWizard
 

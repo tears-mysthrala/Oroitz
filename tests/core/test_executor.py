@@ -9,6 +9,16 @@ def test_executor_creation():
     assert executor.max_concurrency == 4  # from config
 
 
+def test_config_retry_defaults():
+    """Ensure default retry config values exist and are sensible."""
+    from oroitz.core.config import config
+
+    assert hasattr(config, "volatility_retry_attempts")
+    assert hasattr(config, "volatility_retry_backoff_seconds")
+    assert config.volatility_retry_attempts >= 1
+    assert config.volatility_retry_backoff_seconds >= 0
+
+
 def test_execute_plugin_mock():
     """Test executing mock plugins."""
     executor = Executor()
@@ -20,6 +30,8 @@ def test_execute_plugin_mock():
     assert result.output is not None
     assert len(result.output) == 2  # mock data
     assert result.duration >= 0
+    assert hasattr(result, "attempts")
+    assert hasattr(result, "used_mock")
 
     # Test netscan
     result = executor.execute_plugin("windows.netscan", "/fake/image", "windows")
@@ -44,6 +56,9 @@ def test_execute_unknown_plugin():
     assert result.plugin_name == "unknown.plugin"
     assert result.success
     assert result.output == []
+    # Unknown plugin should provide metadata fields; exact used_mock may vary by environment
+    assert hasattr(result, "used_mock")
+    assert result.attempts >= 0
 
 
 def test_execute_workflow():

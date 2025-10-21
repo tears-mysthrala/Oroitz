@@ -4,7 +4,7 @@ import json
 import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from pydantic import BaseModel
 
@@ -30,6 +30,8 @@ class ExecutionResult(BaseModel):
     error: Optional[str] = None
     duration: float
     timestamp: float
+    attempts: int = 1
+    used_mock: bool = False
 
 
 class Executor:
@@ -46,97 +48,187 @@ class Executor:
         try:
             # Try using poetry run vol first
             result = subprocess.run(
-                ["poetry", "run", "vol"],
-                capture_output=True,
-                text=True,
-                timeout=10
+                ["poetry", "run", "vol"], capture_output=True, text=True, timeout=10
             )
             if result.returncode == 2:  # 2 means help/usage shown, which means vol is available
                 self._vol_command = ["poetry", "run", "vol"]
                 return True
-            
+
             # Fallback to just vol
-            result = subprocess.run(
-                ["vol"],
-                capture_output=True,
-                text=True,
-                timeout=10
-            )
+            result = subprocess.run(["vol"], capture_output=True, text=True, timeout=10)
             if result.returncode == 2:
                 self._vol_command = ["vol"]
                 return True
-                
+
             return False
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return False
 
     def _execute_volatility_plugin(
         self, plugin_name: str, image_path: str, profile: str = "", **kwargs: Any
-    ) -> Optional[List[Dict[str, Any]]]:
+    ) -> Tuple[Optional[List[Dict[str, Any]]], int, bool]:
         """Execute a Volatility 3 plugin using CLI and return normalized output."""
         if not self._volatility_available:
             logger.warning("Volatility 3 CLI not available, falling back to mock data")
-            return self._get_mock_data(plugin_name)
-
-        try:
-            # Build command - Volatility 3 auto-detects symbol tables
-            cmd = self._vol_command + ["-f", image_path, "-r", "json"]
-
-            # Add plugin name
-            cmd.append(plugin_name)
-
-            # Add any additional parameters
-            for key, value in kwargs.items():
-                if isinstance(value, bool):
-                    if value:
-                        cmd.append(f"--{key}")
-                else:
-                    cmd.append(f"--{key}={value}")
-
-            logger.info(f"Running command: {' '.join(cmd)}")
-
-            # Execute command
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=300,  # 5 minute timeout
-                cwd=None  # Use current directory
+            log_event(
+                "plugin_fallback",
+                {"plugin": plugin_name, "reason": "volatility_unavailable"},
             )
+            return self._get_mock_data(plugin_name), 0, True
 
-            if result.returncode != 0:
-                logger.warning(f"Volatility plugin {plugin_name} failed: {result.stderr}")
-                return self._get_mock_data(plugin_name)
+        # Retry loop for transient failures
+        attempts = max(1, getattr(config, "volatility_retry_attempts", 1))
+        backoff = float(getattr(config, "volatility_retry_backoff_seconds", 0))
 
-            # Parse JSON output
+        last_exception = None
+        attempts_taken = 0
+        for attempt in range(1, attempts + 1):
             try:
-                output_data = json.loads(result.stdout)
+                # Build command - Volatility 3 auto-detects symbol tables
+                cmd = self._vol_command + ["-f", image_path, "-r", "json"]
+
+                # Add plugin name
+                cmd.append(plugin_name)
+
+                # Add any additional parameters
+                for key, value in kwargs.items():
+                    if isinstance(value, bool):
+                        if value:
+                            cmd.append(f"--{key}")
+                    else:
+                        cmd.append(f"--{key}={value}")
+
+                logger.info("Running command: %s", " ".join(cmd))
+
+                # Execute command
+                result = subprocess.run(
+                    cmd,
+                    capture_output=True,
+                    text=True,
+                    timeout=300,  # 5 minute timeout
+                    cwd=None,  # Use current directory
+                )
+
+                if result.returncode != 0:
+                    # Non-zero return code - treat as possible transient failure
+                    logger.warning(
+                        "Volatility plugin %s failed (attempt %d/%d): %s",
+                        plugin_name,
+                        attempt,
+                        attempts,
+                        result.stderr,
+                    )
+                    last_exception = RuntimeError(result.stderr)
+                    log_event(
+                        "plugin_retry",
+                        {"plugin": plugin_name, "attempt": attempt, "reason": result.stderr},
+                    )
+                    # If more attempts remain, retry (sleep only if backoff > 0)
+                    if attempt < attempts:
+                        if backoff > 0:
+                            time.sleep(backoff * (2 ** (attempt - 1)))
+                        continue
+                    attempts_taken = attempt
+                    log_event(
+                        "plugin_fallback",
+                        {"plugin": plugin_name, "attempts": attempts},
+                    )
+                    return self._get_mock_data(plugin_name), attempts_taken, True
+
+                # Parse JSON output
+                try:
+                    output_data = json.loads(result.stdout)
+                except json.JSONDecodeError as e:
+                    logger.warning("Failed to parse JSON output from %s: %s", plugin_name, e)
+                    log_event(
+                        "plugin_retry",
+                        {"plugin": plugin_name, "attempt": attempt, "reason": "json_error"},
+                    )
+                    logger.debug("Raw output: %s", result.stdout[:500])
+                    if attempt < attempts:
+                        if backoff > 0:
+                            time.sleep(backoff * (2 ** (attempt - 1)))
+                        continue
+                    attempts_taken = attempt
+                    log_event(
+                        "plugin_fallback",
+                        {"plugin": plugin_name, "attempts": attempts},
+                    )
+                    return self._get_mock_data(plugin_name), attempts_taken, True
+
                 # Volatility 3 JSON output is usually wrapped in a structure
                 # Extract the actual data
                 if isinstance(output_data, dict):
                     # Find the data array - it might be under different keys
                     for key, value in output_data.items():
                         if isinstance(value, list) and value and isinstance(value[0], dict):
-                            return value
+                            attempts_taken = attempt
+                            return value, attempts_taken, False
                     # If no list found, return empty list
-                    return []
+                    attempts_taken = attempt
+                    return [], attempts_taken, False
                 elif isinstance(output_data, list):
-                    return output_data
+                    attempts_taken = attempt
+                    return output_data, attempts_taken, False
                 else:
-                    logger.warning(f"Unexpected output format from {plugin_name}")
-                    return self._get_mock_data(plugin_name)
+                    logger.warning("Unexpected output format from %s", plugin_name)
+                    attempts_taken = attempt
+                    log_event(
+                        "plugin_fallback",
+                        {
+                            "plugin": plugin_name,
+                            "attempts": attempts,
+                            "reason": "unexpected_format",
+                        },
+                    )
+                    return self._get_mock_data(plugin_name), attempts_taken, True
 
-            except json.JSONDecodeError as e:
-                logger.warning(f"Failed to parse JSON output from {plugin_name}: {e}")
-                logger.debug(f"Raw output: {result.stdout[:500]}")
-                return self._get_mock_data(plugin_name)
+            except subprocess.TimeoutExpired as e:
+                logger.error(
+                    "Volatility plugin %s timed out (attempt %d/%d)",
+                    plugin_name,
+                    attempt,
+                    attempts,
+                )
+                last_exception = e
+                log_event(
+                    "plugin_retry",
+                    {"plugin": plugin_name, "attempt": attempt, "reason": str(e)},
+                )
+                if attempt < attempts:
+                    if backoff > 0:
+                        time.sleep(backoff * (2 ** (attempt - 1)))
+                    continue
+                attempts_taken = attempt
+                log_event(
+                    "plugin_fallback",
+                    {"plugin": plugin_name, "attempts": attempts, "reason": str(e)},
+                )
+                return self._get_mock_data(plugin_name), attempts_taken, True
+            except Exception as e:
+                logger.error(
+                    "Failed to execute Volatility plugin %s (attempt %d/%d): %s",
+                    plugin_name,
+                    attempt,
+                    attempts,
+                    e,
+                )
+                last_exception = e
+                if attempt < attempts:
+                    if backoff > 0:
+                        time.sleep(backoff * (2 ** (attempt - 1)))
+                    continue
+                attempts_taken = attempt
+                return self._get_mock_data(plugin_name), attempts_taken, True
 
-        except subprocess.TimeoutExpired:
-            logger.error(f"Volatility plugin {plugin_name} timed out")
-            return self._get_mock_data(plugin_name)
-        except Exception as e:
-            logger.error(f"Failed to execute Volatility plugin {plugin_name}: {e}")
-            return self._get_mock_data(plugin_name)
+        # If we get here, and last_exception is set, return mock data as fallback
+        if last_exception is not None:
+            logger.debug("Returning mock data for %s after %d attempts", plugin_name, attempts)
+            log_event(
+                "plugin_fallback",
+                {"plugin": plugin_name, "attempts": attempts, "reason": str(last_exception)},
+            )
+            return self._get_mock_data(plugin_name), attempts, True
 
     def _get_mock_data(self, plugin_name: str) -> List[Dict[str, Any]]:
         """Fallback to mock data when Volatility execution fails."""
@@ -182,9 +274,11 @@ class Executor:
             log_event("plugin_start", {"plugin": plugin_name, "image": image_path})
 
             # Execute real Volatility 3 plugin
-            output = self._execute_volatility_plugin(plugin_name, image_path, profile, **kwargs)
+            output, attempts_taken, used_mock = self._execute_volatility_plugin(
+                plugin_name, image_path, profile, **kwargs
+            )
 
-            # Cache the result
+            # Cache the result (store only the output)
             cache.set(cache_session_id, plugin_name, cache_key_params, output)
 
             success = True
@@ -202,6 +296,10 @@ class Executor:
 
         duration = time.time() - start_time
 
+        # Ensure attempts and used_mock are set even on exceptions/cached results
+        attempts_value = int(locals().get("attempts_taken", 0))
+        used_mock_value = bool(locals().get("used_mock", False))
+
         return ExecutionResult(
             plugin_name=plugin_name,
             success=success,
@@ -209,16 +307,18 @@ class Executor:
             error=error,
             duration=duration,
             timestamp=timestamp,
+            attempts=attempts_value,
+            used_mock=used_mock_value,
         )
 
     def execute_workflow(
-        self, workflow_spec: Any, image_path: str
+        self, workflow_spec: Any, image_path: str, profile: str = ""
     ) -> List[ExecutionResult]:
         """Execute all plugins in a workflow."""
         results: List[ExecutionResult] = []
 
         for plugin in workflow_spec.plugins:
-            result = self.execute_plugin(plugin.name, image_path, "", **plugin.parameters)
+            result = self.execute_plugin(plugin.name, image_path, profile, **plugin.parameters)
             results.append(result)
 
         return results

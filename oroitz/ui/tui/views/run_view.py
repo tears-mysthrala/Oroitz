@@ -86,6 +86,11 @@ class RunView(Screen):
                 # Update log
                 status = "✓" if result.success else "✗"
                 log_update = f"{status} {plugin_name}: {result.duration:.2f}s"
+                # Include retry/attempt info if available
+                if getattr(result, "attempts", None):
+                    log_update += f" (Attempts: {result.attempts})"
+                if getattr(result, "used_mock", False):
+                    log_update += " [FALLBACK: mock data used]"
                 if not result.success and result.error:
                     log_update += f" (Error: {result.error})"
                 current_log = self.query_one("#log-content").renderable.plain
@@ -113,4 +118,5 @@ class RunView(Screen):
             self.app.pop_screen()
         elif button_id == "results-button":
             from .results_view import ResultsView
+
             self.app.push_screen(ResultsView(self.workflow, self.session, self.results))

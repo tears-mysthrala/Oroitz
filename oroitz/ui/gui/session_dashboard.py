@@ -63,11 +63,22 @@ class WorkflowWorker(QThread):
             for i, result in enumerate(results):
                 progress = int(10 + (i / total_plugins) * 80)  # 10-90% range
 
+                # Build message with attempt info and fallback marker
                 if result.success:
-                    self.log_message.emit(f"✓ {result.plugin_name}: {result.duration:.2f}s")
+                    msg = f"\u2713 {result.plugin_name}: {result.duration:.2f}s"
+                else:
+                    msg = f"\u2717 {result.plugin_name}: {result.error}"
+
+                if getattr(result, "attempts", None):
+                    msg += f" (Attempts: {result.attempts})"
+                if getattr(result, "used_mock", False):
+                    msg += " [FALLBACK: mock data used]"
+
+                if result.success:
+                    self.log_message.emit(msg)
                     self.progress_updated.emit(progress, f"Completed {result.plugin_name}")
                 else:
-                    self.log_message.emit(f"✗ {result.plugin_name}: {result.error}")
+                    self.log_message.emit(msg)
                     self.progress_updated.emit(progress, f"Failed {result.plugin_name}")
 
             self.progress_updated.emit(95, "Processing results...")

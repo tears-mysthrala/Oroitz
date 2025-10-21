@@ -37,7 +37,7 @@ Oroitz delivers a complete, production-ready memory forensics platform built on 
 
 ### Testing & Quality
 
-- **Comprehensive Test Suite**: 49 passing tests covering all components
+- **Comprehensive Test Suite**: 53 passing tests covering all components
 - **Real Memory Samples**: Included forensic samples for integration testing
 - **Mock Data Fallback**: Graceful degradation when Volatility 3 unavailable
 - **Code Quality**: Ruff linting and Black formatting enforced
@@ -217,3 +217,9 @@ See [`SECURITY.md`](SECURITY.md) for vulnerability reporting guidance.
 ## License
 
 This project targets the MIT License; a formal `LICENSE` file will be added before the first code release.
+
+## Release Prep & CI
+
+We maintain a CI pipeline at `.github/workflows/ci.yml` which runs the test suite and a lightweight benchmark. Use `tools/benchmark.py` to run a local benchmark and generate `results/benchmark_report.json`.
+
+Before releasing, consult `docs/release-checklist.md` for validation steps (benchmarks, SBOM, packaging, security scan, and docs checks).

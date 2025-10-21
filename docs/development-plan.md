@@ -66,6 +66,9 @@ Provide an execution order with concrete tasks so implementation can proceed pha
 4. Prepare release checklist and CI/CD workflows.
 5. Run security review (dependency scan, threat model summary).
 6. Tag release candidate and gather community feedback.
+7. Improve reliability of Volatility execution by adding configurable retry/backoff
+   and a deterministic mock fallback for environments without Volatility.
+   See `docs/adrs/ADR-0004-retry-and-fallback.md` for policy and configuration details.
 
 ## Continuous Activities
 

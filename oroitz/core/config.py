@@ -19,6 +19,9 @@ class Config(BaseSettings):
     # Volatility settings
     volatility_path: Optional[Path] = None
     symbols_path: Optional[Path] = None
+    # Execution retry settings (Phase 6 hardening)
+    volatility_retry_attempts: int = 2
+    volatility_retry_backoff_seconds: float = 1.0
 
     # GUI settings
     telemetry_enabled: bool = False

@@ -17,9 +17,24 @@ import time
 from pathlib import Path
 from typing import Optional
 
-from oroitz.core.config import config
-from oroitz.core.executor import Executor
-from oroitz.core.workflow import registry, seed_workflows
+try:
+    from oroitz.core.config import config
+    from oroitz.core.executor import Executor
+    from oroitz.core.workflow import registry, seed_workflows
+except Exception:
+    # Allow running the benchmark directly from a developer checkout where the
+    # package isn't installed into the active interpreter. This inserts the
+    # repository root on sys.path so `import oroitz` works without `poetry install`.
+    import sys
+    from pathlib import Path
+
+    repo_root = Path(__file__).resolve().parents[1]
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+
+    from oroitz.core.config import config
+    from oroitz.core.executor import Executor
+    from oroitz.core.workflow import registry, seed_workflows
 
 
 def find_sample(candidates: Optional[list[Path]] = None) -> Optional[Path]:

@@ -136,7 +136,6 @@ poetry.lock
 *.tar.gz
 *.rar
 
-# Explicitly allow the committed CI sample archive (small, vetted). This
-# negation permits the specific file samples/memdump.7z to be tracked even
-# though '*.7z' is ignored globally above.
-!samples/memdump.7z
+## Keep samples out of git. CI caches and the fetch helper are the canonical sources.
+# Do NOT commit memory images or archives. Use CI cache, Git LFS, or release assets instead.
+samples/

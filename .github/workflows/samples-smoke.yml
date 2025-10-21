@@ -15,12 +15,24 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v4
 
-            - name: Restore cached samples
+            - name: Compute sample checksum and restore cache
               id: restore-sample-cache
+              run: |
+                  mkdir -p ci/cached_samples
+                  # If a local sample exists (for fork testing), compute its sha and export
+                  if [ -f samples/memdump.7z ]; then
+                    sha=$(sha256sum samples/memdump.7z | awk '{print $1}')
+                    echo "sample-sha=$sha" >> $GITHUB_OUTPUT
+                  else
+                    # Hard-code the vetted sample sha as fallback (keeps cache predictable)
+                    echo "sample-sha=417159701506d4938e311b97f58fd9a50c6c15405fb1aaf2ad7e5349b7ca1bfe" >> $GITHUB_OUTPUT
+                  fi
+
+            - name: Restore cache by sample sha
               uses: actions/cache@v4
               with:
                   path: ci/cached_samples
-                  key: sample-memdump-v1
+                  key: sample-memdump-${{ steps.restore-sample-cache.outputs.sample-sha }}
 
             - name: Ensure sample archive is available
               run: |

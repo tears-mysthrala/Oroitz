@@ -58,13 +58,26 @@ PY
                     echo "Using cached sample"
                     cp ci/cached_samples/memdump.7z samples/
                   else
-                    echo "Cached sample not found: fetching using helper"
-                    python3 scripts/fetch_samples.py --id samsclass-memdump --yes
-                    if [ -f samples/memdump.7z ]; then
-                      # Place the fetched archive into the cache path so actions/cache will save it
-                      mkdir -p ci/cached_samples
-                      mv samples/memdump.7z ci/cached_samples/memdump.7z
-                    else
+                    # Try to obtain a release asset URL from assets metadata
+                    release_url=$(python3 - <<'PY'
+import json
+data=json.load(open('assets/samples.json'))
+print(data['recommended_samples'][0].get('release_asset_url','') or '')
+PY
+)
+                    if [ -n "$release_url" ]; then
+                      echo "Attempting to download release asset: $release_url"
+                      curl -fsSL -o ci/cached_samples/memdump.7z "$release_url" || true
+                    fi
+                    if [ ! -f ci/cached_samples/memdump.7z ]; then
+                      echo "Release asset not present or download failed: falling back to helper"
+                      python3 scripts/fetch_samples.py --id samsclass-memdump --yes
+                      if [ -f samples/memdump.7z ]; then
+                        mkdir -p ci/cached_samples
+                        mv samples/memdump.7z ci/cached_samples/memdump.7z
+                      fi
+                    fi
+                    if [ ! -f ci/cached_samples/memdump.7z ]; then
                       echo "Failed to obtain sample; aborting"
                       exit 1
                     fi

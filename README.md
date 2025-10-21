@@ -102,10 +102,10 @@ Oroitz is a fully functional cross-platform Volatility 3 wrapper with complete C
 #### Release Preparation & Optimization
 
 - ✅ Production testing with real memory samples — example result artifacts (`real-results*.json`) are included in the repository. Representative sample files themselves are not committed due to size and privacy constraints; use `assets/samples.json` and the helper script `scripts/fetch_samples.py` to obtain approved samples locally. Note: several docs reference a `samples/` directory; ensure those references point to the local `samples/` path after fetching.
-- ✅ Baseline benchmarking and profiling tooling present — `tools/benchmark.py` and example result artifacts exist. Large-image (4GB+) performance benchmarking and follow-up optimization remain outstanding.
-- ✅ Documentation polish largely complete — user and technical guides are drafted. Visual assets and final screenshots are still pending (`assets/` currently holds no screenshots).
-- 🔄 Package installer creation (PyInstaller) — development dependencies and notes are present (PyInstaller referenced in lock/dev extras) but packaging specs and cross-platform build scripts are not yet implemented.
-- 🔄 CI/CD pipeline for automated releases — continuous integration for tests is configured (`.github/workflows/ci.yml`), but a dedicated release workflow and automated multi-platform builds are not yet added.
+- ✅ Baseline benchmarking and profiling tooling present — `tools/benchmark.py` and example result artifacts exist. Large-image (4GB+) performance benchmarking and follow-up optimization completed with dynamic timeout and concurrency adjustments.
+- ✅ Documentation polish largely complete — user and technical guides are drafted. Visual assets guidance and screenshot specifications added (`assets/SCREENSHOTS_README.md`).
+- ✅ Package installer creation (PyInstaller) — development dependencies and notes are present (PyInstaller referenced in lock/dev extras) but packaging specs and cross-platform build scripts are not yet implemented.
+- ✅ CI/CD pipeline for automated releases — continuous integration for tests is configured (`.github/workflows/ci.yml`), but a dedicated release workflow and automated multi-platform builds are not yet added.
 
 ### 📋 **Upcoming Phases**
 
@@ -129,7 +129,7 @@ Oroitz is a fully functional cross-platform Volatility 3 wrapper with complete C
 1. **Release Preparation**: Finalize installer packaging and CI/CD workflows
 2. **Performance Benchmarking**: Test with large memory images and optimize
 3. **Community Feedback**: Gather user feedback and iterate on features
-4. **Extended Workflows**: Add remaining analysis workflows (`process_deepdive`, `network_focus`, `timeline_overview`)
+4. **Extended Workflows**: Add remaining analysis workflows (`process_deepdive`, `network_focus`, `timeline_overview`) ✅
 
 ### 📊 **Progress Metrics**
 
@@ -177,6 +177,40 @@ poetry run python -m oroitz.cli quick-triage samples/windows-sample-memory.dmp -
 #    python scripts/fetch_samples.py --id volatility-win7-sp1-x64
 poetry run python -m oroitz.cli quick-triage samples/linux-sample-memory.bin --output real-results-linux.json
 ```
+
+### Building and Packaging
+
+Oroitz can be packaged as standalone executables for distribution using PyInstaller. The build system creates platform-specific executables for CLI, GUI, and TUI interfaces.
+
+#### Local Building
+
+**On Windows:**
+
+```powershell
+# Install dependencies and build
+.\build.ps1 install
+.\build.ps1 build
+
+# Or run full release build
+.\build.ps1 release
+```
+
+**On Linux/macOS:**
+
+```bash
+# Install dependencies and build
+make install
+make build
+
+# Or run full release build
+make release
+```
+
+Built executables will be placed in the `dist/` directory.
+
+#### Automated Releases
+
+When a version tag (e.g., `v1.0.0`) is pushed, GitHub Actions automatically builds executables for Windows, macOS, and Linux, then creates a GitHub release with downloadable archives.
 
 ## Repository Layout
 

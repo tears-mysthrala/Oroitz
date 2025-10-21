@@ -76,6 +76,12 @@ class Executor:
             )
             return self._get_mock_data(plugin_name), 0, True
 
+        # Adjust timeout based on image size for large images
+        image_size_gb = self._get_image_size_gb(image_path)
+        timeout_seconds = self._calculate_timeout(image_size_gb)
+
+        logger.info(f"Image size: {image_size_gb:.2f} GB, using timeout: {timeout_seconds}s")
+
         # Retry loop for transient failures
         attempts = max(1, getattr(config, "volatility_retry_attempts", 1))
         backoff = float(getattr(config, "volatility_retry_backoff_seconds", 0))
@@ -105,7 +111,7 @@ class Executor:
                     cmd,
                     capture_output=True,
                     text=True,
-                    timeout=300,  # 5 minute timeout
+                    timeout=timeout_seconds,  # Use dynamic timeout
                     cwd=None,  # Use current directory
                 )
 
@@ -241,6 +247,29 @@ class Executor:
         )
         return self._get_mock_data(plugin_name), int(attempts_taken or 0), True
 
+    def _get_image_size_gb(self, image_path: str) -> float:
+        """Get image file size in GB."""
+        try:
+            from pathlib import Path
+
+            return Path(image_path).stat().st_size / (1024**3)
+        except (OSError, AttributeError):
+            return 0.0
+
+    def _calculate_timeout(self, image_size_gb: float) -> int:
+        """Calculate appropriate timeout based on image size."""
+        # Base timeout of 5 minutes for small images
+        base_timeout = 300
+
+        # Add 2 minutes per GB for larger images
+        if image_size_gb > 1.0:
+            additional_timeout = int(image_size_gb * 120)  # 2 minutes per GB
+            total_timeout = base_timeout + additional_timeout
+            # Cap at 30 minutes for very large images
+            return min(total_timeout, 1800)
+        else:
+            return base_timeout
+
     def _get_mock_data(self, plugin_name: str) -> List[Dict[str, Any]]:
         """Fallback to mock data when Volatility execution fails."""
         if plugin_name == "windows.pslist":
@@ -249,6 +278,22 @@ class Executor:
             return self._mock_netscan()
         elif plugin_name == "windows.malfind":
             return self._mock_malfind()
+        elif plugin_name == "windows.pstree":
+            return self._mock_pstree()
+        elif plugin_name == "windows.dlllist":
+            return self._mock_dlllist()
+        elif plugin_name == "windows.handles":
+            return self._mock_handles()
+        elif plugin_name == "windows.psscan":
+            return self._mock_psscan()
+        elif plugin_name == "windows.sockscan":
+            return self._mock_sockscan()
+        elif plugin_name == "windows.connections":
+            return self._mock_connections()
+        elif plugin_name == "windows.timeliner":
+            return self._mock_timeliner()
+        elif plugin_name == "windows.getservicesids":
+            return self._mock_getservicesids()
         else:
             return []
 
@@ -328,9 +373,43 @@ class Executor:
         """Execute all plugins in a workflow."""
         results: List[ExecutionResult] = []
 
-        for plugin in workflow_spec.plugins:
-            result = self.execute_plugin(plugin.name, image_path, profile, **plugin.parameters)
-            results.append(result)
+        # Adjust concurrency based on image size for large images
+        image_size_gb = self._get_image_size_gb(image_path)
+        if image_size_gb > 2.0:  # For images > 2GB, reduce concurrency
+            adjusted_concurrency = max(1, self.max_concurrency // 2)
+            logger.info(
+                f"Large image detected ({image_size_gb:.2f} GB), "
+                f"reducing concurrency to {adjusted_concurrency}"
+            )
+        else:
+            adjusted_concurrency = self.max_concurrency
+
+        # For very large images (> 4GB), execute sequentially to avoid memory pressure
+        if image_size_gb > 4.0:
+            logger.info(
+                f"Very large image detected ({image_size_gb:.2f} GB), "
+                "executing plugins sequentially"
+            )
+            for plugin in workflow_spec.plugins:
+                result = self.execute_plugin(plugin.name, image_path, profile, **plugin.parameters)
+                results.append(result)
+        else:
+            # Use thread pool for normal-sized images
+            import concurrent.futures
+
+            with concurrent.futures.ThreadPoolExecutor(
+                max_workers=adjusted_concurrency
+            ) as executor:
+                futures = []
+                for plugin in workflow_spec.plugins:
+                    future = executor.submit(
+                        self.execute_plugin, plugin.name, image_path, profile, **plugin.parameters
+                    )
+                    futures.append(future)
+
+                for future in concurrent.futures.as_completed(futures):
+                    result = future.result()
+                    results.append(result)
 
         return results
 
@@ -389,5 +468,172 @@ class Executor:
                 "Protection": "PAGE_EXECUTE_READWRITE",
                 "CommitCharge": 1024,
                 "PrivateMemory": 2048,
+            },
+        ]
+
+    def _mock_pstree(self) -> List[Dict[str, Union[str, int, None]]]:
+        """Mock data for pstree plugin."""
+        return [
+            {
+                "PID": 4,
+                "PPID": 0,
+                "ImageFileName": "System",
+                "Offset": "0x12345678",
+                "Threads": 100,
+                "Handles": 500,
+                "CreateTime": "2023-01-01T00:00:00Z",
+            },
+            {
+                "PID": 1234,
+                "PPID": 4,
+                "ImageFileName": "notepad.exe",
+                "Offset": "0x87654321",
+                "Threads": 8,
+                "Handles": 150,
+                "CreateTime": "2023-01-01T12:00:00Z",
+            },
+        ]
+
+    def _mock_dlllist(self) -> List[Dict[str, Union[str, int, None]]]:
+        """Mock data for dlllist plugin."""
+        return [
+            {
+                "PID": 1234,
+                "Process": "notepad.exe",
+                "Base": "0x77400000",
+                "Size": 1048576,
+                "Name": "kernel32.dll",
+                "Path": "C:\\Windows\\System32\\kernel32.dll",
+                "LoadTime": "2023-01-01T12:00:00Z",
+            },
+            {
+                "PID": 1234,
+                "Process": "notepad.exe",
+                "Base": "0x77500000",
+                "Size": 524288,
+                "Name": "user32.dll",
+                "Path": "C:\\Windows\\System32\\user32.dll",
+                "LoadTime": "2023-01-01T12:00:01Z",
+            },
+        ]
+
+    def _mock_handles(self) -> List[Dict[str, Union[str, int, None]]]:
+        """Mock data for handles plugin."""
+        return [
+            {
+                "PID": 1234,
+                "Process": "notepad.exe",
+                "Offset": "0x12345678",
+                "HandleValue": 0x1C,
+                "Type": "File",
+                "GrantedAccess": "0x12019f",
+                "Name": "C:\\Users\\user\\Documents\\test.txt",
+            },
+            {
+                "PID": 1234,
+                "Process": "notepad.exe",
+                "Offset": "0x87654321",
+                "HandleValue": 0x20,
+                "Type": "Key",
+                "GrantedAccess": "0x20019",
+                "Name": "\\REGISTRY\\MACHINE\\SOFTWARE\\Microsoft\\Windows",
+            },
+        ]
+
+    def _mock_psscan(self) -> List[Dict[str, Union[str, int, bool, None]]]:
+        """Mock data for psscan plugin."""
+        return [
+            {
+                "Offset": "0x12345678",
+                "PID": 1234,
+                "PPID": 876,
+                "ImageFileName": "notepad.exe",
+                "CreateTime": "2023-01-01T12:00:00Z",
+                "ExitTime": None,
+                "Threads": 8,
+                "Handles": 150,
+                "SessionId": 1,
+                "Wow64": True,
+            },
+            {
+                "Offset": "0x87654321",
+                "PID": 5678,
+                "PPID": 4,
+                "ImageFileName": "explorer.exe",
+                "CreateTime": "2023-01-01T11:00:00Z",
+                "ExitTime": None,
+                "Threads": 12,
+                "Handles": 300,
+                "SessionId": 1,
+                "Wow64": False,
+            },
+        ]
+
+    def _mock_sockscan(self) -> List[Dict[str, Union[str, int, None]]]:
+        """Mock data for sockscan plugin."""
+        return [
+            {
+                "Offset": "0x12345678",
+                "PID": 1234,
+                "Port": 12345,
+                "Proto": 6,
+                "AddressFamily": 2,
+                "CreateTime": "2023-01-01T12:00:00Z",
+                "LocalAddr": "192.168.1.100",
+                "ForeignAddr": "8.8.8.8",
+            },
+        ]
+
+    def _mock_connections(self) -> List[Dict[str, Union[str, int, None]]]:
+        """Mock data for connections plugin."""
+        return [
+            {
+                "Offset": "0x12345678",
+                "PID": 1234,
+                "Owner": "notepad.exe",
+                "CreateTime": "2023-01-01T12:00:00Z",
+                "LocalAddr": "192.168.1.100",
+                "LocalPort": 12345,
+                "ForeignAddr": "8.8.8.8",
+                "ForeignPort": 53,
+                "State": "ESTABLISHED",
+            },
+        ]
+
+    def _mock_timeliner(self) -> List[Dict[str, Union[str, int, None]]]:
+        """Mock data for timeliner plugin."""
+        return [
+            {
+                "Plugin": "windows.pslist",
+                "Description": "Process notepad.exe created",
+                "CreatedDate": "2023-01-01T12:00:00Z",
+                "AccessedDate": None,
+                "ModifiedDate": None,
+                "ChangedDate": None,
+            },
+            {
+                "Plugin": "windows.netscan",
+                "Description": "Network connection established",
+                "CreatedDate": "2023-01-01T12:01:00Z",
+                "AccessedDate": None,
+                "ModifiedDate": None,
+                "ChangedDate": None,
+            },
+        ]
+
+    def _mock_getservicesids(self) -> List[Dict[str, Union[str, int, None]]]:
+        """Mock data for getservicesids plugin."""
+        return [
+            {
+                "SID": "S-1-5-18",
+                "Name": "NT AUTHORITY\\SYSTEM",
+                "Service": "System",
+                "Domain": "NT AUTHORITY",
+            },
+            {
+                "SID": "S-1-5-19",
+                "Name": "NT AUTHORITY\\LOCAL SERVICE",
+                "Service": "Local Service",
+                "Domain": "NT AUTHORITY",
             },
         ]

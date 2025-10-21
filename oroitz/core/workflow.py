@@ -98,4 +98,46 @@ def seed_workflows() -> None:
     )
     registry.register(quick_triage)
 
+    # process_deepdive workflow
+    process_deepdive = WorkflowSpec(
+        id="process_deepdive",
+        name="Process Deep Dive",
+        description=("Exhaustive process tree analysis including DLL listings and handles"),
+        plugins=[
+            PluginSpec(name="windows.pstree"),
+            PluginSpec(name="windows.dlllist"),
+            PluginSpec(name="windows.handles"),
+            PluginSpec(name="windows.psscan"),
+        ],
+        supported_profiles=[],  # Allow any profile for testing
+    )
+    registry.register(process_deepdive)
+
+    # network_focus workflow
+    network_focus = WorkflowSpec(
+        id="network_focus",
+        name="Network Focus",
+        description=("Highlight network activity, sockets, and associated processes"),
+        plugins=[
+            PluginSpec(name="windows.netscan"),
+            PluginSpec(name="windows.sockscan"),
+            PluginSpec(name="windows.connections"),
+        ],
+        supported_profiles=[],  # Allow any profile for testing
+    )
+    registry.register(network_focus)
+
+    # timeline_overview workflow
+    timeline_overview = WorkflowSpec(
+        id="timeline_overview",
+        name="Timeline Overview",
+        description=("Produce a chronological timeline of key memory events"),
+        plugins=[
+            PluginSpec(name="windows.timeliner"),
+            PluginSpec(name="windows.getservicesids"),
+        ],
+        supported_profiles=[],  # Allow any profile for testing
+    )
+    registry.register(timeline_overview)
+
     logger.info("Seeded default workflows")

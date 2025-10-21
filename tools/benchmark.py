@@ -66,15 +66,43 @@ def run_benchmark(image_path: Path, out_path: Path) -> None:
 
     executor = Executor()
 
+    # Get image size for reporting
+    image_size_bytes = image_path.stat().st_size
+    image_size_gb = image_size_bytes / (1024**3)
+
+    # Track memory usage if psutil is available
+    memory_info = {}
+    try:
+        import psutil
+
+        process = psutil.Process()
+        initial_memory = process.memory_info().rss / (1024**2)  # MB
+        memory_info["initial_memory_mb"] = initial_memory
+    except ImportError:
+        print("psutil not available, skipping memory monitoring")
+
     start = time.time()
     results = executor.execute_workflow(workflow, str(image_path), config.default_profile)
     end = time.time()
 
+    # Get final memory usage
+    if "initial_memory_mb" in memory_info:
+        try:
+            final_memory = process.memory_info().rss / (1024**2)  # MB
+            memory_info["final_memory_mb"] = final_memory
+            memory_info["memory_delta_mb"] = final_memory - memory_info["initial_memory_mb"]
+            memory_info["peak_memory_mb"] = max(initial_memory, final_memory)  # Approximation
+        except Exception:
+            pass
+
     report = {
         "image": str(image_path),
+        "image_size_bytes": image_size_bytes,
+        "image_size_gb": image_size_gb,
         "profile": config.default_profile,
         "timestamp": int(start),
         "duration_seconds": end - start,
+        "memory_info": memory_info,
         "plugins": [],
     }
 
@@ -94,6 +122,8 @@ def run_benchmark(image_path: Path, out_path: Path) -> None:
         json.dump(report, f, indent=2)
 
     print(f"Benchmark finished in {report['duration_seconds']:.2f}s; report: {out_path}")
+    if memory_info:
+        print(f"Memory usage: {memory_info.get('memory_delta_mb', 'N/A'):.1f} MB delta")
 
 
 def _build_arg_parser() -> argparse.ArgumentParser:

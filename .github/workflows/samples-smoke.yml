@@ -56,6 +56,22 @@ jobs:
             - name: Install 7zip for extraction
               run: sudo apt-get update && sudo apt-get install -y p7zip-full
 
+            - name: Verify sample checksum
+              run: |
+                  set -e
+                  expected=417159701506d4938e311b97f58fd9a50c6c15405fb1aaf2ad7e5349b7ca1bfe
+                  if [ -f ci/cached_samples/memdump.7z ]; then
+                    sha=$(sha256sum ci/cached_samples/memdump.7z | awk '{print $1}')
+                  elif [ -f samples/memdump.7z ]; then
+                    sha=$(sha256sum samples/memdump.7z | awk '{print $1}')
+                  else
+                    echo "No sample archive found to verify"; exit 1
+                  fi
+                  echo "Computed sha: $sha"
+                  if [ "$sha" != "$expected" ]; then
+                    echo "Checksum mismatch: expected $expected but got $sha"; exit 1
+                  fi
+
             - name: Extract sample
               run: 7z x ci/cached_samples/memdump.7z -o samples/ -y
 

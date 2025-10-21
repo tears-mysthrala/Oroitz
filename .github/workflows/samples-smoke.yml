@@ -1,139 +1,130 @@
 name: Sample smoke benchmark (auto)
 
 on:
-    push:
-        branches: [main]
-    pull_request:
-    schedule:
-        - cron: "0 3 * * 1" # Weekly on Monday at 03:00 UTC
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 3 * * 1" # Weekly on Monday at 03:00 UTC
 
 jobs:
-    benchmark:
-        name: Prepare sample (cache) and run benchmark
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
+  benchmark:
+    name: Prepare sample (cache) and run benchmark
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            - name: Compute sample checksum and restore cache
-              id: restore-sample-cache
-              run: |
-                  mkdir -p ci/cached_samples
-                  # Try to read expected sha from assets metadata
-                  expected=$(python3 - <<'PY'
-import json
-print(json.load(open('assets/samples.json'))['recommended_samples'][0].get('sha256',''))
-PY
-)
-                  echo "expected-sha=$expected" >> $GITHUB_OUTPUT
-                  # If a local sample exists (for fork testing), compute its sha and export
-                  if [ -f samples/memdump.7z ]; then
-                    sha=$(sha256sum samples/memdump.7z | awk '{print $1}')
-                    echo "sample-sha=$sha" >> $GITHUB_OUTPUT
-                  else
-                    # Use expected sha as the cache key when no local file is present
-                    echo "sample-sha=$expected" >> $GITHUB_OUTPUT
-                  fi
+      - name: Compute sample checksum and restore cache
+        id: restore-sample-cache
+        run: |
+          mkdir -p ci/cached_samples
+          # Try to read expected sha from assets metadata
+                            expected=$(python3 -c "import json; print(json.load(open('assets/samples.json'))['recommended_samples'][0].get('sha256',''))")
+          echo "expected-sha=$expected" >> $GITHUB_OUTPUT
+          # If a local sample exists (for fork testing), compute its sha and export
+          if [ -f samples/memdump.7z ]; then
+            sha=$(sha256sum samples/memdump.7z | awk '{print $1}')
+            echo "sample-sha=$sha" >> $GITHUB_OUTPUT
+          else
+            # Use expected sha as the cache key when no local file is present
+            echo "sample-sha=$expected" >> $GITHUB_OUTPUT
+          fi
 
-            - name: Restore cache by sample sha
-              id: cache-restore
-              uses: actions/cache@v4
-              with:
-                  path: ci/cached_samples
-                  key: sample-memdump-${{ steps.restore-sample-cache.outputs.sample-sha }}
+      - name: Restore cache by sample sha
+        id: cache-restore
+        uses: actions/cache@v4
+        with:
+          path: ci/cached_samples
+          key: sample-memdump-${{ steps.restore-sample-cache.outputs.sample-sha }}
 
-            - name: Log cache key and status
-              run: |
-                  echo "Cache key used: sample-memdump-${{ steps.restore-sample-cache.outputs.sample-sha }}"
-                  if [ -d ci/cached_samples ] && [ -f ci/cached_samples/memdump.7z ]; then
-                    echo "Cache hit: cached archive present"
-                  else
-                    echo "Cache miss: no cached archive present"
-                  fi
+      - name: Log cache key and status
+        run: |
+          echo "Cache key used: sample-memdump-${{ steps.restore-sample-cache.outputs.sample-sha }}"
+          if [ -d ci/cached_samples ] && [ -f ci/cached_samples/memdump.7z ]; then
+            echo "Cache hit: cached archive present"
+          else
+            echo "Cache miss: no cached archive present"
+          fi
 
-            - name: Ensure sample archive is available
-              run: |
-                  mkdir -p ci/cached_samples
-                  if [ -f ci/cached_samples/memdump.7z ]; then
-                    echo "Using cached sample"
-                    cp ci/cached_samples/memdump.7z samples/
-                  else
-                    # Try to obtain a release asset URL from assets metadata
-                    release_url=$(python3 - <<'PY'
-import json
-data=json.load(open('assets/samples.json'))
-print(data['recommended_samples'][0].get('release_asset_url','') or '')
-PY
-)
-                    if [ -n "$release_url" ]; then
-                      echo "Attempting to download release asset: $release_url"
-                      curl -fsSL -o ci/cached_samples/memdump.7z "$release_url" || true
-                    fi
-                    if [ ! -f ci/cached_samples/memdump.7z ]; then
-                      echo "Release asset not present or download failed: falling back to helper"
-                      python3 scripts/fetch_samples.py --id samsclass-memdump --yes
-                      if [ -f samples/memdump.7z ]; then
-                        mkdir -p ci/cached_samples
-                        mv samples/memdump.7z ci/cached_samples/memdump.7z
-                      fi
-                    fi
-                    if [ ! -f ci/cached_samples/memdump.7z ]; then
-                      echo "Failed to obtain sample; aborting"
-                      exit 1
-                    fi
-                  fi
+      - name: Ensure sample archive is available
+        run: |
+          mkdir -p ci/cached_samples
+          if [ -f ci/cached_samples/memdump.7z ]; then
+            echo "Using cached sample"
+            cp ci/cached_samples/memdump.7z samples/
+          else
+            # Try to obtain a release asset URL from assets metadata
+            release_url=$(python3 -c "import json; data=json.load(open('assets/samples.json')); print(data['recommended_samples'][0].get('release_asset_url','') or '')")
+            if [ -n "$release_url" ]; then
+              echo "Attempting to download release asset: $release_url"
+              curl -fsSL -o ci/cached_samples/memdump.7z "$release_url" || true
+            fi
+            if [ ! -f ci/cached_samples/memdump.7z ]; then
+              echo "Release asset not present or download failed: falling back to helper"
+              python3 scripts/fetch_samples.py --id samsclass-memdump --yes
+              if [ -f samples/memdump.7z ]; then
+                mkdir -p ci/cached_samples
+                mv samples/memdump.7z ci/cached_samples/memdump.7z
+              fi
+            fi
+            if [ ! -f ci/cached_samples/memdump.7z ]; then
+              echo "Failed to obtain sample; aborting"
+              exit 1
+            fi
+          fi
 
-            - name: Install 7zip for extraction
-              run: sudo apt-get update && sudo apt-get install -y p7zip-full
+      - name: Install 7zip for extraction
+        run: sudo apt-get update && sudo apt-get install -y p7zip-full
 
-            - name: Verify sample checksum
-              run: |
-                  set -e
-                  expected=417159701506d4938e311b97f58fd9a50c6c15405fb1aaf2ad7e5349b7ca1bfe
-                  if [ -f ci/cached_samples/memdump.7z ]; then
-                    sha=$(sha256sum ci/cached_samples/memdump.7z | awk '{print $1}')
-                  elif [ -f samples/memdump.7z ]; then
-                    sha=$(sha256sum samples/memdump.7z | awk '{print $1}')
-                  else
-                    echo "No sample archive found to verify"; exit 1
-                  fi
-                  echo "Computed sha: $sha"
-                  if [ "$sha" != "$expected" ]; then
-                    echo "Checksum mismatch: expected $expected but got $sha"; exit 1
-                  fi
+      - name: Verify sample checksum
+        run: |
+          set -e
+          expected=417159701506d4938e311b97f58fd9a50c6c15405fb1aaf2ad7e5349b7ca1bfe
+          if [ -f ci/cached_samples/memdump.7z ]; then
+            sha=$(sha256sum ci/cached_samples/memdump.7z | awk '{print $1}')
+          elif [ -f samples/memdump.7z ]; then
+            sha=$(sha256sum samples/memdump.7z | awk '{print $1}')
+          else
+            echo "No sample archive found to verify"; exit 1
+          fi
+          echo "Computed sha: $sha"
+          if [ "$sha" != "$expected" ]; then
+            echo "Checksum mismatch: expected $expected but got $sha"; exit 1
+          fi
 
-            - name: Extract sample
-              run: 7z x ci/cached_samples/memdump.7z -o samples/ -y
+      - name: Extract sample
+        run: 7z x ci/cached_samples/memdump.7z -o samples/ -y
 
-            - name: Verify extracted sample
-              run: |
-                  if [ ! -f samples/memdump.mem ]; then
-                    echo "Extracted file not found"
-                    exit 1
-                  fi
-                  size=$(stat -c%s samples/memdump.mem)
-                  if [ "$size" -lt 536870912 ]; then
-                    echo "File too small: $size bytes"
-                    exit 1
-                  fi
-                  file_output=$(file samples/memdump.mem)
-                  if ! echo "$file_output" | grep -q "data"; then
-                    echo "Unexpected file type: $file_output"
-                    exit 1
-                  fi
-                  echo "Extracted file verified: $size bytes, type: $file_output"
+      - name: Verify extracted sample
+        run: |
+          if [ ! -f samples/memdump.mem ]; then
+            echo "Extracted file not found"
+            exit 1
+          fi
+          size=$(stat -c%s samples/memdump.mem)
+          if [ "$size" -lt 536870912 ]; then
+            echo "File too small: $size bytes"
+            exit 1
+          fi
+          file_output=$(file samples/memdump.mem)
+          if ! echo "$file_output" | grep -q "data"; then
+            echo "Unexpected file type: $file_output"
+            exit 1
+          fi
+          echo "Extracted file verified: $size bytes, type: $file_output"
 
-            - name: Set up Python 3.11
-              uses: actions/setup-python@v4
-              with:
-                  python-version: "3.11"
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
 
-            - name: Run quick_triage benchmark
-              run: |
-                  python tools/benchmark.py --sample samples/memdump.mem --output results/benchmark_report.json
+      - name: Run quick_triage benchmark
+        run: |
+          python tools/benchmark.py --sample samples/memdump.mem --output results/benchmark_report.json
 
-            - name: Upload benchmark report
-              uses: actions/upload-artifact@v3
-              with:
-                  name: benchmark-report
-                  path: results/benchmark_report.json
+      - name: Upload benchmark report
+        uses: actions/upload-artifact@v3
+        with:
+          name: benchmark-report
+          path: results/benchmark_report.json

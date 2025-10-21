@@ -5,11 +5,13 @@ This repository uses Git LFS (Large File Storage) to manage large forensic sampl
 ## Setup
 
 1. Install Git LFS:
+
    ```bash
    git lfs install
    ```
 
 2. Track sample files:
+
    ```bash
    git lfs track "samples/*.7z"
    git lfs track "samples/*.mem"
@@ -18,6 +20,7 @@ This repository uses Git LFS (Large File Storage) to manage large forensic sampl
    ```
 
 3. Push to remote (ensure LFS is enabled on the repository):
+
    ```bash
    git push origin main
    ```

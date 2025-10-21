@@ -1,17 +1,11 @@
 """Tests for the PySide6 GUI application."""
 
-import pytest
-
-# Skip importing the GUI test module if PySide6 is not installed. This allows
-# the main (non-GUI) CI job to run without installing GUI deps and avoids
-# ModuleNotFoundError during test collection.
-pytest.importorskip("PySide6")
-
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication, QComboBox, QLineEdit, QPushButton, QWizard
+from PySide6.QtWidgets import QApplication, QComboBox, QLineEdit, QPushButton
 
 from oroitz.core.session import SessionManager
 from oroitz.core.workflow import seed_workflows
@@ -20,6 +14,11 @@ from oroitz.ui.gui.main_window import MainWindow
 from oroitz.ui.gui.results_explorer import ResultsExplorer
 from oroitz.ui.gui.session_dashboard import SessionDashboard
 from oroitz.ui.gui.session_wizard import SessionWizard
+
+# Skip importing the GUI test module if PySide6 is not installed. This allows
+# the main (non-GUI) CI job to run without installing GUI deps and avoids
+# ModuleNotFoundError during test collection.
+pytest.importorskip("PySide6")
 
 
 @pytest.fixture(scope="session")
@@ -211,7 +210,7 @@ class TestLandingView:
         assert new_analysis_btn is not None
 
         with qtbot.waitSignal(view.new_analysis_requested, timeout=1000) as blocker:
-            qtbot.mouseClick(new_analysis_btn, Qt.LeftButton)
+            qtbot.mouseClick(new_analysis_btn, Qt.MouseButton.LeftButton)
 
         assert blocker.signal_triggered
 
@@ -308,7 +307,7 @@ class TestSessionWizard:
         # Mock the finish signal
         with qtbot.waitSignal(wizard.session_created, timeout=1000) as blocker:
             # Simulate completing the wizard
-            wizard.done(QWizard.Accepted)
+            wizard.accept()
 
         assert blocker.signal_triggered
 
@@ -357,7 +356,7 @@ class TestSessionDashboard:
 
         # Mock the start button click
         with patch.object(dashboard, "_on_start_clicked") as mock_start:
-            qtbot.mouseClick(dashboard.start_btn, Qt.LeftButton)
+            qtbot.mouseClick(dashboard.start_btn, Qt.MouseButton.LeftButton)
             mock_start.assert_called_once()
 
     def test_progress_updates(self, qapp, qtbot):

@@ -135,3 +135,8 @@ poetry.lock
 *.zip
 *.tar.gz
 *.rar
+
+# Explicitly allow the committed CI sample archive (small, vetted). This
+# negation permits the specific file samples/memdump.7z to be tracked even
+# though '*.7z' is ignored globally above.
+!samples/memdump.7z

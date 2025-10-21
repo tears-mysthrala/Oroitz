@@ -44,6 +44,8 @@ jobs:
                     echo "Cached sample not found: fetching using helper"
                     python3 scripts/fetch_samples.py --id samsclass-memdump --yes
                     if [ -f samples/memdump.7z ]; then
+                      # Place the fetched archive into the cache path so actions/cache will save it
+                      mkdir -p ci/cached_samples
                       mv samples/memdump.7z ci/cached_samples/memdump.7z
                     else
                       echo "Failed to obtain sample; aborting"

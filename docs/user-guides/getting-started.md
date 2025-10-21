@@ -102,10 +102,26 @@ Oroitz organizes analysis into **workflows** - predefined sequences of Volatilit
 
 ## Memory Samples
 
-The `samples/` directory includes real memory images for testing:
+The repository does not include large memory images directly. Instead the
+`samples/` directory contains metadata and helper scripts to obtain sample
+images for local testing. This keeps the repository small and avoids
+committing sensitive or large binaries.
 
-- `memdump.mem`: Windows Server 2008 SP1 x86 sample
-- Additional samples available in the repository
+Canonical metadata: `assets/samples.json`.
+
+To download recommended samples (for example the small `memdump.7z` used in
+examples), use the provided helper script:
+
+```bash
+python scripts/fetch_samples.py --list
+python scripts/fetch_samples.py --id samsclass-memdump
+```
+
+For a larger curated list of memory sample links see the community-maintained
+aggregator: [pinesol93/MemoryForensicSamples](https://github.com/pinesol93/MemoryForensicSamples)
+
+Always verify the original data source and respect licensing and privacy
+requirements before downloading or sharing memory images.
 
 ## Next Steps
 

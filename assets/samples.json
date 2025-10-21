@@ -1,0 +1,54 @@
+{
+    "source_repo": "https://github.com/pinesol93/MemoryForensicSamples",
+    "license_note": "These sample links are curated by pinesol93 and point to original providers. Do not redistribute memory images without verifying license/terms.",
+    "recommended_samples": [
+        {
+            "id": "samsclass-memdump",
+            "name": "Samsclass memdump",
+            "description": "Small Windows Server 2008 SP1 x86 memdump used for quick triage examples.",
+            "download_url": "https://samsclass.info/121/proj/memdump.7z",
+            "recommended_filename": "memdump.7z",
+            "notes": "Suitable for quick CI smoke runs; compressed archive."
+        },
+        {
+            "id": "volatility-win7-sp1-x64",
+            "name": "Windows 7 SP1 x64 (Volatility test image)",
+            "description": "Commonly used Volatility test image (large).",
+            "download_url": "https://github.com/volatilityfoundation/volatility3/raw/develop/test/images/win7-sp1-x64.dmp",
+            "recommended_filename": "win7-sp1-x64.dmp",
+            "notes": "Large image; do not commit to repository. Use for performance testing only."
+        },
+        {
+            "id": "13cubed-windows-challenge",
+            "name": "13Cubed Windows challenge",
+            "description": "Windows challenge images used by CTF exercises.",
+            "download_url": "https://cdn.13cubed.com/downloads/windows_challenge.zip",
+            "recommended_filename": "13cubed_windows_challenge.zip",
+            "notes": "Direct ZIP download; check license before redistribution."
+        },
+        {
+            "id": "volatility-workbench-win11",
+            "name": "Volatility Workbench Win11 dumps",
+            "description": "Workbench-provided Win11 dump packages.",
+            "download_url": "https://www.osforensics.com/downloads/Win11Dump.zip",
+            "recommended_filename": "Win11Dump.zip",
+            "notes": "Direct ZIP download; large files."
+        },
+        {
+            "id": "memlabs",
+            "name": "MemLabs",
+            "description": "Repository of memory analysis labs and sample pointers.",
+            "download_url": "https://github.com/stuxnet999/MemLabs",
+            "recommended_filename": "",
+            "notes": "Repository link; not a direct single-file download. Browse the repo for specific samples."
+        },
+        {
+            "id": "pinesol-aggregator",
+            "name": "pinesol93 MemoryForensicSamples",
+            "description": "Community-curated aggregator of memory sample links.",
+            "download_url": "https://github.com/pinesol93/MemoryForensicSamples",
+            "recommended_filename": "",
+            "notes": "Aggregator: follow links to original providers and verify terms before download."
+        }
+    ]
+}

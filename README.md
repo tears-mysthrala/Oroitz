@@ -39,6 +39,7 @@ Oroitz delivers a complete, production-ready memory forensics platform built on 
 
 - **Comprehensive Test Suite**: 53 passing tests covering all components
 - **Real Memory Samples**: Included forensic samples for integration testing
+- **Real Memory Samples**: Not included in the repository due to size and privacy constraints. Use `assets/samples.json` and the helper script `scripts/fetch_samples.py` to download approved sample images into a local `samples/` directory for integration testing. See `samples/README.md` for details.
 - **Mock Data Fallback**: Graceful degradation when Volatility 3 unavailable
 - **Code Quality**: Ruff linting and Black formatting enforced
 
@@ -100,11 +101,11 @@ Oroitz is a fully functional cross-platform Volatility 3 wrapper with complete C
 
 #### Release Preparation & Optimization
 
-- ✅ Complete production testing with real memory samples
-- ✅ Performance benchmarking and optimization
-- ✅ Final documentation polish and screenshots
-- 🔄 Package installer creation (PyInstaller)
-- 🔄 CI/CD pipeline setup for automated releases
+- ✅ Production testing with real memory samples — example result artifacts (`real-results*.json`) are included in the repository. Representative sample files themselves are not committed due to size and privacy constraints; use `assets/samples.json` and the helper script `scripts/fetch_samples.py` to obtain approved samples locally. Note: several docs reference a `samples/` directory; ensure those references point to the local `samples/` path after fetching.
+- ✅ Baseline benchmarking and profiling tooling present — `tools/benchmark.py` and example result artifacts exist. Large-image (4GB+) performance benchmarking and follow-up optimization remain outstanding.
+- ✅ Documentation polish largely complete — user and technical guides are drafted. Visual assets and final screenshots are still pending (`assets/` currently holds no screenshots).
+- 🔄 Package installer creation (PyInstaller) — development dependencies and notes are present (PyInstaller referenced in lock/dev extras) but packaging specs and cross-platform build scripts are not yet implemented.
+- 🔄 CI/CD pipeline for automated releases — continuous integration for tests is configured (`.github/workflows/ci.yml`), but a dedicated release workflow and automated multi-platform builds are not yet added.
 
 ### 📋 **Upcoming Phases**
 
@@ -149,7 +150,7 @@ Oroitz is a fully functional cross-platform Volatility 3 wrapper with complete C
 4. Activate the Poetry shell with `poetry shell`, or prefix commands with `poetry run`.
 5. Run the quality checks: `poetry run pytest` for tests and `poetry run ruff check .` for linting.
 
-Volatility 3 is listed as a dependency in `pyproject.toml`; no additional manual installation is required for local development. Real memory samples are included in the `samples/` directory for testing the Volatility integration. The system automatically detects symbol tables from memory images - no manual profile configuration needed.
+Volatility 3 is listed as a dependency in `pyproject.toml`; no additional manual installation is required for local development. Representative memory images are not committed to this repository because they are large and may contain sensitive data. To obtain approved test samples, use `assets/samples.json` together with the helper script `scripts/fetch_samples.py` which will download verified samples into the local `samples/` directory. See `samples/README.md` for instructions and licensing/provenance guidance. The system automatically detects symbol tables from memory images — no manual profile configuration needed.
 
 ### Running Oroitz
 
@@ -165,8 +166,16 @@ Example CLI usage:
 # Run quick triage analysis (Volatility 3 auto-detects symbol tables)
 poetry run python -m oroitz.cli quick-triage /path/to/memory/image.mem --output results.json
 
-# Test with real memory sample (Windows Server 2008 SP1 x86)
-poetry run python -m oroitz.cli quick-triage samples/memdump.mem --output real-results.json
+# Test with a real memory sample (example)
+# 1) Fetch an approved sample into the local samples/ directory (example uses a small, CI-friendly sample):
+#    python scripts/fetch_samples.py --id samsclass-memdump
+#    # If the sample is an archive (e.g. .7z), extract it to produce the memory image file.
+# 2) Run quick-triage against the downloaded sample:
+poetry run python -m oroitz.cli quick-triage samples/windows-sample-memory.dmp --output real-results.json
+
+# Or fetch and use the Linux sample image (if available locally):
+#    python scripts/fetch_samples.py --id volatility-win7-sp1-x64
+poetry run python -m oroitz.cli quick-triage samples/linux-sample-memory.bin --output real-results-linux.json
 ```
 
 ## Repository Layout
@@ -176,7 +185,7 @@ poetry run python -m oroitz.cli quick-triage samples/memdump.mem --output real-r
 - `oroitz/ui/gui/`: PySide6 desktop application providing visual workflow execution and session management
 - `oroitz/ui/tui/`: Textual-based terminal interface for keyboard-driven investigations
 - `oroitz/bindings/`: Language-specific SDKs (Python bindings implemented, future Node.js support)
-- `samples/`: Real memory forensic samples for testing Volatility integration (Windows Server 2008 SP1 x86, etc.)
+- `samples/`: Local directory intended to hold representative memory images for integration testing. Large images are not committed to the repository; use `scripts/fetch_samples.py` with `assets/samples.json` to populate this directory with approved samples. See `samples/README.md` for more information and legal/licensing notes.
 - `tests/`: Automated tests across core, CLI, and UI components
 - `docs/`: Specifications, ADRs, and contributor-facing guides
 

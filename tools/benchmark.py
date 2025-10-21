@@ -1,18 +1,45 @@
 """Simple benchmarking script for Oroitz quick_triage workflow.
 
-This runs the quick_triage workflow against a sample image (samples/memdump.mem)
-and writes a small JSON report under results/benchmark_report.json.
+This runs the quick_triage workflow against a sample image and writes a
+small JSON report under results/benchmark_report.json.
+
+The script will look for a sample image in a set of known candidate
+locations (e.g. `samples/memdump.mem`, `samples/windows-sample-memory.dmp`,
+`samples/linux-sample-memory.bin`) and will also accept an explicit
+`--sample` path to override the automatic discovery.
 
 Designed for CI smoke benchmarking and quick local checks.
 """
 
+import argparse
 import json
 import time
 from pathlib import Path
+from typing import Optional
 
 from oroitz.core.config import config
 from oroitz.core.executor import Executor
 from oroitz.core.workflow import registry, seed_workflows
+
+
+def find_sample(candidates: Optional[list[Path]] = None) -> Optional[Path]:
+    """Return the first existing sample image from the candidate list.
+
+    The default list includes `samples/memdump.mem`, then repo-root sample
+    filenames that may already exist in this repository.
+    """
+    if candidates is None:
+        candidates = [
+            Path("samples/memdump.mem"),
+            Path("samples/memdump.dmp"),
+            Path("samples/windows-sample-memory.dmp"),
+            Path("samples/linux-sample-memory.bin"),
+        ]
+
+    for p in candidates:
+        if p.exists():
+            return p
+    return None
 
 
 def run_benchmark(image_path: Path, out_path: Path) -> None:
@@ -54,10 +81,31 @@ def run_benchmark(image_path: Path, out_path: Path) -> None:
     print(f"Benchmark finished in {report['duration_seconds']:.2f}s; report: {out_path}")
 
 
+def _build_arg_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(description="Run quick_triage benchmark")
+    p.add_argument(
+        "--sample",
+        type=str,
+        help="Path to memory image to use for benchmark (overrides auto-discovery)",
+    )
+    p.add_argument(
+        "--output",
+        type=str,
+        default="results/benchmark_report.json",
+        help="Output JSON report path",
+    )
+    return p
+
+
 if __name__ == "__main__":
-    sample = Path("samples/memdump.mem")
-    out = Path("results/benchmark_report.json")
-    if not sample.exists():
+    parser = _build_arg_parser()
+    args = parser.parse_args()
+
+    out = Path(args.output)
+
+    sample = Path(args.sample) if args.sample else find_sample()
+
+    if not sample or not sample.exists():
         print("Sample image not found; skipping benchmark")
     else:
         run_benchmark(sample, out)

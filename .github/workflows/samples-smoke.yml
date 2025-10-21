@@ -1,0 +1,52 @@
+name: Sample smoke benchmark
+
+on:
+    workflow_dispatch: {}
+
+jobs:
+    smoke:
+        name: Fetch sample and run smoke benchmark
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Python 3.11
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.11"
+
+            - name: Install Poetry
+              run: |
+                  python -m pip install --upgrade pip
+                  python -m pip install poetry
+
+            - name: Install dependencies (system-wide for job)
+              run: |
+                  poetry config virtualenvs.create false
+                  poetry install --no-interaction --no-ansi
+
+            - name: Fetch a small approved sample (samsclass-memdump)
+              run: python scripts/fetch_samples.py --id samsclass-memdump --yes
+
+            - name: Ensure 7zip is available for archive extraction
+              run: sudo apt-get update && sudo apt-get install -y p7zip-full
+
+            - name: Extract sample archive if present
+              run: |
+                  if [ -f samples/memdump.7z ]; then
+                    7z x samples/memdump.7z -o samples/
+                  fi
+
+            - name: Run quick_triage smoke benchmark
+              run: |
+                  # Attempt to run the benchmark against the downloaded sample. The
+                  # Executor will fall back to mock data if Volatility is not
+                  # available in the runner.
+                  python tools/benchmark.py --sample samples/memdump.mem --output results/smoke-benchmark.json
+
+            - name: Upload benchmark result
+              uses: actions/upload-artifact@v3
+              with:
+                  name: smoke-benchmark
+                  path: results/smoke-benchmark.json

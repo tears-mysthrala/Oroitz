@@ -1,6 +1,7 @@
 """Tests for the PySide6 GUI application."""
 
 import pytest
+
 # Skip importing the GUI test module if PySide6 is not installed. This allows
 # the main (non-GUI) CI job to run without installing GUI deps and avoids
 # ModuleNotFoundError during test collection.
@@ -8,6 +9,7 @@ pytest.importorskip("PySide6")
 
 from pathlib import Path
 from unittest.mock import patch
+
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QComboBox, QLineEdit, QPushButton, QWizard
 
@@ -15,7 +17,6 @@ from oroitz.core.session import SessionManager
 from oroitz.core.workflow import seed_workflows
 from oroitz.ui.gui.landing_view import LandingView
 from oroitz.ui.gui.main_window import MainWindow
-from oroitz.ui.gui.about_dialog import AboutDialog
 from oroitz.ui.gui.results_explorer import ResultsExplorer
 from oroitz.ui.gui.session_dashboard import SessionDashboard
 from oroitz.ui.gui.session_wizard import SessionWizard
@@ -74,9 +75,8 @@ class TestMainWindow:
 
     def test_open_session_file_dialog(self, main_window, qtbot, tmp_path, monkeypatch):
         """Test opening a session file through file dialog."""
-        from pathlib import Path
         from unittest.mock import patch
-        
+
         # Create a test session file
         session_data = {
             "id": "test-session-id",
@@ -85,23 +85,26 @@ class TestMainWindow:
             "profile": "Win10x64_19041",
             "workflow_id": "quick_triage",
             "created_at": "2025-01-01T00:00:00",
-            "updated_at": "2025-01-01T00:00:00"
+            "updated_at": "2025-01-01T00:00:00",
         }
         session_file = tmp_path / "test_session.json"
         import json
-        with open(session_file, 'w') as f:
+
+        with open(session_file, "w") as f:
             json.dump(session_data, f)
-        
+
         # Mock QFileDialog.getOpenFileName to return our test file
         def mock_get_open_file_name(parent, title, directory, filter_str):
             return str(session_file), "Session Files (*.json)"
-        
-        monkeypatch.setattr("oroitz.ui.gui.main_window.QFileDialog.getOpenFileName", mock_get_open_file_name)
-        
+
+        monkeypatch.setattr(
+            "oroitz.ui.gui.main_window.QFileDialog.getOpenFileName", mock_get_open_file_name
+        )
+
         # Mock the show_session_dashboard method to verify it's called
-        with patch.object(main_window, 'show_session_dashboard') as mock_show_dashboard:
+        with patch.object(main_window, "show_session_dashboard") as mock_show_dashboard:
             main_window._open_session()
-            
+
             # Verify show_session_dashboard was called with the loaded session
             assert mock_show_dashboard.called
             session = mock_show_dashboard.call_args[0][0]
@@ -111,61 +114,66 @@ class TestMainWindow:
     def test_show_about_dialog(self, main_window, qtbot):
         """Test showing the about dialog."""
         # Mock the dialog exec method to avoid actually showing the dialog
-        with patch('oroitz.ui.gui.about_dialog.AboutDialog.exec') as mock_exec:
+        with patch("oroitz.ui.gui.about_dialog.AboutDialog.exec") as mock_exec:
             main_window._show_about()
             mock_exec.assert_called_once()
 
     def test_export_json_file_dialog(self, qapp, monkeypatch):
         """Test JSON export with file dialog."""
-        from unittest.mock import patch, MagicMock
-        from pathlib import Path
-        
+        from unittest.mock import MagicMock, patch
+
         explorer = ResultsExplorer()
-        
+
         # Mock normalized data
         mock_data = MagicMock()
         explorer.normalized_data = mock_data
-        
+
         # Mock QFileDialog.getSaveFileName
         def mock_get_save_file_name(parent, title, default_name, filter_str):
             return "/test/path/results.json", "JSON Files (*.json)"
-        
-        monkeypatch.setattr("oroitz.ui.gui.results_explorer.QFileDialog.getSaveFileName", mock_get_save_file_name)
-        
+
+        monkeypatch.setattr(
+            "oroitz.ui.gui.results_explorer.QFileDialog.getSaveFileName", mock_get_save_file_name
+        )
+
         # Mock the exporter
-        with patch('oroitz.ui.gui.results_explorer.OutputExporter') as mock_exporter_class:
+        with patch("oroitz.ui.gui.results_explorer.OutputExporter") as mock_exporter_class:
             mock_exporter = MagicMock()
             mock_exporter_class.return_value = mock_exporter
-            
+
             explorer._export_json()
-            
+
             # Verify exporter was called with correct path
-            mock_exporter.export_json.assert_called_once_with(mock_data, Path("/test/path/results.json"))
+            mock_exporter.export_json.assert_called_once_with(
+                mock_data, Path("/test/path/results.json")
+            )
 
     def test_export_csv_directory_dialog(self, qapp, monkeypatch):
         """Test CSV export with directory dialog."""
-        from unittest.mock import patch, MagicMock
-        from pathlib import Path
-        
+        from unittest.mock import MagicMock, patch
+
         explorer = ResultsExplorer()
-        
+
         # Mock normalized data
         mock_data = MagicMock()
         explorer.normalized_data = mock_data
-        
+
         # Mock QFileDialog.getExistingDirectory
         def mock_get_existing_directory(parent, title, default_dir):
             return "/test/directory"
-        
-        monkeypatch.setattr("oroitz.ui.gui.results_explorer.QFileDialog.getExistingDirectory", mock_get_existing_directory)
-        
+
+        monkeypatch.setattr(
+            "oroitz.ui.gui.results_explorer.QFileDialog.getExistingDirectory",
+            mock_get_existing_directory,
+        )
+
         # Mock the exporter
-        with patch('oroitz.ui.gui.results_explorer.OutputExporter') as mock_exporter_class:
+        with patch("oroitz.ui.gui.results_explorer.OutputExporter") as mock_exporter_class:
             mock_exporter = MagicMock()
             mock_exporter_class.return_value = mock_exporter
-            
+
             explorer._export_csv()
-            
+
             # Verify exporter was called with correct path
             expected_path = Path("/test/directory") / "oroitz_results.csv"
             mock_exporter.export_csv.assert_called_once_with(mock_data, expected_path)
@@ -179,7 +187,6 @@ class TestLandingView:
         """Test initial state of landing view."""
         # Create a fresh session manager for this test
         import tempfile
-        from pathlib import Path
 
         from oroitz.core.session import SessionManager
 
@@ -212,7 +219,6 @@ class TestLandingView:
         """Test session selection from list."""
         # Create a fresh session manager for this test
         import tempfile
-        from pathlib import Path
 
         from oroitz.core.session import Session, SessionManager
 
@@ -320,7 +326,6 @@ class TestSessionDashboard:
     def test_set_session(self, qapp):
         """Test setting session in dashboard."""
         dashboard = SessionDashboard()
-        from pathlib import Path
 
         from oroitz.core.session import Session
 
@@ -338,7 +343,6 @@ class TestSessionDashboard:
     def test_workflow_execution(self, qapp, qtbot):
         """Test workflow execution in dashboard."""
         dashboard = SessionDashboard()
-        from pathlib import Path
 
         from oroitz.core.session import Session
 

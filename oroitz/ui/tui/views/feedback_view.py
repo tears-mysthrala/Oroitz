@@ -30,7 +30,8 @@ class FeedbackView(Screen):
                 yield Breadcrumb("Home > Feedback")
                 yield Static("Manual Testing Feedback", id="feedback-title")
                 yield Static(
-                    "Please provide feedback on your testing experience. This helps us improve Oroitz!",
+                    "Please provide feedback on your testing experience. "
+                    "This helps us improve Oroitz!",
                     classes="feedback-subtitle",
                 )
 

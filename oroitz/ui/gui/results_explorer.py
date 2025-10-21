@@ -200,13 +200,10 @@ class ResultsExplorer(QWidget):
         """Filter the table based on search text."""
         if tab_title == "Processes":
             table = self.processes_tab.layout().itemAt(1).widget()
-            data = self.normalized_data.processes if self.normalized_data else []
         elif tab_title == "Network Connections":
             table = self.network_tab.layout().itemAt(1).widget()
-            data = self.normalized_data.network_connections if self.normalized_data else []
         elif tab_title == "Malfind Results":
             table = self.malfind_tab.layout().itemAt(1).widget()
-            data = self.normalized_data.malfind_hits if self.normalized_data else []
         else:
             return
 

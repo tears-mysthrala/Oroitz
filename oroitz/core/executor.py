@@ -230,6 +230,17 @@ class Executor:
             )
             return self._get_mock_data(plugin_name), attempts, True
 
+        # Fallback: ensure we return a valid tuple on all code paths. This
+        # should be rare, but defensively return mock data so callers always
+        # receive a (list|None, int, bool) tuple instead of falling off the
+        # end of the function (which is what Pylance warns about).
+        logger.debug(
+            "Falling back to mock data for %s with no exception after attempts=%d",
+            plugin_name,
+            attempts_taken,
+        )
+        return self._get_mock_data(plugin_name), int(attempts_taken or 0), True
+
     def _get_mock_data(self, plugin_name: str) -> List[Dict[str, Any]]:
         """Fallback to mock data when Volatility execution fails."""
         if plugin_name == "windows.pslist":

@@ -1,9 +1,10 @@
 """Results explorer for displaying and exporting analysis results."""
 
 from pathlib import Path
-from typing import List
+from typing import List, cast
 
 from PySide6.QtWidgets import (
+    QAbstractItemView,
     QFileDialog,
     QHBoxLayout,
     QHeaderView,
@@ -80,11 +81,18 @@ class ResultsExplorer(QWidget):
 
         table = QTableWidget()
         table.setAlternatingRowColors(True)
-        table.setSelectionBehavior(QTableWidget.SelectRows)
+        # Use the SelectionBehavior enum for clearer type resolution
+        table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         table.horizontalHeader().setStretchLastSection(True)
-        table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+        # Use the ResizeMode enum member for explicitness
+        table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
 
         layout.addWidget(table)
+        # Keep a direct reference to the table on the tab widget so callers
+        # can retrieve it without navigating the layout (avoids Optional[...])
+        # type issues when static analysis checks layout.itemAt(...)).
+        setattr(widget, "_table", table)
+
         return widget
 
     def set_results(self, results: List[ExecutionResult]) -> None:
@@ -106,7 +114,10 @@ class ResultsExplorer(QWidget):
             self._clear_table(self.processes_tab)
             return
 
-        table = self.processes_tab.layout().itemAt(1).widget()
+        # Retrieve the table we attached to the tab widget in
+        # _create_table_tab(). This avoids optional layout lookups that
+        # confuse static analysis.
+        table = cast(QTableWidget, getattr(self.processes_tab, "_table"))
         processes = self.normalized_data.processes
 
         # Set up table
@@ -138,7 +149,7 @@ class ResultsExplorer(QWidget):
             self._clear_table(self.network_tab)
             return
 
-        table = self.network_tab.layout().itemAt(1).widget()
+        table = cast(QTableWidget, getattr(self.network_tab, "_table"))
         connections = self.normalized_data.network_connections
 
         # Set up table
@@ -166,7 +177,7 @@ class ResultsExplorer(QWidget):
             self._clear_table(self.malfind_tab)
             return
 
-        table = self.malfind_tab.layout().itemAt(1).widget()
+        table = cast(QTableWidget, getattr(self.malfind_tab, "_table"))
         hits = self.normalized_data.malfind_hits
 
         # Set up table
@@ -192,18 +203,18 @@ class ResultsExplorer(QWidget):
 
     def _clear_table(self, tab_widget: QWidget) -> None:
         """Clear a table widget."""
-        table = tab_widget.layout().itemAt(1).widget()
+        table = cast(QTableWidget, getattr(tab_widget, "_table"))
         table.setRowCount(0)
         table.setColumnCount(0)
 
     def _filter_table(self, tab_title: str, filter_text: str) -> None:
         """Filter the table based on search text."""
         if tab_title == "Processes":
-            table = self.processes_tab.layout().itemAt(1).widget()
+            table = cast(QTableWidget, getattr(self.processes_tab, "_table"))
         elif tab_title == "Network Connections":
-            table = self.network_tab.layout().itemAt(1).widget()
+            table = cast(QTableWidget, getattr(self.network_tab, "_table"))
         elif tab_title == "Malfind Results":
-            table = self.malfind_tab.layout().itemAt(1).widget()
+            table = cast(QTableWidget, getattr(self.malfind_tab, "_table"))
         else:
             return
 

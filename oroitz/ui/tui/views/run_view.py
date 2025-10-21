@@ -1,7 +1,7 @@
 """Run View for Oroitz TUI."""
 
 import asyncio
-from typing import List
+from typing import List, cast
 
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal, Vertical, VerticalScroll
@@ -58,14 +58,14 @@ class RunView(Screen):
     async def _run_workflow(self) -> None:
         """Execute the workflow asynchronously."""
         try:
-            self.query_one("#log-content").update("Starting workflow execution...\n")
+            cast(Static, self.query_one("#log-content")).update("Starting workflow execution...\n")
 
             results = []
             total_plugins = len(self.workflow.plugins)
 
             for i, plugin_spec in enumerate(self.workflow.plugins):
                 plugin_name = plugin_spec.name
-                self.query_one("#log-content").update(
+                cast(Static, self.query_one("#log-content")).update(
                     f"Running plugin {i+1}/{total_plugins}: {plugin_name}\n"
                 )
 
@@ -81,7 +81,7 @@ class RunView(Screen):
                 results.append(result)
 
                 # Update progress
-                self.query_one("#progress-bar").update(progress=i + 1)
+                cast(ProgressBar, self.query_one("#progress-bar")).update(progress=i + 1)
 
                 # Update log
                 status = "✓" if result.success else "✗"
@@ -93,21 +93,21 @@ class RunView(Screen):
                     log_update += " [FALLBACK: mock data used]"
                 if not result.success and result.error:
                     log_update += f" (Error: {result.error})"
-                current_log = self.query_one("#log-content").renderable.plain
-                self.query_one("#log-content").update(current_log + log_update + "\n")
+                current_log = str(cast(Static, self.query_one("#log-content")).renderable)
+                cast(Static, self.query_one("#log-content")).update(current_log + log_update + "\n")
 
             self.results = results
 
             # Final log update
             successful = sum(1 for r in results if r.success)
             final_msg = f"\nWorkflow completed! {successful}/{total_plugins} plugins successful.\n"
-            current_log = self.query_one("#log-content").renderable.plain
-            self.query_one("#log-content").update(current_log + final_msg)
-            self.query_one("#results-button").disabled = False
+            current_log = str(cast(Static, self.query_one("#log-content")).renderable)
+            cast(Static, self.query_one("#log-content")).update(current_log + final_msg)
+            cast(Button, self.query_one("#results-button")).disabled = False
 
         except Exception as e:
             error_msg = f"Workflow execution failed: {str(e)}"
-            self.query_one("#log-content").update(error_msg)
+            cast(Static, self.query_one("#log-content")).update(error_msg)
             self.notify(error_msg, severity="error")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:

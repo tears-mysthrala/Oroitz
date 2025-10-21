@@ -19,6 +19,9 @@
         "source.fixAll.ruff": "explicit",
         "source.organizeImports.ruff": "explicit"
     },
+    "css.lint.unknownProperties": "ignore",
+    "less.lint.unknownProperties": "ignore",
+    "scss.lint.unknownProperties": "ignore",
     "files.exclude": {
         "**/__pycache__": true,
         "**/*.pyc": true,

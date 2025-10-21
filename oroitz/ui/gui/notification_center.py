@@ -1,6 +1,7 @@
 """Notification center for displaying user notifications."""
 
 from enum import Enum
+from typing import Optional
 
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QMessageBox, QWidget
@@ -34,7 +35,7 @@ class NotificationCenter:
         self,
         message: str,
         notification_type: NotificationType = NotificationType.INFO,
-        parent: QWidget = None,
+        parent: Optional[QWidget] = None,
         auto_close: bool = True,
         duration: int = 3000,
     ) -> None:
@@ -51,7 +52,7 @@ class NotificationCenter:
         self,
         message: str,
         notification_type: NotificationType,
-        parent: QWidget,
+        parent: Optional[QWidget],
         auto_close: bool,
         duration: int,
     ) -> None:
@@ -74,27 +75,27 @@ class NotificationCenter:
 
         msg_box.exec()
 
-    def _show_warning_dialog(self, message: str, parent: QWidget) -> None:
+    def _show_warning_dialog(self, message: str, parent: Optional[QWidget]) -> None:
         """Show a warning dialog."""
         QMessageBox.warning(parent, "Warning", message)
 
-    def _show_error_dialog(self, message: str, parent: QWidget) -> None:
+    def _show_error_dialog(self, message: str, parent: Optional[QWidget]) -> None:
         """Show an error dialog."""
         QMessageBox.critical(parent, "Error", message)
 
     # Convenience methods
-    def show_info(self, message: str, parent: QWidget = None) -> None:
+    def show_info(self, message: str, parent: Optional[QWidget] = None) -> None:
         """Show an info notification."""
         self.show_notification(message, NotificationType.INFO, parent)
 
-    def show_success(self, message: str, parent: QWidget = None) -> None:
+    def show_success(self, message: str, parent: Optional[QWidget] = None) -> None:
         """Show a success notification."""
         self.show_notification(message, NotificationType.SUCCESS, parent)
 
-    def show_warning(self, message: str, parent: QWidget = None) -> None:
+    def show_warning(self, message: str, parent: Optional[QWidget] = None) -> None:
         """Show a warning notification."""
         self.show_notification(message, NotificationType.WARNING, parent)
 
-    def show_error(self, message: str, parent: QWidget = None) -> None:
+    def show_error(self, message: str, parent: Optional[QWidget] = None) -> None:
         """Show an error notification."""
         self.show_notification(message, NotificationType.ERROR, parent)

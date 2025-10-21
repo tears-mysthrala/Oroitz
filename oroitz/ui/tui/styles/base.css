@@ -55,7 +55,7 @@ Container {
     text-align: center;
     margin: 2;
     color: var(--primary);
-    text-style: bold;
+    font-style: bold;
 }
 
 .subtitle,
@@ -91,7 +91,9 @@ Container {
 
 #buttons {
     margin: 2;
-    align: center middle;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #progress-bar {
@@ -107,17 +109,21 @@ Container {
 
 #log-title {
     color: var(--primary);
-    text-style: bold;
+    font-style: bold;
 }
 
 #log-content {
     color: var(--text);
     background: var(--surface-darken-1);
     padding: 1;
-}
 
-#run-buttons {
-    margin: 2;
+    #run-buttons {
+        margin: 2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     align: center middle;
 }
 
@@ -125,31 +131,37 @@ Container {
     text-align: center;
     margin: 2;
     color: var(--success);
-    text-style: bold;
+    font-style: bold;
 }
 
 #results-table {
-    height: 50%;
-    margin: 2;
-}
+    #export-buttons {
+        margin: 2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-#export-buttons {
-    margin: 2;
-    align: center middle;
-}
+    #export-buttons {
+        margin: 2;
+        align: center middle;
+    }
 
-Button {
-    margin: 1;
-}
+    Button {
+        margin: 1;
+    }
 
-.error {
-    background: var(--error);
-    color: var(--text);
-}
+    .error {
+        background: var(--error);
+        color: var(--text);
+    }
 
-.success {
-    background: var(--success);
-    color: var(--text);
+    #error-container {
+        padding: 2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }
 
 #error-container {
@@ -161,7 +173,7 @@ Button {
     text-align: center;
     margin: 2;
     color: var(--error);
-    text-style: bold;
+    font-style: bold;
 }
 
 #error-message {
@@ -176,7 +188,7 @@ Button {
 .error-details-title {
     margin: 1;
     color: var(--text-muted);
-    text-style: bold;
+    font-style: bold;
 }
 
 #error-details {
@@ -197,7 +209,7 @@ Button {
     text-align: center;
     margin: 2;
     color: var(--primary);
-    text-style: bold;
+    font-style: bold;
 }
 
 .feedback-subtitle {
@@ -209,12 +221,17 @@ Button {
 #feedback-form {
     height: 70%;
     margin: 1;
-}
 
-.section-header {
+    #feedback-buttons {
+        margin: 2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     margin: 2 0 1 0;
     color: var(--primary);
-    text-style: bold;
+    font-style: bold;
 }
 
 #feedback-buttons {

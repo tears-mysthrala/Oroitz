@@ -1,7 +1,7 @@
 """Session wizard for creating new analysis sessions."""
 
 from pathlib import Path
-from typing import Optional
+from typing import Optional, cast
 
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
@@ -29,6 +29,9 @@ class SessionWizard(QWizard):
     # Signals
     session_created = Signal(Session)
     cancelled = Signal()
+
+    # Keep a typed attribute so static analysis knows this subclass has it
+    selected_workflow_id: Optional[str] = None
 
     def __init__(self, session_manager: Optional[SessionManager] = None) -> None:
         """Initialize the session wizard."""
@@ -264,7 +267,9 @@ class WorkflowSelectionPage(QWizardPage):
     def _on_workflow_selected(self, button) -> None:
         """Handle workflow selection."""
         workflow_id = button.property("workflow_id")
-        self.wizard().selected_workflow_id = workflow_id
+        # Cast the base QWizard returned by wizard() to our SessionWizard so
+        # the attribute access is recognized by static analysis tools.
+        cast(SessionWizard, self.wizard()).selected_workflow_id = workflow_id
 
 
 class SummaryPage(QWizardPage):
@@ -290,7 +295,9 @@ class SummaryPage(QWizardPage):
         session_name = self.field("sessionName")
         image_path = self.field("imagePath")
         profile = self.field("profile")
-        workflow_id = self.wizard().selected_workflow_id
+        # Cast the returned QWizard to our subclass so static analysis
+        # recognizes the selected_workflow_id attribute.
+        workflow_id = cast(SessionWizard, self.wizard()).selected_workflow_id
 
         # Get workflow name
         workflow_name = "Unknown"

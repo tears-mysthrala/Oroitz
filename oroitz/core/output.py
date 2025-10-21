@@ -31,6 +31,32 @@ class ProcessInfo(BaseModel):
             raise ValueError("Value must be non-negative")
         return v
 
+    def __init__(
+        self,
+        pid: int,
+        name: str,
+        ppid: Optional[int] = None,
+        threads: Optional[int] = None,
+        handles: Optional[int] = None,
+        session: Optional[int] = None,
+        wow64: Optional[bool] = None,
+        create_time: Optional[str] = None,
+        exit_time: Optional[str] = None,
+        anomalies: Optional[List[str]] = None,
+    ) -> None:
+        super().__init__(
+            pid=pid,
+            name=name,
+            ppid=ppid,
+            threads=threads,
+            handles=handles,
+            session=session,
+            wow64=wow64,
+            create_time=create_time,
+            exit_time=exit_time,
+            anomalies=anomalies or [],
+        )
+
 
 class NetworkConnection(BaseModel):
     """Normalized network connection information."""
@@ -49,6 +75,26 @@ class NetworkConnection(BaseModel):
         if v is not None and v < 0:
             raise ValueError("PID must be non-negative")
         return v
+
+    def __init__(
+        self,
+        offset: Optional[str] = None,
+        pid: Optional[int] = None,
+        owner: Optional[str] = None,
+        created: Optional[str] = None,
+        local_addr: Optional[str] = None,
+        remote_addr: Optional[str] = None,
+        state: Optional[str] = None,
+    ) -> None:
+        super().__init__(
+            offset=offset,
+            pid=pid,
+            owner=owner,
+            created=created,
+            local_addr=local_addr,
+            remote_addr=remote_addr,
+            state=state,
+        )
 
 
 class MalfindHit(BaseModel):
@@ -69,6 +115,28 @@ class MalfindHit(BaseModel):
         if v is not None and v < 0:
             raise ValueError("Value must be non-negative")
         return v
+
+    def __init__(
+        self,
+        pid: Optional[int] = None,
+        process_name: Optional[str] = None,
+        start: Optional[str] = None,
+        end: Optional[str] = None,
+        tag: Optional[str] = None,
+        protection: Optional[str] = None,
+        commit_charge: Optional[int] = None,
+        private_memory: Optional[int] = None,
+    ) -> None:
+        super().__init__(
+            pid=pid,
+            process_name=process_name,
+            start=start,
+            end=end,
+            tag=tag,
+            protection=protection,
+            commit_charge=commit_charge,
+            private_memory=private_memory,
+        )
 
 
 class QuickTriageOutput(BaseModel):

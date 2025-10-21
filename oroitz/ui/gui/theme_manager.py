@@ -348,12 +348,16 @@ class ThemeManager:
         if not app:
             return
 
-        if theme == Theme.LIGHT:
-            app.setStyleSheet(cls.LIGHT_THEME)
-        elif theme == Theme.DARK:
-            app.setStyleSheet(cls.DARK_THEME)
-        else:  # SYSTEM
-            app.setStyleSheet("")  # Reset to system default
+        # QApplication.instance() may be typed as QCoreApplication by some
+        # stubs; only call setStyleSheet when we actually have a QApplication
+        # instance to satisfy static type checkers.
+        if isinstance(app, QApplication):
+            if theme == Theme.LIGHT:
+                app.setStyleSheet(cls.LIGHT_THEME)
+            elif theme == Theme.DARK:
+                app.setStyleSheet(cls.DARK_THEME)
+            else:  # SYSTEM
+                app.setStyleSheet("")  # Reset to system default
 
     @classmethod
     def get_current_theme(cls) -> Theme:

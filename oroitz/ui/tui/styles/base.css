@@ -1,37 +1,8 @@
 /* Oroitz TUI Styles - Base Monokai Theme */
 
-:root {
-    --primary: #f92672;
-    --primary-darken-1: #e91e63;
-    --primary-darken-2: #c2185b;
-    --surface: #272822;
-    --surface-darken-1: #1e1f1c;
-    --text: #f8f8f2;
-    --text-muted: #75715e;
-    --success: #a6e22e;
-    --error: #f92672;
-    --warning: #fd971f;
-    --info: #66d9ef;
-}
-
-/* High contrast variant */
-.theme-high-contrast {
-    --primary: #ffffff;
-    --primary-darken-1: #cccccc;
-    --primary-darken-2: #aaaaaa;
-    --surface: #000000;
-    --surface-darken-1: #111111;
-    --text: #ffffff;
-    --text-muted: #cccccc;
-    --success: #00ff00;
-    --error: #ff0000;
-    --warning: #ffff00;
-    --info: #00ffff;
-}
-
 Screen {
-    background: var(--surface);
-    color: var(--text);
+    background: #272822;
+    color: #f8f8f2;
 }
 
 Container {
@@ -54,7 +25,7 @@ Container {
 #settings-title {
     text-align: center;
     margin: 2;
-    color: var(--primary);
+    color: #f92672;
     font-style: bold;
 }
 
@@ -65,24 +36,24 @@ Container {
 .session-info {
     text-align: center;
     margin: 1;
-    color: var(--text-muted);
+    color: #75715e;
 }
 
 .workflow-button {
     width: 100%;
     margin: 1;
     padding: 1;
-    background: var(--primary-darken-1);
-    border: solid var(--primary);
+    background: #e91e63;
+    border: solid #f92672;
 }
 
 .workflow-button:hover {
-    background: var(--primary);
+    background: #f92672;
 }
 
 .workflow-button:focus {
-    background: var(--primary);
-    border: solid var(--text);
+    background: #f92672;
+    border: solid #f8f8f2;
 }
 
 #form {
@@ -103,18 +74,18 @@ Container {
 #log-container {
     height: 60%;
     margin: 2;
-    border: solid var(--primary-darken-2);
+    border: solid #c2185b;
     padding: 1;
 }
 
 #log-title {
-    color: var(--primary);
+    color: #f92672;
     font-style: bold;
 }
 
 #log-content {
-    color: var(--text);
-    background: var(--surface-darken-1);
+    color: #f8f8f2;
+    background: #1e1f1c;
     padding: 1;
 
     #run-buttons {
@@ -130,7 +101,7 @@ Container {
 .summary {
     text-align: center;
     margin: 2;
-    color: var(--success);
+    color: #a6e22e;
     font-style: bold;
 }
 
@@ -152,8 +123,8 @@ Container {
     }
 
     .error {
-        background: var(--error);
-        color: var(--text);
+        background: #f92672;
+        color: #f8f8f2;
     }
 
     #error-container {
@@ -172,31 +143,31 @@ Container {
 #error-title {
     text-align: center;
     margin: 2;
-    color: var(--error);
+    color: #f92672;
     font-style: bold;
 }
 
 #error-message {
     text-align: center;
     margin: 2;
-    color: var(--error);
-    background: var(--surface-darken-1);
+    color: #f92672;
+    background: #1e1f1c;
     padding: 1;
-    border: solid var(--error);
+    border: solid #f92672;
 }
 
 .error-details-title {
     margin: 1;
-    color: var(--text-muted);
+    color: #75715e;
     font-style: bold;
 }
 
 #error-details {
     margin: 1;
-    color: var(--text);
-    background: var(--surface-darken-1);
+    color: #f8f8f2;
+    background: #1e1f1c;
     padding: 1;
-    border: solid var(--text-muted);
+    border: solid #75715e;
     height: 40%;
     overflow: auto;
 }
@@ -208,14 +179,14 @@ Container {
 #feedback-title {
     text-align: center;
     margin: 2;
-    color: var(--primary);
+    color: #f92672;
     font-style: bold;
 }
 
 .feedback-subtitle {
     text-align: center;
     margin: 1;
-    color: var(--text-muted);
+    color: #75715e;
 }
 
 #feedback-form {
@@ -230,11 +201,31 @@ Container {
     }
 
     margin: 2 0 1 0;
-    color: var(--primary);
+    color: #f92672;
     font-style: bold;
 }
 
 #feedback-buttons {
     margin: 2;
     align: center middle;
+}
+
+/* High contrast variant */
+.theme-high-contrast Screen {
+    background: #000000;
+    color: #ffffff;
+}
+
+.theme-high-contrast .workflow-button {
+    background: #cccccc;
+    border: solid #ffffff;
+}
+
+.theme-high-contrast .workflow-button:hover {
+    background: #ffffff;
+}
+
+.theme-high-contrast .workflow-button:focus {
+    background: #ffffff;
+    border: solid #ffffff;
 }

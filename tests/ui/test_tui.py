@@ -10,6 +10,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+import pytest_asyncio
 from textual.widgets import DataTable, Input, Select
 
 from oroitz.core.executor import ExecutionResult
@@ -27,7 +28,7 @@ def tui_app():
     return app
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def pilot(tui_app):
     """Create a pilot for testing the TUI."""
     async with tui_app.run_test() as pilot:
@@ -41,17 +42,18 @@ class TestHomeView:
     async def test_screen_composition(self, pilot):
         """Test screen has all required widgets."""
         await pilot.pause()
+        await pilot.pause()  # Wait for on_mount to push HomeView
 
         # Check title
-        title = pilot.get_widget_by_id("title")
+        title = pilot.app.query_one("#title")
         assert title is not None
 
         # Check workflow buttons container
-        workflow_container = pilot.get_widget_by_id("workflow-buttons")
+        workflow_container = pilot.app.query_one("#workflow-buttons")
         assert workflow_container is not None
 
         # Check exit button
-        exit_btn = pilot.get_widget_by_id("exit-button")
+        exit_btn = pilot.app.query_one("#exit-button")
         assert exit_btn is not None
 
     @pytest.mark.asyncio
@@ -63,7 +65,7 @@ class TestHomeView:
         workflows = registry.list()
         if workflows:
             first_workflow = workflows[0]
-            button = pilot.get_widget_by_id(f"workflow-{first_workflow.id}")
+            button = pilot.app.query_one(f"#workflow-{first_workflow.id}")
 
             # Click the button
             await pilot.click(button)
@@ -89,7 +91,7 @@ class TestSessionWizardView:
             await pilot.pause()
 
             # Check for image path input
-            image_input = pilot.get_widget_by_id("image-path-input")
+            image_input = pilot.app.query_one("#image-path-input")
             assert image_input is not None
             assert isinstance(image_input, Input)
 
@@ -104,7 +106,7 @@ class TestSessionWizardView:
             await pilot.pause()
 
             # Check for profile select
-            profile_select = pilot.get_widget_by_id("profile-select")
+            profile_select = pilot.app.query_one("#profile-select")
             if profile_select:
                 assert isinstance(profile_select, Select)
                 # Should have some default profiles
@@ -121,19 +123,19 @@ class TestSessionWizardView:
             await pilot.pause()
 
             # Fill in the form
-            image_input = pilot.get_widget_by_id("image-path-input")
+            image_input = pilot.app.query_one("#image-path-input")
             await pilot.click(image_input)
             await pilot.press("tab")  # Tab to next field
             await pilot.press(*"/test/memory.img")
 
             # Select profile
-            profile_select = pilot.get_widget_by_id("profile-select")
+            profile_select = pilot.app.query_one("#profile-select")
             if profile_select:
                 await pilot.click(profile_select)
                 await pilot.press("enter")  # Select first option
 
             # Click create button
-            create_btn = pilot.get_widget_by_id("start-button")
+            create_btn = pilot.app.query_one("#start-button")
             if create_btn:
                 await pilot.click(create_btn)
 
@@ -164,7 +166,7 @@ class TestResultsView:
         ]
 
         # Create mock session and workflow
-        session = Session(image_path=Path("/test.img"), profile="windows")
+        session = Session(image_path=Path("/test.img"))
         workflows = registry.list()
         workflow = workflows[0] if workflows else None
 
@@ -175,7 +177,7 @@ class TestResultsView:
             await pilot.pause()
 
             # Check data table exists
-            data_table = pilot.get_widget_by_id("results-table")
+            data_table = pilot.app.query_one("#results-table")
             assert data_table is not None
             assert isinstance(data_table, DataTable)
 
@@ -194,7 +196,7 @@ class TestResultsView:
         ]
 
         # Create mock session and workflow
-        session = Session(image_path=Path("/test.img"), profile="windows")
+        session = Session(image_path=Path("/test.img"))
         workflows = registry.list()
         workflow = workflows[0] if workflows else None
 
@@ -204,7 +206,7 @@ class TestResultsView:
             await pilot.pause()
 
             # Check export button
-            export_btn = pilot.get_widget_by_id("export-json")
+            export_btn = pilot.app.query_one("#export-json")
             if export_btn:
                 # Mock the export function
                 with patch("oroitz.ui.tui.views.OutputExporter"):
@@ -225,7 +227,7 @@ class TestTUIIntegration:
         assert isinstance(pilot.app.screen, HomeView)
 
         # Click on quick triage workflow
-        quick_triage_btn = pilot.get_widget_by_id("workflow-quick_triage")
+        quick_triage_btn = pilot.app.query_one("#workflow-quick_triage")
         if quick_triage_btn:
             await pilot.click(quick_triage_btn)
 
@@ -247,7 +249,7 @@ class TestTUIIntegration:
             await pilot.pause()
 
             # Try to create session with empty image path
-            create_btn = pilot.get_widget_by_id("start-button")
+            create_btn = pilot.app.query_one("#start-button")
             if create_btn:
                 await pilot.click(create_btn)
                 # Should show error or prevent creation

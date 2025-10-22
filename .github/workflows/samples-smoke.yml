@@ -119,12 +119,20 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install Poetry
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+
+      - name: Install dependencies
+        run: poetry install --without gui
+
       - name: Run quick_triage benchmark
         run: |
           python tools/benchmark.py --sample samples/memdump.mem --output results/benchmark_report.json
 
       - name: Upload benchmark report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: benchmark-report
           path: results/benchmark_report.json

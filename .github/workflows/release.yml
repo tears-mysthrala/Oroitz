@@ -32,7 +32,7 @@ jobs:
                   pip install poetry
 
             - name: Install dependencies
-              run: poetry install --with dev
+              run: poetry install --with dev --with gui
 
             - name: Build installers
               run: poetry run python scripts/build_installers.py

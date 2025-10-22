@@ -119,13 +119,6 @@ class SettingsDialog(QDialog):
         widget = QWidget()
         layout = QFormLayout(widget)
 
-        # Default profile
-        self.default_profile_combo = QComboBox()
-        self.default_profile_combo.addItems(
-            ["Win10x64_19041", "Win10x64_2004", "Win7SP1x64", "Linux"]
-        )
-        layout.addRow("Default Profile:", self.default_profile_combo)
-
         # Cache results
         self.cache_results_check = QCheckBox("Cache plugin results")
         layout.addRow(self.cache_results_check)
@@ -166,7 +159,6 @@ class SettingsDialog(QDialog):
         self.sessions_dir_edit.setText(str(config.sessions_dir))
 
         # Analysis
-        self.default_profile_combo.setCurrentText(config.default_profile)
         self.cache_results_check.setChecked(config.cache_enabled)
         self.auto_export_check.setChecked(config.auto_export)
 
@@ -188,7 +180,6 @@ class SettingsDialog(QDialog):
         config.sessions_dir = Path(self.sessions_dir_edit.text())
 
         # Analysis
-        config.default_profile = self.default_profile_combo.currentText()
         config.cache_enabled = self.cache_results_check.isChecked()
         config.auto_export = self.auto_export_check.isChecked()
 

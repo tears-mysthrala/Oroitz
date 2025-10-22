@@ -30,12 +30,11 @@ class WorkflowWorker(QThread):
     execution_finished = Signal(list)  # results list
     execution_error = Signal(str)  # error message
 
-    def __init__(self, workflow_id: str, image_path: str, profile: str) -> None:
+    def __init__(self, workflow_id: str, image_path: str) -> None:
         """Initialize the workflow worker."""
         super().__init__()
         self.workflow_id = workflow_id
         self.image_path = image_path
-        self.profile = profile
         self.executor = Executor()
 
     def run(self) -> None:
@@ -48,15 +47,15 @@ class WorkflowWorker(QThread):
                 return
 
             # Check compatibility
-            if not registry.validate_compatibility(self.workflow_id, self.profile):
-                self.execution_error.emit(f"Workflow not compatible with profile {self.profile}")
+            if not registry.validate_compatibility(self.workflow_id):
+                self.execution_error.emit("Workflow validation failed")
                 return
 
             self.log_message.emit(f"Starting workflow: {workflow.name}")
             self.progress_updated.emit(5, "Initializing...")
 
             # Execute workflow
-            results = self.executor.execute_workflow(workflow, self.image_path, self.profile)
+            results = self.executor.execute_workflow(workflow, self.image_path)
 
             # Update progress for each plugin
             total_plugins = len(workflow.plugins)
@@ -213,8 +212,6 @@ class SessionDashboard(QWidget):
         workflow_info = f"Name: {session.name}\n"
         if session.image_path:
             workflow_info += f"Image: {session.image_path.name}\n"
-        if session.profile:
-            workflow_info += f"Profile: {session.profile}\n"
         workflow_info += f"Created: {session.created_at.strftime('%Y-%m-%d %H:%M')}"
 
         self.workflow_info.setText(workflow_info)
@@ -240,10 +237,6 @@ class SessionDashboard(QWidget):
             self.status_label.setText("Error: No memory image specified")
             return
 
-        if not self.current_session.profile:
-            self.status_label.setText("Error: No profile specified")
-            return
-
         # Start workflow execution
         self.status_label.setText("Starting analysis...")
         self.start_btn.setEnabled(False)
@@ -258,7 +251,6 @@ class SessionDashboard(QWidget):
         self.worker = WorkflowWorker(
             self.current_session.workflow_id,
             str(self.current_session.image_path),
-            self.current_session.profile,
         )
 
         # Connect signals

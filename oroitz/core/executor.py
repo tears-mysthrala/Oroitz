@@ -12,13 +12,20 @@ from oroitz.core.cache import cache
 from oroitz.core.config import config
 from oroitz.core.telemetry import log_event, logger
 
-# Volatility 3 imports - only for checking availability
-VOLATILITY_AVAILABLE = True
+# Volatility 3 imports
 try:
-    import volatility3
+    import volatility3.framework.automagic as automagic
+    import volatility3.framework.contexts as contexts
+    import volatility3.framework.plugins as plugins
+    from volatility3.cli import CommandLine
+
+    VOLATILITY_AVAILABLE = True
 except ImportError:
     VOLATILITY_AVAILABLE = False
-    volatility3 = None
+    automagic = None
+    contexts = None
+    plugins = None
+    CommandLine = None
 
 
 class ExecutionResult(BaseModel):
@@ -65,9 +72,54 @@ class Executor:
             return False
 
     def _execute_volatility_plugin(
-        self, plugin_name: str, image_path: str, profile: str = "", **kwargs: Any
+        self, plugin_name: str, image_path: str, **kwargs: Any
     ) -> Tuple[Optional[List[Dict[str, Any]]], int, bool]:
-        """Execute a Volatility 3 plugin using CLI and return normalized output."""
+        """Execute a Volatility 3 plugin using Python API."""
+        if not VOLATILITY_AVAILABLE:
+            logger.warning("Volatility 3 Python API not available, falling back to mock data")
+            log_event(
+                "plugin_fallback",
+                {"plugin": plugin_name, "reason": "volatility_unavailable"},
+            )
+            return self._get_mock_data(plugin_name), 0, True
+
+        # Use Python API for better integration
+        try:
+            # Create context and configure
+            ctx = contexts.Context()
+            ctx.config["automagic.LayerStacker.single_location"] = f"file://{image_path}"
+
+            # Run automagic to detect OS and symbols
+            automagics = automagic.available(ctx)
+            chosen_automagics = automagic.choose_automagic(automagics, plugin_name)
+
+            for amagic in chosen_automagics:
+                if amagic.__class__.__name__ == "LayerStacker":
+                    ctx.config["automagic.LayerStacker.single_location"] = f"file://{image_path}"
+                amagic(ctx)
+
+            # Construct plugin
+            plugin = plugins.construct_plugin(ctx, automagics, plugin_name, None, None, **kwargs)
+
+            # Run plugin
+            treegrid = plugin.run()
+
+            # Convert treegrid to list of dicts
+            result = []
+            for row in treegrid:
+                result.append(dict(row))
+
+            return result, 1, False
+
+        except Exception as e:
+            logger.warning("Volatility 3 Python API failed: %s", e)
+            logger.info("Falling back to CLI method")
+            return self._execute_volatility_plugin_cli(plugin_name, image_path, **kwargs)
+
+    def _execute_volatility_plugin_cli(
+        self, plugin_name: str, image_path: str, **kwargs: Any
+    ) -> Tuple[Optional[List[Dict[str, Any]]], int, bool]:
+        """Execute a Volatility 3 plugin using CLI as fallback."""
         if not self._volatility_available:
             logger.warning("Volatility 3 CLI not available, falling back to mock data")
             log_event(
@@ -301,7 +353,6 @@ class Executor:
         self,
         plugin_name: str,
         image_path: str,
-        profile: str = "",
         session_id: Optional[str] = None,
         **kwargs: Any,
     ) -> ExecutionResult:
@@ -313,7 +364,7 @@ class Executor:
         cache_session_id = session_id or "default"
 
         # Check cache first
-        cache_key_params = {"image_path": image_path, "profile": profile, **kwargs}
+        cache_key_params = {"image_path": image_path, **kwargs}
         cached_result = cache.get(cache_session_id, plugin_name, cache_key_params)
         if cached_result is not None:
             logger.info(f"Using cached result for {plugin_name}")
@@ -331,7 +382,7 @@ class Executor:
 
             # Execute real Volatility 3 plugin
             output, attempts_taken, used_mock = self._execute_volatility_plugin(
-                plugin_name, image_path, profile, **kwargs
+                plugin_name, image_path, **kwargs
             )
 
             # Cache the result (store only the output)
@@ -367,9 +418,7 @@ class Executor:
             used_mock=used_mock_value,
         )
 
-    def execute_workflow(
-        self, workflow_spec: Any, image_path: str, profile: str = ""
-    ) -> List[ExecutionResult]:
+    def execute_workflow(self, workflow_spec: Any, image_path: str) -> List[ExecutionResult]:
         """Execute all plugins in a workflow."""
         results: List[ExecutionResult] = []
 
@@ -391,7 +440,7 @@ class Executor:
                 "executing plugins sequentially"
             )
             for plugin in workflow_spec.plugins:
-                result = self.execute_plugin(plugin.name, image_path, profile, **plugin.parameters)
+                result = self.execute_plugin(plugin.name, image_path, **plugin.parameters)
                 results.append(result)
         else:
             # Use thread pool for normal-sized images
@@ -403,7 +452,7 @@ class Executor:
                 futures = []
                 for plugin in workflow_spec.plugins:
                     future = executor.submit(
-                        self.execute_plugin, plugin.name, image_path, profile, **plugin.parameters
+                        self.execute_plugin, plugin.name, image_path, **plugin.parameters
                     )
                     futures.append(future)
 

@@ -77,7 +77,7 @@ def test_execute_workflow():
         ],
     )
 
-    results = executor.execute_workflow(workflow, "/fake/image", "windows")
+    results = executor.execute_workflow(workflow, "/fake/image")
 
     assert len(results) == 2
     assert all(r.success for r in results)

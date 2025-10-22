@@ -83,7 +83,7 @@ Document the default workflows, their constituent Volatility plugins, expected o
 
 ## Validation Rules
 
-- Before executing, ensure selected workflow supports the memory image profile (Windows vs Linux vs macOS). For now focus on Windows; extend catalogue before claiming cross-platform support.
+- Before executing, ensure selected workflow supports the memory image OS (Windows vs Linux vs macOS). For now focus on Windows; extend catalogue before claiming cross-platform support.
 - Verify required symbol files or configuration options exist; if not, present actionable error.
 - Provide dry-run mode that only validates prerequisites without executing plugins.
 

@@ -21,9 +21,8 @@ def cli(log_level: str) -> None:
 
 @cli.command()
 @click.argument("image_path", type=click.Path(exists=True))
-@click.option("--profile", default="", help="Profile name to use for analysis", type=str)
 @click.option("--output", type=click.Path(), help="Output file for JSON export")
-def quick_triage(image_path: str, profile: str, output: Optional[str]) -> None:
+def quick_triage(image_path: str, output: Optional[str]) -> None:
     """Run quick triage analysis on a memory image."""
     click.echo(f"Running quick triage on {image_path}")
 
@@ -35,7 +34,7 @@ def quick_triage(image_path: str, profile: str, output: Optional[str]) -> None:
 
     # Execute workflow (Volatility 3 auto-detects symbol tables)
     executor = Executor()
-    results = executor.execute_workflow(workflow, str(image_path), profile)
+    results = executor.execute_workflow(workflow, str(image_path))
 
     # Normalize output
     normalizer = OutputNormalizer()

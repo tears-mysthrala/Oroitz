@@ -6,7 +6,7 @@ from typing import Optional
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal, Vertical
 from textual.screen import Screen
-from textual.widgets import Button, Input, Label, Select, Static
+from textual.widgets import Button, Input, Label, Static
 
 from oroitz.core.session import Session
 from oroitz.core.workflow import WorkflowSpec, registry
@@ -26,7 +26,6 @@ class SessionWizardView(Screen):
         super().__init__()
         self.workflow = workflow
         self.image_path: Optional[Path] = None
-        self.profile = "windows"
 
     def compose(self) -> ComposeResult:
         """Compose the session wizard."""
@@ -39,12 +38,6 @@ class SessionWizardView(Screen):
                 with Vertical(id="form"):
                     yield Label("Memory Image Path:")
                     yield Input(placeholder="/path/to/memory/image.raw", id="image-path-input")
-
-                    yield Label("Profile:")
-                    yield Select(
-                        [("windows", "Windows"), ("linux", "Linux"), ("mac", "macOS")],
-                        id="profile-select",
-                    )
 
                 with Horizontal(id="buttons"):
                     yield Button("Back", id="back-button", variant="default")
@@ -71,11 +64,6 @@ class SessionWizardView(Screen):
             if path_str:
                 self.image_path = Path(path_str)
 
-    def on_select_changed(self, event: Select.Changed) -> None:
-        """Handle select changes."""
-        if event.select.id == "profile-select":
-            self.profile = event.value
-
     def _start_analysis(self) -> None:
         """Start the analysis with current configuration."""
         if not self.image_path:
@@ -86,13 +74,13 @@ class SessionWizardView(Screen):
             self.notify(f"Memory image file does not exist: {self.image_path}", severity="error")
             return
 
-        # Check workflow compatibility
-        if not registry.validate_compatibility(self.workflow.id, str(self.profile)):
-            self.notify(f"Workflow not compatible with profile: {self.profile}", severity="error")
+        # Check workflow compatibility - Volatility 3 auto-detects OS
+        if not registry.validate_compatibility(self.workflow.id):
+            self.notify("Workflow validation failed", severity="error")
             return
 
         # Create session
-        session = Session(image_path=self.image_path, profile=str(self.profile))
+        session = Session(image_path=self.image_path)
         # Cast app to access custom methods
         from .. import OroitzTUI
 

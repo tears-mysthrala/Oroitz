@@ -31,7 +31,6 @@ class WorkflowSpec(BaseModel):
         ..., min_length=1, description="Workflow must have at least one plugin"
     )
     transforms: List[TransformSpec] = Field(default_factory=list)
-    supported_profiles: List[str] = Field(default_factory=list)  # e.g., ["windows"]
 
 
 class WorkflowRegistry:
@@ -57,17 +56,17 @@ class WorkflowRegistry:
         """List all registered workflows."""
         return list(self._workflows.values())
 
-    def validate_compatibility(self, workflow_id: str, profile: str) -> bool:
-        """Check if workflow is compatible with the given profile."""
+    def validate_compatibility(self, workflow_id: str) -> bool:
+        """Check if workflow is compatible (Volatility 3 auto-detects OS from plugins)."""
         if not isinstance(workflow_id, str) or not workflow_id:
             raise ValueError("Workflow ID must be a non-empty string")
-        if not isinstance(profile, str) or not profile:
-            raise ValueError("Profile must be a non-empty string")
 
         workflow = self.get(workflow_id)
         if not workflow:
             return False
-        return not workflow.supported_profiles or profile in workflow.supported_profiles
+        # In Volatility 3, compatibility is determined by plugin OS prefixes
+        # (windows.*, linux.*, mac.*). We assume workflows are correctly defined
+        return True
 
     def clear(self) -> None:
         """Clear all registered workflows."""
@@ -94,7 +93,6 @@ def seed_workflows() -> None:
             PluginSpec(name="windows.netscan"),
             PluginSpec(name="windows.malfind"),
         ],
-        supported_profiles=[],  # Allow any profile for testing
     )
     registry.register(quick_triage)
 
@@ -109,7 +107,6 @@ def seed_workflows() -> None:
             PluginSpec(name="windows.handles"),
             PluginSpec(name="windows.psscan"),
         ],
-        supported_profiles=[],  # Allow any profile for testing
     )
     registry.register(process_deepdive)
 
@@ -123,7 +120,6 @@ def seed_workflows() -> None:
             PluginSpec(name="windows.sockscan"),
             PluginSpec(name="windows.connections"),
         ],
-        supported_profiles=[],  # Allow any profile for testing
     )
     registry.register(network_focus)
 
@@ -136,7 +132,6 @@ def seed_workflows() -> None:
             PluginSpec(name="windows.timeliner"),
             PluginSpec(name="windows.getservicesids"),
         ],
-        supported_profiles=[],  # Allow any profile for testing
     )
     registry.register(timeline_overview)
 

@@ -13,13 +13,11 @@ def test_workflow_spec_creation():
             PluginSpec(name="test.plugin1"),
             PluginSpec(name="test.plugin2", parameters={"param1": "value1"}),
         ],
-        supported_profiles=["windows", "linux"],
     )
 
     assert workflow.id == "test_workflow"
     assert workflow.name == "Test Workflow"
     assert len(workflow.plugins) == 2
-    assert workflow.supported_profiles == ["windows", "linux"]
 
 
 def test_workflow_registry():
@@ -61,14 +59,12 @@ def test_workflow_compatibility():
         name="Windows Only",
         description="Windows workflow",
         plugins=[PluginSpec(name="windows.test")],
-        supported_profiles=["windows"],
     )
     registry.register(workflow)
 
-    # Test compatibility
-    assert registry.validate_compatibility("windows_only", "windows")
-    assert not registry.validate_compatibility("windows_only", "linux")
-    assert not registry.validate_compatibility("nonexistent", "windows")
+    # Test compatibility - now always returns True for Volatility 3
+    assert registry.validate_compatibility("windows_only")
+    assert registry.validate_compatibility("nonexistent") is False
 
 
 def test_seed_workflows():
@@ -84,4 +80,3 @@ def test_seed_workflows():
     assert workflow is not None
     assert workflow.name == "Quick Triage"
     assert len(workflow.plugins) == 3
-    assert workflow.supported_profiles == []

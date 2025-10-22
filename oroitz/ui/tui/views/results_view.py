@@ -40,7 +40,7 @@ class ResultsView(Screen):
                 yield Breadcrumb(f"Home > {self.workflow.name} > Results")
                 yield Static(f"Results: {self.workflow.name}", id="results-title")
                 yield Static(
-                    f"Session: {self.session.image_path} ({self.session.profile})",
+                    f"Session: {self.session.image_path}",
                     classes="session-info",
                 )
 

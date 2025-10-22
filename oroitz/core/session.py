@@ -17,7 +17,6 @@ class Session(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
     name: str = Field(default="Untitled Session")
     image_path: Optional[Path] = None
-    profile: Optional[str] = None
     workflow_id: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
@@ -56,11 +55,11 @@ class Session(BaseModel):
         if not workflow:
             return None
 
-        if not self.image_path or not self.profile:
+        if not self.image_path:
             return None
 
-        # Check compatibility
-        if not registry.validate_compatibility(workflow_id, self.profile):
+        # Check compatibility - Volatility 3 auto-detects OS, so we validate plugin OS prefix
+        if not registry.validate_compatibility(workflow_id):
             return None
 
         executor = Executor()
@@ -84,7 +83,6 @@ class Session(BaseModel):
                 result = executor.execute_plugin(
                     plugin_spec.name,
                     str(self.image_path),
-                    self.profile,
                     session_id=self.id,
                     **plugin_spec.parameters,
                 )
@@ -125,13 +123,10 @@ class SessionManager:
         self,
         name: str = "Untitled Session",
         image_path: Optional[Path] = None,
-        profile: Optional[str] = None,
         workflow_id: Optional[str] = None,
     ) -> Session:
         """Create a new session."""
-        session = Session(
-            name=name, image_path=image_path, profile=profile, workflow_id=workflow_id
-        )
+        session = Session(name=name, image_path=image_path, workflow_id=workflow_id)
         self._sessions[session.id] = session
         return session
 

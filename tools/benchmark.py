@@ -18,7 +18,6 @@ from pathlib import Path
 from typing import Optional
 
 try:
-    from oroitz.core.config import config
     from oroitz.core.executor import Executor
     from oroitz.core.workflow import registry, seed_workflows
 except Exception:
@@ -32,7 +31,6 @@ except Exception:
     if str(repo_root) not in sys.path:
         sys.path.insert(0, str(repo_root))
 
-    from oroitz.core.config import config
     from oroitz.core.executor import Executor
     from oroitz.core.workflow import registry, seed_workflows
 
@@ -82,7 +80,7 @@ def run_benchmark(image_path: Path, out_path: Path) -> None:
         print("psutil not available, skipping memory monitoring")
 
     start = time.time()
-    results = executor.execute_workflow(workflow, str(image_path), config.default_profile)
+    results = executor.execute_workflow(workflow, str(image_path))
     end = time.time()
 
     # Get final memory usage
@@ -99,7 +97,6 @@ def run_benchmark(image_path: Path, out_path: Path) -> None:
         "image": str(image_path),
         "image_size_bytes": image_size_bytes,
         "image_size_gb": image_size_gb,
-        "profile": config.default_profile,
         "timestamp": int(start),
         "duration_seconds": end - start,
         "memory_info": memory_info,

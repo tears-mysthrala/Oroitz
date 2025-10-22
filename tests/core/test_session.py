@@ -12,21 +12,19 @@ def test_session_creation():
     assert session.id
     assert session.name == "Untitled Session"
     assert session.image_path is None
-    assert session.profile is None
     assert session.created_at
     assert session.updated_at
 
 
 def test_session_save_load():
     """Test saving and loading session."""
-    session = Session(name="Test Session", profile="Win10x64")
+    session = Session(name="Test Session")
     with tempfile.TemporaryDirectory() as tmpdir:
         path = Path(tmpdir) / "session.json"
         session.save(path)
         loaded = Session.load(path)
         assert loaded.id == session.id
         assert loaded.name == session.name
-        assert loaded.profile == session.profile
 
 
 def test_session_context_manager():
@@ -46,7 +44,7 @@ def test_session_run_quick_triage():
     seed_workflows()
 
     # Create session with image and profile
-    session = Session(name="Test Session", image_path=Path("/fake/image.dmp"), profile="windows")
+    session = Session(name="Test Session", image_path=Path("/fake/image.dmp"))
 
     # Run quick_triage
     result = session.run("quick_triage")
@@ -74,7 +72,7 @@ def test_session_run_with_caching():
     seed_workflows()
 
     # Create session with image and profile
-    session = Session(name="Test Session", image_path=Path("/fake/image.dmp"), profile="windows")
+    session = Session(name="Test Session", image_path=Path("/fake/image.dmp"))
 
     # Run quick_triage twice
     result1 = session.run("quick_triage")

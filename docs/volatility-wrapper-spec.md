@@ -34,7 +34,7 @@
 - **Plugin Management:** Discover, enable/disable, parameterize Volatility plugins programmatically; validate compatibility.
 - **Output Normalization:** Convert plugin results into schema-validated structures (JSON, CSV, Parquet).
 - **Pipeline Integration:** Provide async/batch processing hooks, streaming outputs, and return codes suitable for automation.
-- **Session Profiles:** Persist configuration (paths, symbols, profiles) for reuse across runs.
+- **Session Management:** Persist configuration (paths, workflows) for reuse across runs.
 - **Language Bindings:** First-class SDKs for Python and Node.js; publish a CLI that reuses the same core engine.
 - **Extensibility Hooks:** Allow custom post-processors, output sinks, and plugin wrappers via documented interfaces.
 - **Graphical User Interface:** Offer cross-platform desktop application with workflow templates, visual diffs, search, and export actions; surface remediation hints and contextual documentation.
@@ -100,7 +100,7 @@
 
 ### 11.1 Core Operations
 
-- `Session.create(image_path, profile, config)`
+- `Session.create(image_path, config)`
 - `Session.run(workflow, options)`
 - `Session.get_results(format="json")`
 - `Workflow.register(name, plugins, transforms)`
@@ -109,7 +109,7 @@
 ### 11.2 Python Binding Example
 
 ```python
-with vw.Session(image="/cases/acme.mem", profile="Win10x64") as session:
+with vw.Session(image="/cases/acme.mem") as session:
     session.run("quick_triage", include_plugins=["pslist", "netscan"])
     results = session.get_results(format="parquet")
     results.save("./out/case001.parquet")
@@ -118,7 +118,7 @@ with vw.Session(image="/cases/acme.mem", profile="Win10x64") as session:
 ### 11.3 CLI Sketch
 
 ```bash
-vw session create --image ./cases/acme.mem --profile Win10x64 --name case001
+vw session create --image ./cases/acme.mem --name case001
 vw run --session case001 --workflow quick_triage --include pslist netscan
 vw export --session case001 --format json --out ./out/case001.json
 ```

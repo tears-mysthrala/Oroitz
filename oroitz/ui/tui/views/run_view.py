@@ -37,7 +37,6 @@ class RunView(Screen):
                 yield Breadcrumb(f"Home > {self.workflow.name} > Running")
                 yield Static(f"Running: {self.workflow.name}", id="run-title")
                 yield Static(f"Image: {self.session.image_path}", classes="image-info")
-                yield Static(f"Profile: {self.session.profile}", classes="profile-info")
 
                 yield ProgressBar(id="progress-bar", total=len(self.workflow.plugins))
 
@@ -75,7 +74,6 @@ class RunView(Screen):
                     self.executor.execute_plugin,
                     plugin_name,
                     str(self.session.image_path),
-                    self.session.profile or "windows",
                 )
 
                 results.append(result)

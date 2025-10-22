@@ -36,8 +36,12 @@ def test_retry_then_success(monkeypatch):
     success_stdout = json.dumps([{"PID": 42, "ImageFileName": "proc.exe"}])
     success = _make_result(0, stdout=success_stdout, stderr="")
 
-    with patch("oroitz.core.executor.subprocess.run", side_effect=[fail, success]):
-        result = executor.execute_plugin("windows.pslist", "/fake/image", "windows")
+    # Force Python API to fail so we test CLI retry logic
+    with (
+        patch("oroitz.core.executor.contexts.Context", side_effect=Exception("Python API failed")),
+        patch("oroitz.core.executor.subprocess.run", side_effect=[fail, success]),
+    ):
+        result = executor.execute_plugin("windows.pslist", "/fake/image")
 
     assert result.success
     assert result.output is not None
@@ -63,8 +67,11 @@ def test_permanent_failure_fallback(monkeypatch):
     fail = _make_result(1, stdout="", stderr="error")
 
     # All attempts fail
-    with patch("oroitz.core.executor.subprocess.run", side_effect=[fail, fail, fail]):
-        result = executor.execute_plugin("windows.pslist", "/fake/image", "windows")
+    with (
+        patch("oroitz.core.executor.contexts.Context", side_effect=Exception("Python API failed")),
+        patch("oroitz.core.executor.subprocess.run", side_effect=[fail, fail, fail]),
+    ):
+        result = executor.execute_plugin("windows.pslist", "/fake/image")
 
     assert result.success  # fallback returns mock data, but marked as success
     assert result.used_mock is True

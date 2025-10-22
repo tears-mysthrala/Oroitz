@@ -6,7 +6,6 @@ from typing import Optional, cast
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
     QButtonGroup,
-    QComboBox,
     QFileDialog,
     QFormLayout,
     QHBoxLayout,
@@ -60,13 +59,11 @@ class SessionWizard(QWizard):
             # Create session from wizard data
             session_name = self.field("sessionName")
             image_path = self.field("imagePath")
-            profile = self.field("profile")
             workflow_id = self.selected_workflow_id
 
             session = self.session_manager.create_session(
                 name=session_name,
                 image_path=Path(image_path) if image_path else None,
-                profile=profile,
                 workflow_id=workflow_id,
             )
 
@@ -120,13 +117,13 @@ class SessionInfoPage(QWizardPage):
 
 
 class ImageSelectionPage(QWizardPage):
-    """Page for selecting memory image and profile."""
+    """Page for selecting memory image."""
 
     def __init__(self) -> None:
         """Initialize the image selection page."""
         super().__init__()
         self.setTitle("Memory Image")
-        self.setSubTitle("Select the memory image file and analysis profile.")
+        self.setSubTitle("Select the memory image file to analyze.")
 
         self._setup_ui()
 
@@ -178,36 +175,8 @@ class ImageSelectionPage(QWizardPage):
 
         # Add validation hint
         image_hint = QLabel("Supported formats: .raw, .mem, .dmp, .vmem")
-        image_hint.setStyleSheet("color: #7f8c8d; font-size: 12px; margin-bottom: 10px;")
+        image_hint.setStyleSheet("color: #7f8c8d; font-size: 12px;")
         layout.addRow("", image_hint)
-
-        # Profile selection with better styling
-        profile_combo = QComboBox()
-        profile_combo.addItems(["Win10x64_19041", "Win10x64_2004", "Win7SP1x64", "Linux"])
-        profile_combo.setStyleSheet(
-            """
-            QComboBox {
-                padding: 8px;
-                border: 2px solid #ddd;
-                border-radius: 4px;
-                font-size: 14px;
-                min-width: 200px;
-            }
-            QComboBox:focus {
-                border-color: #3498db;
-            }
-            QComboBox::drop-down {
-                border: none;
-            }
-        """
-        )
-        self.registerField("profile", profile_combo, "currentText")
-        layout.addRow("Profile:", profile_combo)
-
-        # Profile hint
-        profile_hint = QLabel("Select the OS profile that matches your memory image")
-        profile_hint.setStyleSheet("color: #7f8c8d; font-size: 12px;")
-        layout.addRow("", profile_hint)
 
     def _browse_image(self) -> None:
         """Open file dialog to select memory image."""
@@ -294,7 +263,6 @@ class SummaryPage(QWizardPage):
         """Initialize the page with current field values."""
         session_name = self.field("sessionName")
         image_path = self.field("imagePath")
-        profile = self.field("profile")
         # Cast the returned QWizard to our subclass so static analysis
         # recognizes the selected_workflow_id attribute.
         workflow_id = cast(SessionWizard, self.wizard()).selected_workflow_id
@@ -312,7 +280,6 @@ class SummaryPage(QWizardPage):
         summary = f"""
         <b>Session Name:</b> {session_name}<br>
         <b>Memory Image:</b> {image_path or 'Not selected'}<br>
-        <b>Profile:</b> {profile}<br>
         <b>Workflow:</b> {workflow_name}
         """
 

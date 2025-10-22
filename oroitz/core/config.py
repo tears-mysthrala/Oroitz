@@ -25,7 +25,6 @@ class Config(BaseSettings):
 
     # GUI settings
     telemetry_enabled: bool = False
-    default_profile: str = "Win10x64_19041"
     cache_enabled: bool = True
     auto_export: bool = False
     theme: str = "system"

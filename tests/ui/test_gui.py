@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import pytest
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication, QComboBox, QLineEdit, QPushButton
+from PySide6.QtWidgets import QApplication, QLineEdit, QPushButton
 
 from oroitz.core.session import SessionManager
 from oroitz.core.workflow import seed_workflows
@@ -225,7 +225,7 @@ class TestLandingView:
             session_manager = SessionManager(Path(temp_dir) / "sessions")
 
             # Add a mock session
-            session = Session(name="Test Session", image_path=Path("/test.img"), profile="windows")
+            session = Session(name="Test Session", image_path=Path("/test.img"))
             session_manager._sessions[session.id] = session
             session_manager.save_sessions()
 
@@ -278,23 +278,6 @@ class TestSessionWizard:
         image_edit.setText(test_path)
         assert image_edit.text() == test_path
 
-    def test_profile_selection(self, qapp, qtbot):
-        """Test profile selection."""
-        wizard = SessionWizard()
-
-        # Navigate to image selection page (page 1)
-        wizard.setStartId(1)
-        wizard.restart()
-        qtbot.wait(100)  # Allow UI to update
-
-        # Find profile combo box in the current page
-        current_page = wizard.currentPage()
-        assert current_page is not None
-        profile_combo = current_page.findChild(QComboBox)
-        assert profile_combo is not None
-        profile_combo.setCurrentText("Win10x64_19041")
-        assert profile_combo.currentText() == "Win10x64_19041"
-
     def test_wizard_completion(self, qapp, qtbot):
         """Test wizard completion creates session."""
         wizard = SessionWizard()
@@ -302,7 +285,6 @@ class TestSessionWizard:
         # Fill in required fields
         wizard.setField("sessionName", "Test Session")
         wizard.setField("imagePath", "/test/memory.img")
-        wizard.setField("profile", "Win10x64_19041")
 
         # Mock the finish signal
         with qtbot.waitSignal(wizard.session_created, timeout=1000) as blocker:
@@ -331,7 +313,6 @@ class TestSessionDashboard:
         session = Session(
             name="Test Session",
             image_path=Path("/test.img"),
-            profile="Win10x64_19041",
             workflow_id="quick_triage",
         )
 
@@ -349,7 +330,6 @@ class TestSessionDashboard:
         session = Session(
             name="Test Session",
             image_path=Path("/test.img"),
-            profile="Win10x64_19041",
             workflow_id="quick_triage",
         )
         dashboard.set_session(session)

@@ -459,15 +459,24 @@ class Executor:
                 max_workers=adjusted_concurrency
             ) as executor:
                 futures = []
-                for plugin in workflow_spec.plugins:
+                future_to_index = {}
+                for i, plugin in enumerate(workflow_spec.plugins):
                     future = executor.submit(
                         self.execute_plugin, plugin.name, image_path, **plugin.parameters
                     )
                     futures.append(future)
+                    future_to_index[future] = i
 
+                # Collect results in completion order, then sort by original order
+                completed_results = []
                 for future in concurrent.futures.as_completed(futures):
                     result = future.result()
-                    results.append(result)
+                    index = future_to_index[future]
+                    completed_results.append((index, result))
+
+                # Sort by original order and extract just the results
+                completed_results.sort(key=lambda x: x[0])
+                results = [result for _, result in completed_results]
 
         return results
 

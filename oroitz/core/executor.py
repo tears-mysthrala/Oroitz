@@ -4,7 +4,7 @@ import json
 import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 from pydantic import BaseModel
 
@@ -12,7 +12,13 @@ from oroitz.core.cache import cache
 from oroitz.core.config import config
 from oroitz.core.telemetry import log_event, logger
 
-# Volatility 3 imports
+# Volatility 3 imports with proper type checking
+if TYPE_CHECKING:
+    import volatility3.framework.automagic as automagic
+    import volatility3.framework.contexts as contexts
+    import volatility3.framework.plugins as plugins
+    from volatility3.cli import CommandLine
+
 try:
     import volatility3.framework.automagic as automagic
     import volatility3.framework.contexts as contexts
@@ -22,10 +28,10 @@ try:
     VOLATILITY_AVAILABLE = True
 except ImportError:
     VOLATILITY_AVAILABLE = False
-    automagic = None
-    contexts = None
-    plugins = None
-    CommandLine = None
+    automagic = None  # type: ignore
+    contexts = None  # type: ignore
+    plugins = None  # type: ignore
+    CommandLine = None  # type: ignore
 
 
 class ExecutionResult(BaseModel):
@@ -86,27 +92,30 @@ class Executor:
         # Use Python API for better integration
         try:
             # Create context and configure
-            ctx = contexts.Context()
+            ctx = contexts.Context()  # type: ignore
             ctx.config["automagic.LayerStacker.single_location"] = f"file://{image_path}"
 
-            # Run automagic to detect OS and symbols
-            automagics = automagic.available(ctx)
-            chosen_automagics = automagic.choose_automagic(automagics, plugin_name)
+            # Get available automagics (returns list of classes)
+            automagic_classes = automagic.available(ctx)  # type: ignore
 
+            # Choose appropriate automagics for the plugin
+            chosen_automagics = automagic.choose_automagic(automagic_classes, plugin_name)  # type: ignore
+
+            # Apply automagics to context
             for amagic in chosen_automagics:
                 if amagic.__class__.__name__ == "LayerStacker":
                     ctx.config["automagic.LayerStacker.single_location"] = f"file://{image_path}"
                 amagic(ctx)
 
             # Construct plugin
-            plugin = plugins.construct_plugin(ctx, automagics, plugin_name, None, None, **kwargs)
+            plugin = plugins.construct_plugin(ctx, plugin_name, **kwargs)  # type: ignore
 
             # Run plugin
             treegrid = plugin.run()
 
             # Convert treegrid to list of dicts
             result = []
-            for row in treegrid:
+            for row in treegrid.get_renderable().rows:  # type: ignore
                 result.append(dict(row))
 
             return result, 1, False

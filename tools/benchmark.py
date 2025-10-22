@@ -70,6 +70,8 @@ def run_benchmark(image_path: Path, out_path: Path) -> None:
 
     # Track memory usage if psutil is available
     memory_info = {}
+    process = None
+    initial_memory = 0
     try:
         import psutil
 
@@ -84,11 +86,11 @@ def run_benchmark(image_path: Path, out_path: Path) -> None:
     end = time.time()
 
     # Get final memory usage
-    if "initial_memory_mb" in memory_info:
+    if "initial_memory_mb" in memory_info and process is not None:
         try:
             final_memory = process.memory_info().rss / (1024**2)  # MB
             memory_info["final_memory_mb"] = final_memory
-            memory_info["memory_delta_mb"] = final_memory - memory_info["initial_memory_mb"]
+            memory_info["memory_delta_mb"] = final_memory - initial_memory
             memory_info["peak_memory_mb"] = max(initial_memory, final_memory)  # Approximation
         except Exception:
             pass

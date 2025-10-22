@@ -1,8 +1,8 @@
-/* Oroitz TUI Styles - Base Monokai Theme */
+/* Oroitz TUI Styles - Modern Dark Theme */
 
 Screen {
-    background: #272822;
-    color: #f8f8f2;
+    background: #1a1a2e;
+    color: #e6e6e6;
 }
 
 Container {
@@ -15,7 +15,7 @@ Container {
 #run-container,
 #results-container,
 #settings-container {
-    padding: 1;
+    padding: 2;
 }
 
 #title,
@@ -24,9 +24,10 @@ Container {
 #results-title,
 #settings-title {
     text-align: center;
-    margin: 2;
-    color: #f92672;
+    margin: 2 0 3 0;
+    color: #00d4ff;
     font-style: bold;
+    text-style: bold;
 }
 
 .subtitle,
@@ -35,103 +36,89 @@ Container {
 .profile-info,
 .session-info {
     text-align: center;
-    margin: 1;
-    color: #75715e;
+    margin: 1 0 2 0;
+    color: #b0b0b0;
 }
 
 .workflow-button {
     width: 100%;
-    margin: 1;
-    padding: 1;
-    background: #e91e63;
-    border: solid #f92672;
+    margin: 1 0;
+    padding: 1 2;
+    background: #16213e;
+    border: solid #00d4ff;
+    color: #e6e6e6;
 }
 
 .workflow-button:hover {
-    background: #f92672;
+    background: #00d4ff;
+    color: #1a1a2e;
 }
 
 .workflow-button:focus {
-    background: #f92672;
-    border: solid #f8f8f2;
+    background: #00d4ff;
+    border: solid #ffffff;
+    color: #1a1a2e;
 }
 
 #form {
-    margin: 2;
+    margin: 3 0;
 }
 
 #buttons {
-    margin: 2;
+    margin: 3 0;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 #progress-bar {
-    margin: 2;
+    margin: 2 0;
 }
 
 #log-container {
     height: 60%;
-    margin: 2;
-    border: solid #c2185b;
+    margin: 2 0;
+    border: solid #00d4ff;
     padding: 1;
+    background: #0f0f23;
 }
 
 #log-title {
-    color: #f92672;
+    color: #00d4ff;
     font-style: bold;
+    margin-bottom: 1;
 }
 
 #log-content {
-    color: #f8f8f2;
-    background: #1e1f1c;
+    color: #e6e6e6;
+    background: #0f0f23;
     padding: 1;
+}
 
-    #run-buttons {
-        margin: 2;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    align: center middle;
+#run-buttons {
+    margin: 2 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .summary {
     text-align: center;
-    margin: 2;
-    color: #a6e22e;
+    margin: 2 0;
+    color: #00ff88;
     font-style: bold;
 }
 
 #results-table {
     #export-buttons {
-        margin: 2;
+        margin: 2 0;
         display: flex;
         justify-content: center;
         align-items: center;
-    }
-
-    #export-buttons {
-        margin: 2;
-        align: center middle;
     }
 
     Button {
         margin: 1;
-    }
-
-    .error {
-        background: #f92672;
-        color: #f8f8f2;
-    }
-
-    #error-container {
-        padding: 2;
-        display: flex;
-        justify-content: center;
-        align-items: center;
     }
 }
 
@@ -142,72 +129,179 @@ Container {
 
 #error-title {
     text-align: center;
-    margin: 2;
-    color: #f92672;
+    margin: 2 0;
+    color: #ff6b6b;
     font-style: bold;
 }
 
 #error-message {
     text-align: center;
-    margin: 2;
-    color: #f92672;
-    background: #1e1f1c;
+    margin: 2 0;
+    color: #ff6b6b;
+    background: #2d1b1b;
     padding: 1;
-    border: solid #f92672;
+    border: solid #ff6b6b;
 }
 
 .error-details-title {
-    margin: 1;
-    color: #75715e;
+    margin: 1 0;
+    color: #b0b0b0;
     font-style: bold;
 }
 
 #error-details {
-    margin: 1;
-    color: #f8f8f2;
-    background: #1e1f1c;
+    margin: 1 0;
+    color: #e6e6e6;
+    background: #2d1b1b;
     padding: 1;
-    border: solid #75715e;
+    border: solid #b0b0b0;
     height: 40%;
     overflow: auto;
 }
 
 #feedback-container {
-    padding: 1;
+    padding: 2;
 }
 
 #feedback-title {
     text-align: center;
-    margin: 2;
-    color: #f92672;
+    margin: 2 0;
+    color: #00d4ff;
     font-style: bold;
 }
 
 .feedback-subtitle {
     text-align: center;
-    margin: 1;
-    color: #75715e;
+    margin: 1 0;
+    color: #b0b0b0;
 }
 
 #feedback-form {
     height: 70%;
-    margin: 1;
-
-    #feedback-buttons {
-        margin: 2;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    margin: 2 0 1 0;
-    color: #f92672;
-    font-style: bold;
+    margin: 1 0;
 }
 
 #feedback-buttons {
-    margin: 2;
+    margin: 2 0;
     align: center middle;
+}
+
+/* DataTable styling */
+DataTable {
+    height: 100%;
+    max-height: 60vh;
+    background: #0f0f23;
+    border: solid #00d4ff;
+}
+
+DataTable>.datatable--header {
+    background: #16213e;
+    color: #00d4ff;
+    font-style: bold;
+}
+
+DataTable>.datatable--cursor {
+    background: #00d4ff;
+    color: #1a1a2e;
+}
+
+VerticalScroll {
+    height: 100%;
+    max-height: 60vh;
+    border: solid #16213e;
+}
+
+/* Button improvements */
+Button {
+    margin: 0 1;
+    padding: 0 2;
+}
+
+Button.variant-primary {
+    background: #00d4ff;
+    border: solid #00d4ff;
+    color: #1a1a2e;
+}
+
+Button.variant-primary:hover {
+    background: #0099cc;
+    border: solid #0099cc;
+}
+
+Button.variant-error {
+    background: #ff6b6b;
+    border: solid #ff6b6b;
+    color: #ffffff;
+}
+
+Button.variant-error:hover {
+    background: #cc5555;
+    border: solid #cc5555;
+}
+
+Button.variant-default {
+    background: #16213e;
+    border: solid #b0b0b0;
+    color: #e6e6e6;
+}
+
+Button.variant-default:hover {
+    background: #b0b0b0;
+    border: solid #b0b0b0;
+    color: #1a1a2e;
+}
+
+/* Input styling */
+Input {
+    border: solid #00d4ff;
+    background: #0f0f23;
+    color: #e6e6e6;
+}
+
+Input:focus {
+    border: solid #ffffff;
+}
+
+/* TextArea styling */
+TextArea {
+    border: solid #00d4ff;
+    background: #0f0f23;
+    color: #e6e6e6;
+    height: 8;
+}
+
+TextArea:focus {
+    border: solid #ffffff;
+}
+
+/* Label styling */
+Label {
+    color: #b0b0b0;
+    margin-bottom: 0;
+}
+
+/* RadioSet styling */
+RadioSet {
+    margin: 1 0;
+}
+
+RadioSet Button {
+    margin: 0 1 0 0;
+    padding: 0 1;
+}
+
+/* Checkbox styling */
+Checkbox {
+    margin: 1 0;
+}
+
+/* Tab styling */
+TabPane {
+    padding: 1;
+}
+
+TabbedContent {
+    border: solid #16213e;
 }
 
 /* High contrast variant */

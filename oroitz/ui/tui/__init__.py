@@ -61,8 +61,9 @@ class OroitzTUI(App):
 
     def action_help(self) -> None:
         """Show help."""
-        # TODO: Implement help screen
-        self.notify("Help not implemented yet", severity="information")
+        from .views.help_view import HelpView
+
+        self.push_screen(HelpView())
 
     def action_new(self) -> None:
         """Create a new session."""

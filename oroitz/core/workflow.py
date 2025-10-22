@@ -123,16 +123,58 @@ def seed_workflows() -> None:
     )
     registry.register(network_focus)
 
-    # timeline_overview workflow
-    timeline_overview = WorkflowSpec(
-        id="timeline_overview",
-        name="Timeline Overview",
-        description=("Produce a chronological timeline of key memory events"),
+    # full_system_scan workflow
+    full_system_scan = WorkflowSpec(
+        id="full_system_scan",
+        name="Full System Scan",
+        description=(
+            "Complete analysis including all available plugins " "for comprehensive forensics"
+        ),
         plugins=[
+            PluginSpec(name="windows.pslist"),
+            PluginSpec(name="windows.netscan"),
+            PluginSpec(name="windows.malfind"),
+            PluginSpec(name="windows.pstree"),
+            PluginSpec(name="windows.dlllist"),
+            PluginSpec(name="windows.handles"),
+            PluginSpec(name="windows.psscan"),
+            PluginSpec(name="windows.sockscan"),
+            PluginSpec(name="windows.connections"),
             PluginSpec(name="windows.timeliner"),
             PluginSpec(name="windows.getservicesids"),
         ],
     )
-    registry.register(timeline_overview)
+    registry.register(full_system_scan)
+
+    # malware_hunt workflow
+    malware_hunt = WorkflowSpec(
+        id="malware_hunt",
+        name="Malware Hunt",
+        description=(
+            "Focused scan for malware indicators, suspicious processes, " "and injected code"
+        ),
+        plugins=[
+            PluginSpec(name="windows.malfind"),
+            PluginSpec(name="windows.psscan"),
+            PluginSpec(name="windows.dlllist"),
+            PluginSpec(name="windows.handles"),
+            PluginSpec(name="windows.modscan"),
+        ],
+    )
+    registry.register(malware_hunt)
+
+    # memory_analysis workflow
+    memory_analysis = WorkflowSpec(
+        id="memory_analysis",
+        name="Memory Analysis",
+        description=("Detailed memory structure analysis including pools, heaps, and allocations"),
+        plugins=[
+            PluginSpec(name="windows.poolscanner"),
+            PluginSpec(name="windows.heap"),
+            PluginSpec(name="windows.bigpoolscan"),
+            PluginSpec(name="windows.memmap"),
+        ],
+    )
+    registry.register(memory_analysis)
 
     logger.info("Seeded default workflows")

@@ -34,6 +34,10 @@ def build_executable(entry_point, name, console=True, additional_args=None):
         "--clean",  # Clean cache
         "--noconfirm",  # Don't ask for confirmation
         f"--name={name}",
+        "--collect-all",
+        "textual",  # Collect all textual modules
+        "--collect-all",
+        "volatility3",  # Collect all volatility3 modules and data
     ]
 
     if console:
@@ -96,7 +100,13 @@ def main():
 
     # Build TUI executable
     tui_success = build_executable(
-        "oroitz/ui/tui/__main__.py", f"oroitz-tui-{system}", console=True
+        "oroitz/ui/tui/__main__.py",
+        f"oroitz-tui-{system}",
+        console=True,
+        additional_args=[
+            "--add-data",
+            "oroitz/ui/tui:oroitz/ui/tui",  # Include TUI resources including styles
+        ],
     )
 
     # Summary

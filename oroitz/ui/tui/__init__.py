@@ -1,15 +1,15 @@
 """Textual TUI application for Oroitz."""
 
+import sys
 from typing import Optional
 
-from textual.app import App, ComposeResult
-from textual.command import CommandPalette
-from textual.widgets import Footer, Header
+from textual.app import App
 
 from oroitz.core.executor import Executor
 from oroitz.core.output import OutputExporter, OutputNormalizer
 from oroitz.core.session import Session
-from oroitz.core.telemetry import setup_logging
+from oroitz.core.telemetry import logger, setup_logging
+from oroitz.core.workflow import seed_workflows
 
 from .views import HomeView
 from .widgets import Breadcrumb
@@ -20,7 +20,7 @@ __all__ = ["OroitzTUI", "HomeView", "Breadcrumb"]
 class OroitzTUI(App):
     """Main Textual application for Oroitz."""
 
-    CSS_PATH = "styles/base.css"
+    CSS_PATH = None if getattr(sys, "_MEIPASS", None) else "styles/base.css"
 
     BINDINGS = [
         ("ctrl+k", "command_palette", "Command Palette"),
@@ -29,21 +29,23 @@ class OroitzTUI(App):
 
     def __init__(self):
         super().__init__()
+        seed_workflows()
         self.session: Optional[Session] = None
         self.executor = Executor()
         self.normalizer = OutputNormalizer()
         self.exporter = OutputExporter()
         setup_logging("INFO")
 
-    def compose(self) -> ComposeResult:
-        """Compose the main application layout."""
-        yield Header()
-        yield Footer()
-        yield CommandPalette()
+    def on_mount(self) -> None:
+        """Mount the initial screen."""
+        self.push_screen(HomeView())
+        logger.info("TUI on_mount called")
 
-    async def on_mount(self) -> None:
-        """Handle application mount."""
-        await self.push_screen(HomeView())
+    # def compose(self) -> ComposeResult:
+    #     """Compose the main application layout."""
+    #     # yield Header()
+    #     # yield Footer()
+    #     pass
 
     def get_current_session(self) -> Optional[Session]:
         """Get the current active session."""

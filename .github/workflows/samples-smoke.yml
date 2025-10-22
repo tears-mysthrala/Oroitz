@@ -94,7 +94,7 @@ jobs:
           fi
 
       - name: Extract sample
-        run: 7z x ci/cached_samples/memdump.7z -o samples/ -y
+        run: 7z x ci/cached_samples/memdump.7z -osamples/ -y
 
       - name: Verify extracted sample
         run: |

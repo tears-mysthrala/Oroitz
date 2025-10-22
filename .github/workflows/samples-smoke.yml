@@ -129,7 +129,7 @@ jobs:
 
       - name: Run quick_triage benchmark
         run: |
-          python tools/benchmark.py --sample samples/memdump.mem --output results/benchmark_report.json
+          poetry run python tools/benchmark.py --sample samples/memdump.mem --output results/benchmark_report.json
 
       - name: Upload benchmark report
         uses: actions/upload-artifact@v4

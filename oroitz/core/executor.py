@@ -99,13 +99,14 @@ class Executor:
             automagic_classes = automagic.available(ctx)  # type: ignore
 
             # Choose appropriate automagics for the plugin
+            assert automagic is not None  # VOLATILITY_AVAILABLE ensures this
             chosen_automagics = automagic.choose_automagic(automagic_classes, plugin_name)  # type: ignore
 
             # Apply automagics to context
             for amagic in chosen_automagics:
                 if amagic.__class__.__name__ == "LayerStacker":
                     ctx.config["automagic.LayerStacker.single_location"] = f"file://{image_path}"
-                amagic(ctx)
+                amagic(ctx, config_path=config.config_file)  # type: ignore
 
             # Construct plugin
             plugin = plugins.construct_plugin(ctx, plugin_name, **kwargs)  # type: ignore

@@ -29,11 +29,23 @@ def run_command(cmd, cwd=None):
 def build_executable(entry_point, name, console=True, additional_args=None):
     """Build a single executable using PyInstaller."""
     cmd = [
+        "poetry",
+        "run",
         "pyinstaller",
         "--onefile",  # Single executable file
         "--clean",  # Clean cache
         "--noconfirm",  # Don't ask for confirmation
         f"--name={name}",
+        "--collect-all",
+        "volatility3",
+        "--collect-all",
+        "pydantic",
+        "--collect-all",
+        "rich",
+        "--collect-all",
+        "textual",
+        "--collect-all",
+        "click",
     ]
 
     if console:
@@ -84,19 +96,27 @@ def main():
     cli_success = build_executable("oroitz/cli/__main__.py", f"oroitz-cli-{system}", console=True)
 
     # Build GUI executable (windowed)
+    gui_additional_args = [
+        "--add-data",
+        f"oroitz/ui/gui{os.pathsep}oroitz/ui/gui",  # Include GUI resources
+    ]
     gui_success = build_executable(
         "oroitz/ui/gui/__main__.py",
         f"oroitz-gui-{system}",
         console=False,
-        additional_args=[
-            "--add-data",
-            "oroitz/ui/gui:oroitz/ui/gui",  # Include GUI resources
-        ],
+        additional_args=gui_additional_args,
     )
 
     # Build TUI executable
+    tui_additional_args = [
+        "--add-data",
+        f"oroitz/ui/tui/styles{os.pathsep}oroitz/ui/tui/styles",  # Include TUI styles
+    ]
     tui_success = build_executable(
-        "oroitz/ui/tui/__main__.py", f"oroitz-tui-{system}", console=True
+        "oroitz/ui/tui/__main__.py",
+        f"oroitz-tui-{system}",
+        console=True,
+        additional_args=tui_additional_args,
     )
 
     # Summary

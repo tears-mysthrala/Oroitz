@@ -2,34 +2,33 @@
   "image": "samples\\memdump.mem",
   "image_size_bytes": 536870912,
   "image_size_gb": 0.5,
-  "profile": "Win10x64_19041",
-  "timestamp": 1761076996,
-  "duration_seconds": 11.547895193099976,
+  "timestamp": 1761248171,
+  "duration_seconds": 12.419769763946533,
   "memory_info": {
-    "initial_memory_mb": 36.7265625,
-    "final_memory_mb": 36.87890625,
-    "memory_delta_mb": 0.15234375,
-    "peak_memory_mb": 36.87890625
+    "initial_memory_mb": 39.625,
+    "final_memory_mb": 44.09375,
+    "memory_delta_mb": 4.46875,
+    "peak_memory_mb": 44.09375
   },
   "plugins": [
     {
       "plugin": "windows.pslist",
       "success": true,
-      "duration": 3.364135503768921,
+      "duration": 3.0761117935180664,
       "attempts": 1,
       "used_mock": false
     },
     {
       "plugin": "windows.netscan",
       "success": true,
-      "duration": 5.103362321853638,
+      "duration": 5.978705167770386,
       "attempts": 1,
       "used_mock": false
     },
     {
       "plugin": "windows.malfind",
       "success": true,
-      "duration": 11.546893119812012,
+      "duration": 12.418771743774414,
       "attempts": 1,
       "used_mock": false
     }

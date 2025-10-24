@@ -1,37 +1,13 @@
-/* Oroitz TUI Styles - Base Monokai Theme */
+/* Oroitz TUI Styles - Base Monokai Theme
 
-:root {
-    --primary: #f92672;
-    --primary-darken-1: #e91e63;
-    --primary-darken-2: #c2185b;
-    --surface: #272822;
-    --surface-darken-1: #1e1f1c;
-    --text: #f8f8f2;
-    --text-muted: #75715e;
-    --success: #a6e22e;
-    --error: #f92672;
-    --warning: #fd971f;
-    --info: #66d9ef;
-}
-
-/* High contrast variant */
-.theme-high-contrast {
-    --primary: #ffffff;
-    --primary-darken-1: #cccccc;
-    --primary-darken-2: #aaaaaa;
-    --surface: #000000;
-    --surface-darken-1: #111111;
-    --text: #ffffff;
-    --text-muted: #cccccc;
-    --success: #00ff00;
-    --error: #ff0000;
-    --warning: #ffff00;
-    --info: #00ffff;
-}
+   NOTE: Textual's CSS parser (used in packaged executables) does not support
+   the `:root` selector or CSS variables. This stylesheet uses explicit color
+   values so it works both in development and in frozen/packaged executables.
+*/
 
 Screen {
-    background: var(--surface);
-    color: var(--text);
+    background: #272822; /* surface */
+    color: #f8f8f2; /* text */
 }
 
 Container {
@@ -54,8 +30,8 @@ Container {
 #settings-title {
     text-align: center;
     margin: 2;
-    color: var(--primary);
-    font-style: bold;
+    color: #f92672; /* primary */
+    text-style: bold;
 }
 
 .subtitle,
@@ -65,24 +41,24 @@ Container {
 .session-info {
     text-align: center;
     margin: 1;
-    color: var(--text-muted);
+    color: #75715e; /* text-muted */
 }
 
 .workflow-button {
     width: 100%;
     margin: 1;
     padding: 1;
-    background: var(--primary-darken-1);
-    border: solid var(--primary);
+    background: #e91e63; /* primary-darken-1 */
+    border: solid #f92672; /* primary */
 }
 
 .workflow-button:hover {
-    background: var(--primary);
+    background: #f92672; /* primary */
 }
 
 .workflow-button:focus {
-    background: var(--primary);
-    border: solid var(--text);
+    background: #f92672; /* primary */
+    border: solid #f8f8f2; /* text */
 }
 
 #form {
@@ -91,9 +67,7 @@ Container {
 
 #buttons {
     margin: 2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    align: center middle;
 }
 
 #progress-bar {
@@ -103,25 +77,23 @@ Container {
 #log-container {
     height: 60%;
     margin: 2;
-    border: solid var(--primary-darken-2);
+    border: solid #c2185b; /* primary-darken-2 */
     padding: 1;
 }
 
 #log-title {
-    color: var(--primary);
+    color: #f92672; /* primary */
     font-style: bold;
 }
 
 #log-content {
-    color: var(--text);
-    background: var(--surface-darken-1);
+    color: #f8f8f2; /* text */
+    background: #1e1f1c; /* surface-darken-1 */
     padding: 1;
 
     #run-buttons {
         margin: 2;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        align: center middle;
     }
 
     align: center middle;
@@ -130,16 +102,14 @@ Container {
 .summary {
     text-align: center;
     margin: 2;
-    color: var(--success);
-    font-style: bold;
+    color: #a6e22e; /* success */
+    text-style: bold;
 }
 
 #results-table {
     #export-buttons {
         margin: 2;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        align: center middle;
     }
 
     #export-buttons {
@@ -152,15 +122,13 @@ Container {
     }
 
     .error {
-        background: var(--error);
-        color: var(--text);
+        background: #f92672; /* error */
+        color: #f8f8f2; /* text */
     }
 
     #error-container {
         padding: 2;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        align: center middle;
     }
 }
 
@@ -172,31 +140,31 @@ Container {
 #error-title {
     text-align: center;
     margin: 2;
-    color: var(--error);
-    font-style: bold;
+    color: #f92672; /* error */
+    text-style: bold;
 }
 
 #error-message {
     text-align: center;
     margin: 2;
-    color: var(--error);
-    background: var(--surface-darken-1);
+    color: #f92672; /* error */
+    background: #1e1f1c; /* surface-darken-1 */
     padding: 1;
-    border: solid var(--error);
+    border: solid #f92672; /* error */
 }
 
 .error-details-title {
     margin: 1;
-    color: var(--text-muted);
-    font-style: bold;
+    color: #75715e; /* text-muted */
+    text-style: bold;
 }
 
 #error-details {
     margin: 1;
-    color: var(--text);
-    background: var(--surface-darken-1);
+    color: #f8f8f2; /* text */
+    background: #1e1f1c; /* surface-darken-1 */
     padding: 1;
-    border: solid var(--text-muted);
+    border: solid #75715e; /* text-muted */
     height: 40%;
     overflow: auto;
 }
@@ -208,14 +176,14 @@ Container {
 #feedback-title {
     text-align: center;
     margin: 2;
-    color: var(--primary);
-    font-style: bold;
+    color: #f92672; /* primary */
+    text-style: bold;
 }
 
 .feedback-subtitle {
     text-align: center;
     margin: 1;
-    color: var(--text-muted);
+    color: #75715e; /* text-muted */
 }
 
 #feedback-form {
@@ -224,14 +192,12 @@ Container {
 
     #feedback-buttons {
         margin: 2;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        align: center middle;
     }
 
     margin: 2 0 1 0;
-    color: var(--primary);
-    font-style: bold;
+    color: #f92672; /* primary */
+    text-style: bold;
 }
 
 #feedback-buttons {

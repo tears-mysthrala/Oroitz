@@ -6,8 +6,10 @@
 */
 
 Screen {
-    background: #272822; /* surface */
-    color: #f8f8f2; /* text */
+    background: #272822;
+    /* surface */
+    color: #f8f8f2;
+    /* text */
 }
 
 Container {
@@ -30,7 +32,8 @@ Container {
 #settings-title {
     text-align: center;
     margin: 2;
-    color: #f92672; /* primary */
+    color: #f92672;
+    /* primary */
     text-style: bold;
 }
 
@@ -41,24 +44,30 @@ Container {
 .session-info {
     text-align: center;
     margin: 1;
-    color: #75715e; /* text-muted */
+    color: #75715e;
+    /* text-muted */
 }
 
 .workflow-button {
     width: 100%;
     margin: 1;
     padding: 1;
-    background: #e91e63; /* primary-darken-1 */
-    border: solid #f92672; /* primary */
+    background: #e91e63;
+    /* primary-darken-1 */
+    border: solid #f92672;
+    /* primary */
 }
 
 .workflow-button:hover {
-    background: #f92672; /* primary */
+    background: #f92672;
+    /* primary */
 }
 
 .workflow-button:focus {
-    background: #f92672; /* primary */
-    border: solid #f8f8f2; /* text */
+    background: #f92672;
+    /* primary */
+    border: solid #f8f8f2;
+    /* text */
 }
 
 #form {
@@ -77,18 +86,22 @@ Container {
 #log-container {
     height: 60%;
     margin: 2;
-    border: solid #c2185b; /* primary-darken-2 */
+    border: solid #c2185b;
+    /* primary-darken-2 */
     padding: 1;
 }
 
 #log-title {
-    color: #f92672; /* primary */
+    color: #f92672;
+    /* primary */
     font-style: bold;
 }
 
 #log-content {
-    color: #f8f8f2; /* text */
-    background: #1e1f1c; /* surface-darken-1 */
+    color: #f8f8f2;
+    /* text */
+    background: #1e1f1c;
+    /* surface-darken-1 */
     padding: 1;
 
     #run-buttons {
@@ -102,7 +115,8 @@ Container {
 .summary {
     text-align: center;
     margin: 2;
-    color: #a6e22e; /* success */
+    color: #a6e22e;
+    /* success */
     text-style: bold;
 }
 
@@ -122,8 +136,10 @@ Container {
     }
 
     .error {
-        background: #f92672; /* error */
-        color: #f8f8f2; /* text */
+        background: #f92672;
+        /* error */
+        color: #f8f8f2;
+        /* text */
     }
 
     #error-container {
@@ -140,31 +156,39 @@ Container {
 #error-title {
     text-align: center;
     margin: 2;
-    color: #f92672; /* error */
+    color: #f92672;
+    /* error */
     text-style: bold;
 }
 
 #error-message {
     text-align: center;
     margin: 2;
-    color: #f92672; /* error */
-    background: #1e1f1c; /* surface-darken-1 */
+    color: #f92672;
+    /* error */
+    background: #1e1f1c;
+    /* surface-darken-1 */
     padding: 1;
-    border: solid #f92672; /* error */
+    border: solid #f92672;
+    /* error */
 }
 
 .error-details-title {
     margin: 1;
-    color: #75715e; /* text-muted */
+    color: #75715e;
+    /* text-muted */
     text-style: bold;
 }
 
 #error-details {
     margin: 1;
-    color: #f8f8f2; /* text */
-    background: #1e1f1c; /* surface-darken-1 */
+    color: #f8f8f2;
+    /* text */
+    background: #1e1f1c;
+    /* surface-darken-1 */
     padding: 1;
-    border: solid #75715e; /* text-muted */
+    border: solid #75715e;
+    /* text-muted */
     height: 40%;
     overflow: auto;
 }
@@ -176,14 +200,16 @@ Container {
 #feedback-title {
     text-align: center;
     margin: 2;
-    color: #f92672; /* primary */
+    color: #f92672;
+    /* primary */
     text-style: bold;
 }
 
 .feedback-subtitle {
     text-align: center;
     margin: 1;
-    color: #75715e; /* text-muted */
+    color: #75715e;
+    /* text-muted */
 }
 
 #feedback-form {
@@ -196,7 +222,8 @@ Container {
     }
 
     margin: 2 0 1 0;
-    color: #f92672; /* primary */
+    color: #f92672;
+    /* primary */
     text-style: bold;
 }
 

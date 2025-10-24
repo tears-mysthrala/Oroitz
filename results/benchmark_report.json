@@ -1,34 +1,34 @@
 {
-  "image": "samples\\memdump.mem",
-  "image_size_bytes": 536870912,
-  "image_size_gb": 0.5,
-  "timestamp": 1761248171,
-  "duration_seconds": 12.419769763946533,
+  "image": "samples/memory/memory.dmp",
+  "image_size_bytes": 4293816320,
+  "image_size_gb": 3.9989280700683594,
+  "timestamp": 1761292385,
+  "duration_seconds": 320.3622770309448,
   "memory_info": {
-    "initial_memory_mb": 39.625,
-    "final_memory_mb": 44.09375,
-    "memory_delta_mb": 4.46875,
-    "peak_memory_mb": 44.09375
+    "initial_memory_mb": 38.640625,
+    "final_memory_mb": 49.24609375,
+    "memory_delta_mb": 10.60546875,
+    "peak_memory_mb": 49.24609375
   },
   "plugins": [
     {
       "plugin": "windows.pslist",
       "success": true,
-      "duration": 3.0761117935180664,
-      "attempts": 1,
+      "duration": 77.51970887184143,
+      "attempts": 2,
       "used_mock": false
     },
     {
       "plugin": "windows.netscan",
       "success": true,
-      "duration": 5.978705167770386,
-      "attempts": 1,
+      "duration": 178.97089910507202,
+      "attempts": 2,
       "used_mock": false
     },
     {
       "plugin": "windows.malfind",
       "success": true,
-      "duration": 12.418771743774414,
+      "duration": 242.8335621356964,
       "attempts": 1,
       "used_mock": false
     }

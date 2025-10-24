@@ -62,10 +62,27 @@
 
 ### Phase 6 – Hardening & Release Prep
 
-- 🔄 Performance benchmarking with large memory images (4GB+)
-- 🔄 Complete installer packaging (PyInstaller) and distribution artifacts
-- 🔄 Security review and vulnerability assessment
-- 🔄 Community feedback collection and feature prioritization
+- ✅ Performance benchmarking with large memory images (4GB+)
+- ✅ Complete installer packaging (PyInstaller) and distribution artifacts
+- ✅ Security review and vulnerability assessment
+- ✅ Community feedback collection and feature prioritization
+
+#### Prioritized Features from Community Feedback
+
+Based on manual testing feedback (`manual_testing_feedback.txt`):
+
+1. **High Priority - UI/UX Improvements**
+   - Fix table scrolling in results views (TUI and GUI)
+   - Improve visual design and aesthetics ("ugly as hell")
+   - Add visible help and settings access
+
+2. **Medium Priority - Functionality Fixes**
+   - Investigate and fix discrepancy in process counts between quick scan and deep dive scan
+   - Ensure consistent results display across scan types
+
+3. **Low Priority - Feature Additions**
+   - Add more pre-setup scans as suggested
+   - Improve form usability in feedback collection
 
 ### Phase 7 – Feature Expansion
 

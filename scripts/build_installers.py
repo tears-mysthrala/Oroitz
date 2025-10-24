@@ -102,10 +102,6 @@ def main():
     )
 
     # Build TUI executable
-    tui_additional_args = [
-        "--add-data",
-        f"oroitz/ui/tui/styles{os.pathsep}oroitz/ui/tui/styles",  # Include TUI styles
-    ]
     tui_success = build_executable(
         "oroitz/ui/tui/__main__.py",
         f"oroitz-tui-{system}",

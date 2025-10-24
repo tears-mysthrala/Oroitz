@@ -199,7 +199,7 @@ class ThemeManager:
     }
 
     QMenuBar::item:selected {
-        background-color: #0078d4;
+        background-color: #9d4edd;
     }
 
     QMenu {
@@ -212,7 +212,7 @@ class ThemeManager:
     }
 
     QMenu::item:selected {
-        background-color: #0078d4;
+        background-color: #9d4edd;
     }
 
     QPushButton {
@@ -247,7 +247,7 @@ class ThemeManager:
     }
 
     QLineEdit:focus, QComboBox:focus, QSpinBox:focus {
-        border-color: #0078d4;
+        border-color: #9d4edd;
     }
 
     QListWidget {
@@ -263,7 +263,7 @@ class ThemeManager:
     }
 
     QListWidget::item:selected {
-        background-color: #0078d4;
+        background-color: #9d4edd;
         color: #f1f1f1;
     }
 
@@ -279,7 +279,7 @@ class ThemeManager:
     }
 
     QTableWidget::item:selected {
-        background-color: #0078d4;
+        background-color: #9d4edd;
     }
 
     QHeaderView::section {

@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import List
 
 from textual.app import ComposeResult
-from textual.containers import Container, Horizontal, Vertical, VerticalScroll
+from textual.containers import Container, Horizontal, Vertical
 from textual.screen import Screen
 from textual.widgets import Button, DataTable, Static, TabbedContent, TabPane
 
@@ -51,24 +51,19 @@ class ResultsView(Screen):
                 # Tabbed results interface
                 with TabbedContent():
                     with TabPane("Overview", id="overview-tab"):
-                        with VerticalScroll():
-                            yield DataTable(id="overview-table")
+                        yield DataTable(id="overview-table")
 
                     with TabPane("Processes", id="processes-tab"):
-                        with VerticalScroll():
-                            yield DataTable(id="processes-table")
+                        yield DataTable(id="processes-table")
 
                     with TabPane("Network", id="network-tab"):
-                        with VerticalScroll():
-                            yield DataTable(id="network-table")
+                        yield DataTable(id="network-table")
 
                     with TabPane("DLLs", id="dlls-tab"):
-                        with VerticalScroll():
-                            yield DataTable(id="dlls-table")
+                        yield DataTable(id="dlls-table")
 
                     with TabPane("Timeline", id="timeline-tab"):
-                        with VerticalScroll():
-                            yield DataTable(id="timeline-table")
+                        yield DataTable(id="timeline-table")
 
                 with Horizontal(id="export-buttons"):
                     yield Button("Export JSON", id="export-json", variant="default")
@@ -113,25 +108,30 @@ class ResultsView(Screen):
 
         # Get data from pslist or psscan plugin results
         # (check both since different workflows use different plugins)
-        process_results = []
+        process_results = {}
 
         # Try pslist first (used in quick triage)
         pslist_result = next(
             (r for r in self.results if r.plugin_name == "windows.pslist" and r.output), None
         )
         if pslist_result and pslist_result.output:
-            process_results.extend(pslist_result.output)
+            for process in pslist_result.output:
+                pid = process.get("PID")
+                if pid is not None:
+                    process_results[pid] = process
 
-        # Try psscan if no pslist results (used in deep dive)
-        if not process_results:
-            psscan_result = next(
-                (r for r in self.results if r.plugin_name == "windows.psscan" and r.output), None
-            )
-            if psscan_result and psscan_result.output:
-                process_results.extend(psscan_result.output)
+        # Try psscan (used in deep dive)
+        psscan_result = next(
+            (r for r in self.results if r.plugin_name == "windows.psscan" and r.output), None
+        )
+        if psscan_result and psscan_result.output:
+            for process in psscan_result.output:
+                pid = process.get("PID")
+                if pid is not None:
+                    process_results[pid] = process  # Overwrite if duplicate, prefer psscan if both
 
         if process_results:
-            for process in process_results:  # Show all processes
+            for process in process_results.values():  # Show all unique processes
                 table.add_row(
                     str(process.get("PID", "")),
                     process.get("ImageFileName", ""),

@@ -177,4 +177,16 @@ def seed_workflows() -> None:
     )
     registry.register(memory_analysis)
 
+    # timeline_overview workflow
+    timeline_overview = WorkflowSpec(
+        id="timeline_overview",
+        name="Timeline Overview",
+        description=("Chronological view of system events and process activities"),
+        plugins=[
+            PluginSpec(name="windows.timeliner"),
+            PluginSpec(name="windows.pslist"),
+        ],
+    )
+    registry.register(timeline_overview)
+
     logger.info("Seeded default workflows")

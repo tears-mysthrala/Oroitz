@@ -25,7 +25,7 @@ Container {
 #settings-title {
     text-align: center;
     margin: 2 0 3 0;
-    color: #00d4ff;
+    color: #9d4edd;
     font-style: bold;
     text-style: bold;
 }
@@ -44,18 +44,18 @@ Container {
     width: 100%;
     margin: 1 0;
     padding: 1 2;
-    background: #16213e;
-    border: solid #00d4ff;
+    background: #2d1b69;
+    border: solid #9d4edd;
     color: #e6e6e6;
 }
 
 .workflow-button:hover {
-    background: #00d4ff;
+    background: #9d4edd;
     color: #1a1a2e;
 }
 
 .workflow-button:focus {
-    background: #00d4ff;
+    background: #9d4edd;
     border: solid #ffffff;
     color: #1a1a2e;
 }
@@ -78,13 +78,13 @@ Container {
 #log-container {
     height: 60%;
     margin: 2 0;
-    border: solid #00d4ff;
+    border: solid #9d4edd;
     padding: 1;
     background: #0f0f23;
 }
 
 #log-title {
-    color: #00d4ff;
+    color: #9d4edd;
     font-style: bold;
     margin-bottom: 1;
 }
@@ -166,7 +166,7 @@ Container {
 #feedback-title {
     text-align: center;
     margin: 2 0;
-    color: #00d4ff;
+    color: #9d4edd;
     font-style: bold;
 }
 
@@ -191,24 +191,24 @@ DataTable {
     height: 100%;
     max-height: 60vh;
     background: #0f0f23;
-    border: solid #00d4ff;
+    border: solid #9d4edd;
 }
 
 DataTable>.datatable--header {
-    background: #16213e;
-    color: #00d4ff;
+    background: #2d1b69;
+    color: #9d4edd;
     font-style: bold;
 }
 
 DataTable>.datatable--cursor {
-    background: #00d4ff;
+    background: #9d4edd;
     color: #1a1a2e;
 }
 
 VerticalScroll {
     height: 100%;
     max-height: 60vh;
-    border: solid #16213e;
+    border: solid #2d1b69;
 }
 
 /* Button improvements */
@@ -218,14 +218,14 @@ Button {
 }
 
 Button.variant-primary {
-    background: #00d4ff;
-    border: solid #00d4ff;
+    background: #9d4edd;
+    border: solid #9d4edd;
     color: #1a1a2e;
 }
 
 Button.variant-primary:hover {
-    background: #0099cc;
-    border: solid #0099cc;
+    background: #7b2cbf;
+    border: solid #7b2cbf;
 }
 
 Button.variant-error {
@@ -253,7 +253,7 @@ Button.variant-default:hover {
 
 /* Input styling */
 Input {
-    border: solid #00d4ff;
+    border: solid #9d4edd;
     background: #0f0f23;
     color: #e6e6e6;
 }
@@ -264,7 +264,7 @@ Input:focus {
 
 /* TextArea styling */
 TextArea {
-    border: solid #00d4ff;
+    border: solid #9d4edd;
     background: #0f0f23;
     color: #e6e6e6;
     height: 8;

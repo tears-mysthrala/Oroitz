@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QPushButton,
+    QScrollArea,
     QTableWidget,
     QTableWidgetItem,
     QTabWidget,
@@ -87,7 +88,10 @@ class ResultsExplorer(QWidget):
         # Use the ResizeMode enum member for explicitness
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
 
-        layout.addWidget(table)
+        scroll_area = QScrollArea()
+        scroll_area.setWidget(table)
+        scroll_area.setWidgetResizable(True)
+        layout.addWidget(scroll_area)
         # Keep a direct reference to the table on the tab widget so callers
         # can retrieve it without navigating the layout (avoids Optional[...])
         # type issues when static analysis checks layout.itemAt(...)).

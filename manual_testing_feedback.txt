@@ -1,0 +1,19 @@
+=== Manual Testing Feedback ===
+Timestamp: 2025-10-22 14:22:02
+Tester Name: unai
+Environment: TUI
+Overall Rating: Poor
+Navigation Rating: Poor
+Performance Rating: Poor
+Usability Rating: Average
+Visual Rating: Poor
+Functionality Rating: Poor
+Error_Handling Rating: Not Tested
+Issues Found: Yes
+Issues Description: how come i see less processes in a deep dive scan than in a quick scan? also i can't scroll on the tables to see the results on complete, please make sure it wokrs correctly. Ah i forgot, this form doesn't show what you are writing
+Feature Suggestions: more pre-setup scans
+General Comments: the UI is ugly as hell, fix it please, and it doesn't has any help nor settings visible
+Testing Scenarios: New Session, Quick Triage, View Results
+
+==================================================
+

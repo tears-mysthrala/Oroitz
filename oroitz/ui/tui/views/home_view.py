@@ -1,7 +1,7 @@
 """Home View for Oroitz TUI."""
 
 from textual.app import ComposeResult
-from textual.containers import Container, Vertical
+from textual.containers import Container, Horizontal, Vertical
 from textual.screen import Screen
 from textual.widgets import Button, Static
 
@@ -40,7 +40,10 @@ class HomeView(Screen):
                     "💡 Tip: Use Tab/Shift+Tab to navigate, Enter to select, Esc to go back",
                     classes="help-text",
                 )
-                yield Button("Provide Feedback", id="feedback-button", variant="default")
+                with Horizontal(id="bottom-buttons"):
+                    yield Button("Help", id="help-button", variant="default")
+                    yield Button("Settings", id="settings-button", variant="default")
+                    yield Button("Provide Feedback", id="feedback-button", variant="default")
                 yield Button("Exit", id="exit-button", variant="error")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -53,6 +56,14 @@ class HomeView(Screen):
             from .feedback_view import FeedbackView
 
             self.app.push_screen(FeedbackView())
+        elif button_id == "help-button":
+            from .help_view import HelpView
+
+            self.app.push_screen(HelpView())
+        elif button_id == "settings-button":
+            from .settings_view import SettingsView
+
+            self.app.push_screen(SettingsView())
         elif button_id and button_id.startswith("workflow-"):
             workflow_id = button_id.replace("workflow-", "")
             workflow = registry.get(workflow_id)

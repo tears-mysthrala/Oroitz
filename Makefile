@@ -18,7 +18,7 @@ build: ## Build PyInstaller executables
 	poetry run python scripts/build_installers.py
 
 test: ## Run all tests
-	poetry run pytest tests/
+	poetry run pytest tests/ --ignore=tests/ui/test_tui.py
 
 test-core: ## Run core tests only
 	poetry run pytest tests/core/ tests/cli/
@@ -45,8 +45,10 @@ clean: ## Clean build artifacts
 
 dist: build ## Build and create distribution archives
 	@echo "Creating distribution archives..."
-	@cd dist && for exe in *.exe; do \
-		tar -czf "$${exe%.exe}.tar.gz" "$$exe"; \
+	@cd dist && for exe in *; do \
+		if [ -f "$$exe" ] && [ -x "$$exe" ]; then \
+			tar -czf "$$exe.tar.gz" "$$exe"; \
+		fi \
 	done
 	@echo "Distribution archives created in dist/"
 

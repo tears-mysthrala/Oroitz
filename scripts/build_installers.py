@@ -37,15 +37,9 @@ def build_executable(entry_point, name, console=True, additional_args=None):
         "--noconfirm",  # Don't ask for confirmation
         f"--name={name}",
         "--collect-all",
-        "volatility3",
+        "textual",  # Collect all textual modules
         "--collect-all",
-        "pydantic",
-        "--collect-all",
-        "rich",
-        "--collect-all",
-        "textual",
-        "--collect-all",
-        "click",
+        "volatility3",  # Collect all volatility3 modules and data
     ]
 
     if console:
@@ -116,7 +110,10 @@ def main():
         "oroitz/ui/tui/__main__.py",
         f"oroitz-tui-{system}",
         console=True,
-        additional_args=tui_additional_args,
+        additional_args=[
+            "--add-data",
+            "oroitz/ui/tui:oroitz/ui/tui",  # Include TUI resources including styles
+        ],
     )
 
     # Summary

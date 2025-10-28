@@ -1,6 +1,7 @@
 """Textual TUI application for Oroitz."""
 
 import sys
+from pathlib import Path
 from typing import Optional
 
 from textual.app import App
@@ -20,7 +21,11 @@ __all__ = ["OroitzTUI", "HomeView", "Breadcrumb"]
 class OroitzTUI(App):
     """Main Textual application for Oroitz."""
 
-    CSS_PATH = None if getattr(sys, "_MEIPASS", None) else "styles/base.css"
+    CSS_PATH = (
+        None
+        if getattr(sys, "_MEIPASS", None)
+        else Path(__file__).parent / "styles" / "base.css"
+    )
 
     BINDINGS = [
         ("f1", "help", "Help"),

@@ -6,10 +6,10 @@ from PySide6.QtCore import QThread, Signal
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
+    QPlainTextEdit,
     QProgressBar,
     QPushButton,
     QSplitter,
-    QTextEdit,
     QVBoxLayout,
     QWidget,
 )
@@ -116,11 +116,11 @@ class SessionDashboard(QWidget):
         self.back_btn.clicked.connect(self._on_back_clicked)
         header_layout.addWidget(self.back_btn)
 
-        header_layout.addStretch()
-
         self.session_title = QLabel("No Session Loaded")
-        self.session_title.setStyleSheet("font-size: 16px; font-weight: bold;")
+        self.session_title.setStyleSheet("font-size: 12px; font-weight: normal;")
         header_layout.addWidget(self.session_title)
+
+        header_layout.addStretch()
 
         layout.addLayout(header_layout)
 
@@ -145,6 +145,26 @@ class SessionDashboard(QWidget):
         self.status_label = QLabel("Ready to start analysis")
         left_layout.addWidget(self.status_label)
 
+        # Summary section
+        summary_label = QLabel("Summary")
+        summary_label.setStyleSheet("font-size: 14px; font-weight: bold; margin-top: 10px;")
+        left_layout.addWidget(summary_label)
+
+        self.workflow_info = QLabel("No workflow selected")
+        self.workflow_info.setWordWrap(True)
+        left_layout.addWidget(self.workflow_info)
+
+        # Logs section
+        logs_label = QLabel("Logs")
+        logs_label.setStyleSheet("font-size: 14px; font-weight: bold; margin-top: 10px;")
+        left_layout.addWidget(logs_label)
+
+        self.logs_text = QPlainTextEdit()
+        self.logs_text.setPlainText("Analysis logs will appear here...")
+        self.logs_text.setReadOnly(True)
+        self.logs_text.setMaximumHeight(150)  # Limit height to keep UI compact
+        left_layout.addWidget(self.logs_text)
+
         # Control buttons
         controls_layout = QHBoxLayout()
 
@@ -164,33 +184,15 @@ class SessionDashboard(QWidget):
 
         left_layout.addLayout(controls_layout)
 
-        # Workflow info
-        workflow_label = QLabel("Workflow Information")
-        workflow_label.setStyleSheet("font-size: 14px; font-weight: bold; margin-top: 20px;")
-        left_layout.addWidget(workflow_label)
-
-        self.workflow_info = QLabel("No workflow selected")
-        self.workflow_info.setWordWrap(True)
-        left_layout.addWidget(self.workflow_info)
-
         left_layout.addStretch()
 
-        # Right panel - Logs and results
+        # Right panel - Results only
         right_panel = QWidget()
         right_layout = QVBoxLayout(right_panel)
 
-        logs_label = QLabel("Analysis Logs")
-        logs_label.setStyleSheet("font-size: 14px; font-weight: bold;")
-        right_layout.addWidget(logs_label)
-
-        self.logs_text = QTextEdit()
-        self.logs_text.setReadOnly(True)
-        self.logs_text.setPlainText("Analysis logs will appear here...")
-        right_layout.addWidget(self.logs_text)
-
-        # Results section (placeholder for now)
+        # Results section
         results_label = QLabel("Results")
-        results_label.setStyleSheet("font-size: 14px; font-weight: bold; margin-top: 20px;")
+        results_label.setStyleSheet("font-size: 14px; font-weight: bold;")
         right_layout.addWidget(results_label)
 
         self.results_explorer = ResultsExplorer()
@@ -243,9 +245,11 @@ class SessionDashboard(QWidget):
         self.pause_btn.setEnabled(True)
         self.stop_btn.setEnabled(True)
 
-        # Clear previous logs and results
-        self.logs_text.clear()
+        # Clear previous results
         self.results_explorer.set_results([])
+
+        # Clear logs
+        self.logs_text.setPlainText("Analysis logs will appear here...")
 
         # Create and start worker thread
         self.worker = WorkflowWorker(
@@ -269,7 +273,11 @@ class SessionDashboard(QWidget):
 
     def _on_log_message(self, message: str) -> None:
         """Handle log messages from worker thread."""
-        self.logs_text.append(message)
+        current_text = self.logs_text.toPlainText()
+        if current_text == "Analysis logs will appear here...":
+            self.logs_text.setPlainText(message)
+        else:
+            self.logs_text.appendPlainText(message)
 
     def _on_execution_finished(self, results) -> None:
         """Handle successful workflow execution."""

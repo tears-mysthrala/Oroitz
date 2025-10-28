@@ -101,7 +101,8 @@ class Executor:
             # Resolve plugin name to the plugin class/type expected by volatility3
             plugin_class = plugin_list.get(plugin_name)
             if plugin_class is None:
-                # Try to find plugin by partial name match (e.g., 'windows.pslist' -> 'windows.pslist.PsList')
+                # Try to find plugin by partial name match
+                # (e.g., 'windows.pslist' -> 'windows.pslist.PsList')
                 matching_plugins = [
                     name for name in plugin_list.keys() if plugin_name in name.lower()
                 ]
@@ -121,7 +122,7 @@ class Executor:
             chosen_automagics = automagic.choose_automagic(automagic_classes, plugin_class)  # type: ignore
 
             # Construct plugin (pass the plugin class/type, and follow construct_plugin signature)
-            # construct_plugin(ctx, automagics, plugin, base_config_path, progress_callback, open_method)
+            # construct_plugin(ctx, automagics, plugin, base_config_path, progress_callback, open_method)  # noqa: E501
             # For our use, we can pass an empty base_config_path and a simple progress callback
             def _noop_progress(progress, msg):
                 return None
@@ -564,6 +565,63 @@ class Executor:
                     "FileOffset": 0,
                     "FileName": None,
                 }
+            ]
+        elif "hashdump" in plugin_name:
+            return [
+                {
+                    "Username": "Administrator",
+                    "UID": 500,
+                    "GID": 500,
+                    "Hash": "aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0",
+                    "Type": "NTLM",
+                },
+                {
+                    "Username": "user1",
+                    "UID": 1000,
+                    "GID": 1000,
+                    "Hash": "e19ccf75ee54e06b06a5907af13cef42:31d6cfe0d16ae931b73c59d7e0c089c0",
+                    "Type": "NTLM",
+                },
+            ]
+        elif "lsadump" in plugin_name or "cachedump" in plugin_name:
+            return [
+                {
+                    "Username": "Administrator",
+                    "UID": 500,
+                    "GID": 500,
+                    "HomeDir": "/home/admin",
+                    "Shell": "/bin/bash",
+                    "Description": "Administrator account",
+                },
+                {
+                    "Username": "user1",
+                    "UID": 1000,
+                    "GID": 1000,
+                    "HomeDir": "/home/user1",
+                    "Shell": "/bin/bash",
+                    "Description": "Regular user",
+                },
+            ]
+        elif "getsids" in plugin_name:
+            return [
+                {
+                    "Name": "Administrator",
+                    "SID": "S-1-5-21-1367486129-1636748403-2738611465-500",
+                    "PID": 2496,
+                    "Process": "explorer.exe",
+                },
+                {
+                    "Name": "Domain Users",
+                    "SID": "S-1-5-21-1367486129-1636748403-2738611465-513",
+                    "PID": 2496,
+                    "Process": "explorer.exe",
+                },
+                {
+                    "Name": "Administrators",
+                    "SID": "S-1-5-32-544",
+                    "PID": 2496,
+                    "Process": "explorer.exe",
+                },
             ]
         else:
             # Generic mock data for unknown plugins - return empty list

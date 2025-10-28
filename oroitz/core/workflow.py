@@ -92,6 +92,7 @@ def seed_workflows() -> None:
             PluginSpec(name="windows.pslist"),
             PluginSpec(name="windows.netscan"),
             PluginSpec(name="windows.malfind"),
+            PluginSpec(name="windows.getsids"),
         ],
     )
     registry.register(quick_triage)

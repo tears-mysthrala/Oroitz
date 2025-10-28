@@ -139,12 +139,69 @@ class MalfindHit(BaseModel):
         )
 
 
+class UserInfo(BaseModel):
+    """Normalized user information from Windows SIDs."""
+
+    name: Optional[str] = None
+    sid: Optional[str] = None
+    pid: Optional[int] = Field(None, ge=0)
+    process: Optional[str] = None
+
+    @field_validator("pid")
+    @classmethod
+    def validate_non_negative(cls, v: Optional[int]) -> Optional[int]:
+        if v is not None and v < 0:
+            raise ValueError("Value must be non-negative")
+        return v
+
+    def __init__(
+        self,
+        name: Optional[str] = None,
+        sid: Optional[str] = None,
+        pid: Optional[int] = None,
+        process: Optional[str] = None,
+    ) -> None:
+        super().__init__(
+            name=name,
+            sid=sid,
+            pid=pid,
+            process=process,
+        )
+
+
+class HashInfo(BaseModel):
+    """Normalized password hash information (not available in current Volatility version)."""
+
+    username: Optional[str] = None
+    hash_value: Optional[str] = None
+    hash_type: Optional[str] = None  # NTLM, LM, SHA-512, etc.
+    note: Optional[str] = Field(
+        default="Hash extraction not available in current Volatility 3 version"
+    )
+
+    def __init__(
+        self,
+        username: Optional[str] = None,
+        hash_value: Optional[str] = None,
+        hash_type: Optional[str] = None,
+        note: Optional[str] = None,
+    ) -> None:
+        super().__init__(
+            username=username,
+            hash_value=hash_value,
+            hash_type=hash_type,
+            note=note or "Hash extraction not available in current Volatility 3 version",
+        )
+
+
 class QuickTriageOutput(BaseModel):
     """Output for quick_triage workflow."""
 
     processes: List[ProcessInfo] = Field(default_factory=list)
     network_connections: List[NetworkConnection] = Field(default_factory=list)
     malfind_hits: List[MalfindHit] = Field(default_factory=list)
+    users: List[UserInfo] = Field(default_factory=list)
+    hashes: List[HashInfo] = Field(default_factory=list)
 
 
 class OutputNormalizer:
@@ -210,6 +267,32 @@ class OutputNormalizer:
             normalized.append(hit)
         return normalized
 
+    def normalize_users(self, raw_output: List[Dict[str, Any]]) -> List[UserInfo]:
+        """Normalize user information output from windows.getsids."""
+        normalized: List[UserInfo] = []
+        for item in raw_output:
+            user = UserInfo(
+                name=item.get("Name"),
+                sid=item.get("SID"),
+                pid=item.get("PID"),
+                process=item.get("Process"),
+            )
+            normalized.append(user)
+        return normalized
+
+    def normalize_hashes(self, raw_output: List[Dict[str, Any]]) -> List[HashInfo]:
+        """Normalize password hash output (not available in current Volatility version)."""
+        # Hash extraction is not available in the current Volatility 3 version
+        # Return a single entry indicating this
+        return [
+            HashInfo(
+                note=(
+                    "Hash extraction plugins (hashdump, lsadump, cachedump) "
+                    "are not available in this Volatility 3 version"
+                )
+            )
+        ]
+
     def normalize_quick_triage(self, results: List) -> QuickTriageOutput:
         """Normalize complete quick_triage workflow output."""
         output = QuickTriageOutput()
@@ -221,6 +304,8 @@ class OutputNormalizer:
                 output.network_connections = self.normalize_netscan(result.output)
             elif result.plugin_name == "windows.malfind" and result.output:
                 output.malfind_hits = self.normalize_malfind(result.output)
+            elif result.plugin_name == "windows.getsids" and result.output:
+                output.users = self.normalize_users(result.output)
 
         return output
 
@@ -281,6 +366,30 @@ class OutputExporter:
                         for item in output.malfind_hits:
                             writer.writerow(item.model_dump())
                 logger.info(f"Exported malfind hits to CSV: {malfind_path}")
+
+            # Users
+            if output.users:
+                users_path = Path(f"{base_path}_users.csv")
+                with open(users_path, "w", newline="", encoding="utf-8") as f:
+                    if output.users:
+                        writer = csv.DictWriter(f, fieldnames=output.users[0].model_dump().keys())
+                        writer.writeheader()
+                        for item in output.users:
+                            writer.writerow(item.model_dump())
+                logger.info(f"Exported users to CSV: {users_path}")
+
+            # Password hashes
+            if output.password_hashes:
+                hashes_path = Path(f"{base_path}_hashes.csv")
+                with open(hashes_path, "w", newline="", encoding="utf-8") as f:
+                    if output.password_hashes:
+                        writer = csv.DictWriter(
+                            f, fieldnames=output.password_hashes[0].model_dump().keys()
+                        )
+                        writer.writeheader()
+                        for item in output.password_hashes:
+                            writer.writerow(item.model_dump())
+                logger.info(f"Exported password hashes to CSV: {hashes_path}")
         else:
             # Generic export for other models
             with open(path, "w", newline="", encoding="utf-8") as f:

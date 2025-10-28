@@ -61,10 +61,14 @@ class ResultsExplorer(QWidget):
         self.processes_tab = self._create_table_tab("Processes")
         self.network_tab = self._create_table_tab("Network Connections")
         self.malfind_tab = self._create_table_tab("Malfind Results")
+        self.users_tab = self._create_table_tab("Users")
+        self.hashes_tab = self._create_table_tab("Hashes")
 
         self.tab_widget.addTab(self.processes_tab, "Processes")
         self.tab_widget.addTab(self.network_tab, "Network")
         self.tab_widget.addTab(self.malfind_tab, "Malfind")
+        self.tab_widget.addTab(self.users_tab, "Users")
+        self.tab_widget.addTab(self.hashes_tab, "Hashes")
 
     def _create_table_tab(self, title: str) -> QWidget:
         """Create a tab with a table widget."""
@@ -111,6 +115,8 @@ class ResultsExplorer(QWidget):
         self._update_processes_tab()
         self._update_network_tab()
         self._update_malfind_tab()
+        self._update_users_tab()
+        self._update_hashes_tab()
 
     def _update_processes_tab(self) -> None:
         """Update the processes table."""
@@ -205,6 +211,59 @@ class ResultsExplorer(QWidget):
         # Resize columns to content
         table.resizeColumnsToContents()
 
+    def _update_users_tab(self) -> None:
+        """Update the users table."""
+        if not self.normalized_data or not self.normalized_data.users:
+            self._clear_table(self.users_tab)
+            return
+
+        table = cast(QTableWidget, getattr(self.users_tab, "_table"))
+        users = self.normalized_data.users
+
+        # Set up table
+        table.setRowCount(len(users))
+        table.setColumnCount(6)
+        table.setHorizontalHeaderLabels(
+            ["Username", "UID", "GID", "Home Dir", "Shell", "Description"]
+        )
+
+        # Populate table
+        for row, user in enumerate(users):
+            table.setItem(row, 0, QTableWidgetItem(user.username or ""))
+            table.setItem(row, 1, QTableWidgetItem(str(user.uid or "")))
+            table.setItem(row, 2, QTableWidgetItem(str(user.gid or "")))
+            table.setItem(row, 3, QTableWidgetItem(user.home_dir or ""))
+            table.setItem(row, 4, QTableWidgetItem(user.shell or ""))
+            table.setItem(row, 5, QTableWidgetItem(user.description or ""))
+
+        # Resize columns to content
+        table.resizeColumnsToContents()
+
+    def _update_hashes_tab(self) -> None:
+        """Update the hashes table."""
+        if not self.normalized_data or not self.normalized_data.hashes:
+            self._clear_table(self.hashes_tab)
+            return
+
+        table = cast(QTableWidget, getattr(self.hashes_tab, "_table"))
+        hashes = self.normalized_data.hashes
+
+        # Set up table
+        table.setRowCount(len(hashes))
+        table.setColumnCount(5)
+        table.setHorizontalHeaderLabels(["Username", "UID", "GID", "Hash Type", "Hash Value"])
+
+        # Populate table
+        for row, hash_info in enumerate(hashes):
+            table.setItem(row, 0, QTableWidgetItem(hash_info.username or ""))
+            table.setItem(row, 1, QTableWidgetItem(str(hash_info.uid or "")))
+            table.setItem(row, 2, QTableWidgetItem(str(hash_info.gid or "")))
+            table.setItem(row, 3, QTableWidgetItem(hash_info.hash_type or ""))
+            table.setItem(row, 4, QTableWidgetItem(hash_info.hash_value or ""))
+
+        # Resize columns to content
+        table.resizeColumnsToContents()
+
     def _clear_table(self, tab_widget: QWidget) -> None:
         """Clear a table widget."""
         table = cast(QTableWidget, getattr(tab_widget, "_table"))
@@ -219,6 +278,10 @@ class ResultsExplorer(QWidget):
             table = cast(QTableWidget, getattr(self.network_tab, "_table"))
         elif tab_title == "Malfind Results":
             table = cast(QTableWidget, getattr(self.malfind_tab, "_table"))
+        elif tab_title == "Users":
+            table = cast(QTableWidget, getattr(self.users_tab, "_table"))
+        elif tab_title == "Hashes":
+            table = cast(QTableWidget, getattr(self.hashes_tab, "_table"))
         else:
             return
 

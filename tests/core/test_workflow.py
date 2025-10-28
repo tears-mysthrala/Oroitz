@@ -79,4 +79,4 @@ def test_seed_workflows():
     workflow = registry.get("quick_triage")
     assert workflow is not None
     assert workflow.name == "Quick Triage"
-    assert len(workflow.plugins) == 3
+    assert len(workflow.plugins) == 4

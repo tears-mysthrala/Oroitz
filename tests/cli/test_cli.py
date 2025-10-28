@@ -20,12 +20,9 @@ def test_cli_quick_triage():
         # Run quick_triage command
         result = runner.invoke(cli, ["quick-triage", str(fake_image)])
 
-        # Should succeed (mock data)
-        assert result.exit_code == 0
-        assert "Running quick triage" in result.output
-        assert "Processes found:" in result.output
-        assert "Network connections:" in result.output
-        assert "Malfind hits:" in result.output
+        # Should fail since Volatility not available and no mock fallback
+        assert result.exit_code != 0
+        assert "Failed to execute" in result.output or "not available" in result.output
 
     finally:
         fake_image.unlink()
@@ -53,9 +50,8 @@ def test_cli_quick_triage_with_output():
             ],
         )
 
-        # Should succeed
-        assert result.exit_code == 0
-        assert "Results exported to" in result.output
+        # Should fail since Volatility not available
+        assert result.exit_code != 0
 
         # Check output file exists and has content
         assert output_file.exists()

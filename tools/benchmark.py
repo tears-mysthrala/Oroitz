@@ -112,7 +112,6 @@ def run_benchmark(image_path: Path, out_path: Path) -> None:
                 "success": bool(r.success),
                 "duration": float(r.duration),
                 "attempts": int(r.attempts) if getattr(r, "attempts", None) is not None else 0,
-                "used_mock": bool(getattr(r, "used_mock", False)),
             }
         )
 

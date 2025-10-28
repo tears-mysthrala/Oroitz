@@ -46,11 +46,10 @@ def test_retry_then_success(monkeypatch):
     assert result.success
     assert result.output is not None
     assert result.attempts == 2
-    assert result.used_mock is False
 
 
 def test_permanent_failure_fallback(monkeypatch):
-    """Simulate repeated failures to ensure fallback to mock data and used_mock is True."""
+    """Simulate repeated failures to ensure proper failure handling without mock data."""
     # Use 3 attempts and no backoff to speed up
     config.volatility_retry_attempts = 3
     config.volatility_retry_backoff_seconds = 0
@@ -73,7 +72,7 @@ def test_permanent_failure_fallback(monkeypatch):
     ):
         result = executor.execute_plugin("windows.pslist", "/fake/image")
 
-    assert result.success  # fallback returns mock data, but marked as success
-    assert result.used_mock is True
+    assert result.success is False
+    assert result.output is None
+    assert result.error is not None
     assert result.attempts == config.volatility_retry_attempts
-    assert isinstance(result.output, list)

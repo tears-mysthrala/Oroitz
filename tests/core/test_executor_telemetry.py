@@ -19,7 +19,7 @@ def test_retry_and_fallback_telemetry():
 
     cache.clear()
 
-    # Simulate two failing runs to hit fallback
+    # Simulate two failing runs to hit failure
     fail = type("R", (), {"returncode": 1, "stdout": "", "stderr": "err"})
 
     with patch("oroitz.core.executor.subprocess.run", side_effect=[fail, fail]):
@@ -27,7 +27,7 @@ def test_retry_and_fallback_telemetry():
         with patch("oroitz.core.executor.log_event") as mock_log:
             executor.execute_plugin("windows.pslist", "/fake/image", "windows")
 
-            # Should have emitted at least one retry and one fallback
+            # Should have emitted retry and error events
             calls = [c[0][0] for c in mock_log.call_args_list]
             assert "plugin_retry" in calls
-            assert "plugin_fallback" in calls
+            assert "plugin_error" in calls

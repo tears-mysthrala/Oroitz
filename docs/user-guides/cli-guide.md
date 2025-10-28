@@ -209,7 +209,7 @@ Oroitz leverages Volatility 3's modern architecture:
 #### Volatility 3 not found
 
 - Ensure Volatility 3 is installed: `pip install volatility3`
-- Or use the provided mock data fallback
+- Ensure Volatility 3 is properly installed and configured
 
 #### Unsupported Memory Image
 

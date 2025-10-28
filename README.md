@@ -40,7 +40,7 @@ Oroitz delivers a complete, production-ready memory forensics platform built on 
 - **Comprehensive Test Suite**: 53 passing tests covering all components
 - **Real Memory Samples**: Included forensic samples for integration testing
 - **Real Memory Samples**: Not included in the repository due to size and privacy constraints. Use `assets/samples.json` and the helper script `scripts/fetch_samples.py` to download approved sample images into a local `samples/` directory for integration testing. See `samples/README.md` for details.
-- **Mock Data Fallback**: Graceful degradation when Volatility 3 unavailable
+- **Retry Mechanism**: Automatic retries for transient failures with configurable backoff
 - **Code Quality**: Ruff linting and Black formatting enforced
 
 ## Project Status

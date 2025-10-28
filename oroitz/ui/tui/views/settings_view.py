@@ -3,9 +3,9 @@
 from pathlib import Path
 
 from textual.app import ComposeResult
-from textual.containers import Container, Vertical
+from textual.containers import Container, Vertical, VerticalScroll
 from textual.screen import Screen
-from textual.widgets import Button, Checkbox, Input, Label, Select, Static, VerticalScroll
+from textual.widgets import Button, Checkbox, Input, Label, Select, Static
 
 from oroitz.core.cache import cache
 from oroitz.core.config import config

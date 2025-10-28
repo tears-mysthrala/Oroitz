@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Optional
 
 from textual.app import App
+from textual.command import CommandPalette
+from textual.widgets import Footer
 
 from oroitz.core.executor import Executor
 from oroitz.core.output import OutputExporter, OutputNormalizer
@@ -29,6 +31,7 @@ class OroitzTUI(App):
 
     BINDINGS = [
         ("f1", "help", "Help"),
+        ("ctrl+k", "command_palette", "Command Palette"),
     ]
 
     def __init__(self):
@@ -45,11 +48,10 @@ class OroitzTUI(App):
         self.push_screen(HomeView())
         logger.info("TUI on_mount called")
 
-    # def compose(self) -> ComposeResult:
-    #     """Compose the main application layout."""
-    #     # yield Header()
-    #     # yield Footer()
-    #     pass
+    def compose(self):
+        """Compose the main application layout."""
+        yield CommandPalette()
+        yield Footer()
 
     def get_current_session(self) -> Optional[Session]:
         """Get the current active session."""
@@ -91,3 +93,15 @@ class OroitzTUI(App):
         from .views.feedback_view import FeedbackView
 
         self.push_screen(FeedbackView())
+
+    @staticmethod
+    def get_command_palette_commands():
+        """Get commands for the command palette."""
+        return [
+            ("new", "Create a new analysis session"),
+            ("open", "Open an existing session"),
+            ("settings", "Open settings"),
+            ("help", "Show help and shortcuts"),
+            ("feedback", "Provide feedback"),
+            ("quit", "Quit the application"),
+        ]

@@ -1,7 +1,7 @@
 /* Oroitz TUI Styles - Modern Dark Theme */
 
 Screen {
-    background: #1a1a2e;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
     color: #e6e6e6;
 }
 
@@ -19,11 +19,16 @@ Container {
 #results-container,
 #settings-container {
     padding: 2;
+    background: rgba(15, 15, 35, 0.8);
+    border: solid rgba(157, 78, 221, 0.3);
+    border-radius: 1;
 }
 
 #workflow-scroll {
-    border: solid #2d1b69;
-    background: #0f0f23;
+    height: 15;
+    border: solid rgba(157, 78, 221, 0.5);
+    background: rgba(45, 27, 105, 0.8);
+    border-radius: 1;
 }
 
 #title,
@@ -35,6 +40,7 @@ Container {
     margin: 0 0 1 0;
     color: #9d4edd;
     text-style: bold;
+    text-shadow: 0 0 2px rgba(157, 78, 221, 0.5);
 }
 
 .subtitle,
@@ -43,28 +49,34 @@ Container {
 .profile-info,
 .session-info {
     text-align: center;
-    margin: 0 0 1 0;
-    color: #b0b0b0;
+    margin: 1 0 2 0;
+    color: #b794f6;
+    text-style: italic;
 }
 
 .workflow-button {
     width: 100%;
     margin: 1 0;
     padding: 1 2;
-    background: #2d1b69;
-    border: solid #9d4edd;
+    background: linear-gradient(135deg, #2d1b69 0%, #4c1d95 100%);
+    border: solid rgba(157, 78, 221, 0.8);
     color: #e6e6e6;
+    border-radius: 1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .workflow-button:hover {
-    background: #9d4edd;
-    color: #1a1a2e;
+    background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%);
+    border: solid #9d4edd;
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(157, 78, 221, 0.4);
 }
 
 .workflow-button:focus {
-    background: #9d4edd;
+    background: linear-gradient(135deg, #7c3aed 0%, #9d4edd 100%);
     border: solid #ffffff;
     color: #1a1a2e;
+    box-shadow: 0 0 0 2px rgba(157, 78, 221, 0.6);
 }
 
 #form {
@@ -126,6 +138,9 @@ Container {
 #error-container {
     padding: 2;
     align: center middle;
+    background: rgba(255, 107, 107, 0.1);
+    border: solid rgba(255, 107, 107, 0.5);
+    border-radius: 1;
 }
 
 #error-title {
@@ -133,35 +148,41 @@ Container {
     margin: 2 0;
     color: #ff6b6b;
     text-style: bold;
+    text-shadow: 0 0 2px rgba(255, 107, 107, 0.5);
 }
 
 #error-message {
     text-align: center;
     margin: 2 0;
     color: #ff6b6b;
-    background: #2d1b1b;
+    background: rgba(255, 107, 107, 0.2);
     padding: 1;
-    border: solid #ff6b6b;
+    border: solid rgba(255, 107, 107, 0.5);
+    border-radius: 1;
 }
 
 .error-details-title {
     margin: 1 0;
-    color: #b0b0b0;
+    color: #ff9999;
     text-style: bold;
 }
 
 #error-details {
     margin: 1 0;
     color: #e6e6e6;
-    background: #2d1b1b;
+    background: rgba(255, 107, 107, 0.1);
     padding: 1;
-    border: solid #b0b0b0;
+    border: solid rgba(176, 176, 176, 0.3);
     height: 40%;
     overflow: auto;
+    border-radius: 1;
 }
 
 #feedback-container {
     padding: 2;
+    background: rgba(15, 15, 35, 0.8);
+    border: solid rgba(157, 78, 221, 0.3);
+    border-radius: 1;
 }
 
 #feedback-title {
@@ -169,12 +190,14 @@ Container {
     margin: 2 0;
     color: #9d4edd;
     text-style: bold;
+    text-shadow: 0 0 2px rgba(157, 78, 221, 0.5);
 }
 
 .feedback-subtitle {
     text-align: center;
     margin: 1 0;
-    color: #b0b0b0;
+    color: #b794f6;
+    text-style: italic;
 }
 
 #feedback-form {
@@ -189,96 +212,123 @@ Container {
 
 /* DataTable styling */
 DataTable {
-    height: 1fr;
-    max-height: 60vh;
-    background: #0f0f23;
-    border: solid #9d4edd;
+    height: 100%;
+    min-height: 20;
+    background: rgba(15, 15, 35, 0.9);
+    border: solid rgba(157, 78, 221, 0.5);
+    border-radius: 1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 DataTable>.datatable--header {
-    background: #2d1b69;
+    background: linear-gradient(135deg, #2d1b69 0%, #4c1d95 100%);
     color: #9d4edd;
     text-style: bold;
+    border-bottom: solid rgba(157, 78, 221, 0.8);
 }
 
 DataTable>.datatable--cursor {
-    background: #9d4edd;
-    color: #1a1a2e;
+    background: linear-gradient(135deg, #9d4edd 0%, #7c3aed 100%);
+    color: #ffffff;
+    text-style: bold;
 }
 
-VerticalScroll {
-    height: 1fr;
-        max-height: 70vh;
-    border: solid #2d1b69;
+/* Container styling for scrollable tables */
+#overview-container,
+#processes-container,
+#network-container,
+#dlls-container,
+#timeline-container {
+    height: 100%;
+    min-height: 25;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: rgba(15, 15, 35, 0.6);
+    border: solid rgba(157, 78, 221, 0.3);
+    border-radius: 1;
+    padding: 1;
 }
 
 /* Button improvements */
 Button {
     margin: 0 1;
     padding: 0 2;
+    border-radius: 1;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 Button.variant-primary {
-    background: #9d4edd;
-    border: solid #9d4edd;
+    background: linear-gradient(135deg, #9d4edd 0%, #7c3aed 100%);
+    border: solid rgba(157, 78, 221, 0.8);
     color: #1a1a2e;
+    text-style: bold;
 }
 
 Button.variant-primary:hover {
-    background: #7b2cbf;
-    border: solid #7b2cbf;
+    background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
+    border: solid #9d4edd;
+    box-shadow: 0 2px 6px rgba(157, 78, 221, 0.5);
 }
 
 Button.variant-error {
-    background: #ff6b6b;
-    border: solid #ff6b6b;
+    background: linear-gradient(135deg, #ff6b6b 0%, #cc5555 100%);
+    border: solid rgba(255, 107, 107, 0.8);
     color: #ffffff;
 }
 
 Button.variant-error:hover {
-    background: #cc5555;
-    border: solid #cc5555;
+    background: linear-gradient(135deg, #cc5555 0%, #aa4444 100%);
+    border: solid #ff6b6b;
+    box-shadow: 0 2px 6px rgba(255, 107, 107, 0.5);
 }
 
 Button.variant-default {
-    background: #16213e;
-    border: solid #b0b0b0;
+    background: linear-gradient(135deg, #16213e 0%, #2d1b69 100%);
+    border: solid rgba(176, 176, 176, 0.5);
     color: #e6e6e6;
 }
 
 Button.variant-default:hover {
-    background: #b0b0b0;
+    background: linear-gradient(135deg, #2d1b69 0%, #4c1d95 100%);
     border: solid #b0b0b0;
-    color: #1a1a2e;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(176, 176, 176, 0.3);
 }
 
 /* Input styling */
 Input {
-    border: solid #9d4edd;
-    background: #0f0f23;
+    border: solid rgba(157, 78, 221, 0.5);
+    background: rgba(15, 15, 35, 0.8);
     color: #e6e6e6;
+    border-radius: 1;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 Input:focus {
-    border: solid #ffffff;
+    border: solid #9d4edd;
+    box-shadow: 0 0 0 1px rgba(157, 78, 221, 0.5), inset 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 /* TextArea styling */
 TextArea {
-    border: solid #9d4edd;
-    background: #0f0f23;
+    border: solid rgba(157, 78, 221, 0.5);
+    background: rgba(15, 15, 35, 0.8);
     color: #e6e6e6;
     height: 8;
+    border-radius: 1;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 TextArea:focus {
-    border: solid #ffffff;
+    border: solid #9d4edd;
+    box-shadow: 0 0 0 1px rgba(157, 78, 221, 0.5), inset 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 /* Label styling */
 Label {
-    color: #b0b0b0;
+    color: #b794f6;
     margin-bottom: 0;
+    text-style: bold;
 }
 
 /* RadioSet styling */
@@ -299,23 +349,25 @@ Checkbox {
 /* Tab styling */
 TabPane {
     padding: 1;
-    height: 1fr;
-    overflow-y: auto;
+    background: rgba(15, 15, 35, 0.6);
+    border: solid rgba(157, 78, 221, 0.3);
+    border-radius: 1;
 }
 
 TabbedContent {
-    border: solid #16213e;
-    height: 1fr;
-    min-height: 40vh;
+    border: solid rgba(157, 78, 221, 0.4);
+    background: rgba(26, 26, 46, 0.8);
+    border-radius: 1;
 }
 
-/* Ensure DataTable in tabs can scroll */
-TabPane DataTable {
-    height: 1fr;
-    max-height: 100%;
+.help-text {
+    text-align: center;
+    margin: 1 0;
+    color: #b794f6;
+    text-style: italic;
+    font-size: 90%;
 }
 
-/* High contrast variant */
 .theme-high-contrast Screen {
     background: #000000;
     color: #ffffff;

@@ -51,22 +51,27 @@ class ResultsView(Screen):
                 # Tabbed results interface
                 with TabbedContent():
                     with TabPane("Overview", id="overview-tab"):
-                        yield DataTable(id="overview-table")
+                        with Vertical(id="overview-container"):
+                            yield DataTable(id="overview-table")
 
                     with TabPane("Processes", id="processes-tab"):
-                        yield DataTable(id="processes-table")
+                        with Vertical(id="processes-container"):
+                            yield DataTable(id="processes-table")
 
                     with TabPane("Network", id="network-tab"):
-                        yield DataTable(id="network-table")
+                        with Vertical(id="network-container"):
+                            yield DataTable(id="network-table")
 
                     with TabPane("Users", id="users-tab"):
                         yield DataTable(id="users-table")
 
                     with TabPane("DLLs", id="dlls-tab"):
-                        yield DataTable(id="dlls-table")
+                        with Vertical(id="dlls-container"):
+                            yield DataTable(id="dlls-table")
 
                     with TabPane("Timeline", id="timeline-tab"):
-                        yield DataTable(id="timeline-table")
+                        with Vertical(id="timeline-container"):
+                            yield DataTable(id="timeline-table")
 
                 with Horizontal(id="export-buttons"):
                     yield Button("Export JSON", id="export-json", variant="default")

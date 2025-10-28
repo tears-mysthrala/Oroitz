@@ -35,16 +35,20 @@ class HomeView(Screen):
                             classes="workflow-button",
                         )
 
-                with Vertical(id="bottom-section"):
-                    yield Static(
-                        "💡 Tip: Use Tab/Shift+Tab to navigate, Enter to select, Esc to go back",
-                        classes="help-text",
-                    )
-                    with Horizontal(id="bottom-buttons"):
-                        yield Button("Help", id="help-button", variant="default")
-                        yield Button("Settings", id="settings-button", variant="default")
-                        yield Button("Provide Feedback", id="feedback-button", variant="default")
-                    yield Button("Exit", id="exit-button", variant="error")
+                yield Static("", id="spacer")
+                yield Static(
+                    "💡 Tip: Use Tab/Shift+Tab to navigate, Enter to select, Esc to go back",
+                    classes="help-text",
+                )
+                yield Static(
+                    "⌨️ Shortcuts: F1=Help, Ctrl+K=Command Palette",
+                    classes="help-text",
+                )
+                with Horizontal(id="bottom-buttons"):
+                    yield Button("Help (F1)", id="help-button", variant="default")
+                    yield Button("Settings", id="settings-button", variant="default")
+                    yield Button("Provide Feedback", id="feedback-button", variant="default")
+                yield Button("Exit", id="exit-button", variant="error")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle button presses."""

@@ -1,6 +1,7 @@
 """Tests for CLI module."""
 
 import tempfile
+import time
 from pathlib import Path
 
 from click.testing import CliRunner
@@ -28,7 +29,16 @@ def test_cli_quick_triage():
         )
 
     finally:
-        fake_image.unlink()
+        # Retry cleanup on Windows due to file handle locking
+        for _ in range(10):  # Try up to 10 times
+            try:
+                fake_image.unlink()
+                break
+            except PermissionError:
+                time.sleep(0.1)  # Wait 100ms before retry
+        else:
+            # If still failing after retries, just continue (file will be cleaned up by OS)
+            pass
 
 
 def test_cli_quick_triage_with_output():
@@ -68,7 +78,16 @@ def test_cli_quick_triage_with_output():
         assert "malfind_hits" in content
 
     finally:
-        fake_image.unlink()
+        # Retry cleanup on Windows due to file handle locking
+        for _ in range(10):  # Try up to 10 times
+            try:
+                fake_image.unlink()
+                break
+            except PermissionError:
+                time.sleep(0.1)  # Wait 100ms before retry
+        else:
+            # If still failing after retries, just continue (file will be cleaned up by OS)
+            pass
         output_file.unlink(missing_ok=True)
 
 

@@ -20,6 +20,8 @@ if TYPE_CHECKING:
     from volatility3.cli import CommandLine
 
 try:
+    import volatility3
+    import volatility3.framework as framework
     import volatility3.framework.automagic as automagic
     import volatility3.framework.contexts as contexts
     import volatility3.framework.plugins as plugins
@@ -90,21 +92,50 @@ class Executor:
             ctx = contexts.Context()  # type: ignore
             ctx.config["automagic.LayerStacker.single_location"] = f"file://{image_path}"
 
+            # Import plugin files and build list (mirror CLI behavior)
+            failures = framework.import_files(volatility3.plugins, True)  # type: ignore
+            if failures:
+                logger.debug("Volatility plugin import failures: %s", failures)
+            plugin_list = framework.list_plugins()
+
+            # Resolve plugin name to the plugin class/type expected by volatility3
+            plugin_class = plugin_list.get(plugin_name)
+            if plugin_class is None:
+                # Try to find plugin by partial name match (e.g., 'windows.pslist' -> 'windows.pslist.PsList')
+                matching_plugins = [
+                    name for name in plugin_list.keys() if plugin_name in name.lower()
+                ]
+                if matching_plugins:
+                    # Take the first match (should be the most relevant)
+                    plugin_name_full = matching_plugins[0]
+                    plugin_class = plugin_list[plugin_name_full]
+                    logger.info(f"Resolved plugin name '{plugin_name}' to '{plugin_name_full}'")
+                else:
+                    raise RuntimeError(f"Could not find Volatility plugin: {plugin_name}")
+
             # Get available automagics (returns list of classes)
             automagic_classes = automagic.available(ctx)  # type: ignore
 
-            # Choose appropriate automagics for the plugin
+            # Choose appropriate automagics for the plugin (pass the plugin class/type)
             assert automagic is not None  # VOLATILITY_AVAILABLE ensures this
-            chosen_automagics = automagic.choose_automagic(automagic_classes, plugin_name)  # type: ignore
+            chosen_automagics = automagic.choose_automagic(automagic_classes, plugin_class)  # type: ignore
 
-            # Apply automagics to context
-            for amagic in chosen_automagics:
-                if amagic.__class__.__name__ == "LayerStacker":
-                    ctx.config["automagic.LayerStacker.single_location"] = f"file://{image_path}"
-                amagic(ctx, config_path=config.config_file)  # type: ignore
+            # Construct plugin (pass the plugin class/type, and follow construct_plugin signature)
+            # construct_plugin(ctx, automagics, plugin, base_config_path, progress_callback, open_method)
+            # For our use, we can pass an empty base_config_path and a simple progress callback
+            def _noop_progress(progress, msg):
+                return None
 
-            # Construct plugin
-            plugin = plugins.construct_plugin(ctx, plugin_name, **kwargs)  # type: ignore
+            constructed = plugins.construct_plugin(
+                ctx,
+                chosen_automagics,
+                plugin_class,
+                "plugins",
+                _noop_progress,
+                plugins.__dict__.get("FileHandler", None),
+            )
+
+            plugin = constructed
 
             # Run plugin
             treegrid = plugin.run()

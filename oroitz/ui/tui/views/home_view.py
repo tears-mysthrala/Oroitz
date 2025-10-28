@@ -1,7 +1,7 @@
 """Home View for Oroitz TUI."""
 
 from textual.app import ComposeResult
-from textual.containers import Container, Horizontal, Vertical
+from textual.containers import Container, Horizontal, Vertical, VerticalScroll
 from textual.screen import Screen
 from textual.widgets import Button, Static
 
@@ -27,13 +27,14 @@ class HomeView(Screen):
                 yield Static("Select a workflow to begin analysis:", classes="subtitle")
 
                 # Workflow buttons
-                with Vertical(id="workflow-buttons"):
-                    for workflow in registry.list():
-                        yield Button(
-                            f"{workflow.name}\n{workflow.description}",
-                            id=f"workflow-{workflow.id}",
-                            classes="workflow-button",
-                        )
+                with VerticalScroll(id="workflow-scroll"):
+                    with Vertical(id="workflow-buttons"):
+                        for workflow in registry.list():
+                            yield Button(
+                                f"{workflow.name}\n{workflow.description}",
+                                id=f"workflow-{workflow.id}",
+                                classes="workflow-button",
+                            )
 
                 yield Static("", id="spacer")
                 yield Static(

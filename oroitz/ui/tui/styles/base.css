@@ -18,6 +18,12 @@ Container {
     padding: 2;
 }
 
+#workflow-scroll {
+    height: 15;
+    border: solid #2d1b69;
+    background: #0f0f23;
+}
+
 #title,
 #wizard-title,
 #run-title,
@@ -26,7 +32,6 @@ Container {
     text-align: center;
     margin: 2 0 3 0;
     color: #9d4edd;
-    font-style: bold;
     text-style: bold;
 }
 
@@ -66,9 +71,7 @@ Container {
 
 #buttons {
     margin: 3 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    align: center middle;
 }
 
 #progress-bar {
@@ -85,7 +88,7 @@ Container {
 
 #log-title {
     color: #9d4edd;
-    font-style: bold;
+    text-style: bold;
     margin-bottom: 1;
 }
 
@@ -97,24 +100,20 @@ Container {
 
 #run-buttons {
     margin: 2 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    align: center middle;
 }
 
 .summary {
     text-align: center;
     margin: 2 0;
     color: #00ff88;
-    font-style: bold;
+    text-style: bold;
 }
 
 #results-table {
     #export-buttons {
         margin: 2 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        align: center middle;
     }
 
     Button {
@@ -131,7 +130,7 @@ Container {
     text-align: center;
     margin: 2 0;
     color: #ff6b6b;
-    font-style: bold;
+    text-style: bold;
 }
 
 #error-message {
@@ -146,7 +145,7 @@ Container {
 .error-details-title {
     margin: 1 0;
     color: #b0b0b0;
-    font-style: bold;
+    text-style: bold;
 }
 
 #error-details {
@@ -167,7 +166,7 @@ Container {
     text-align: center;
     margin: 2 0;
     color: #9d4edd;
-    font-style: bold;
+    text-style: bold;
 }
 
 .feedback-subtitle {
@@ -197,7 +196,7 @@ DataTable {
 DataTable>.datatable--header {
     background: #2d1b69;
     color: #9d4edd;
-    font-style: bold;
+    text-style: bold;
 }
 
 DataTable>.datatable--cursor {

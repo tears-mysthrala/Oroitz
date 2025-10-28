@@ -23,7 +23,6 @@ class OroitzTUI(App):
     CSS_PATH = None if getattr(sys, "_MEIPASS", None) else "styles/base.css"
 
     BINDINGS = [
-        ("ctrl+k", "command_palette", "Command Palette"),
         ("f1", "help", "Help"),
     ]
 
@@ -54,10 +53,6 @@ class OroitzTUI(App):
     def set_current_session(self, session: Optional[Session]) -> None:
         """Set the current active session."""
         self.session = session
-
-    def action_command_palette(self) -> None:
-        """Show the command palette."""
-        self.push_screen("command-palette")
 
     def action_help(self) -> None:
         """Show help."""

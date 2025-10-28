@@ -125,10 +125,10 @@ vw export --session case001 --format json --out ./out/case001.json
 
 ## 12. Feature Roadmap
 
-- **MVP (v0.1.0):** Python SDK, CLI, Textual-based TUI with quick triage workflow, JSON/CSV outputs, basic caching, unit tests, docs site.
-- **v0.2.x:** PySide6 GUI beta with workflow designer, Node.js SDK, Parquet support, plugin metadata API, Docker distribution, CI/CD pipelines.
-- **v0.3.x:** Rust accelerators for parsing, GUI visualization enhancements (timeline, diffing), session resume, multi-image orchestration, advanced telemetry, integrations with SOAR tools.
-- **v1.0.0:** Stable API, polished GUI/TUI experiences, performance benchmarks, governance board, long-term support policy, community forum setup.
+- **MVP (initial release):** Python SDK, CLI, Textual-based TUI with quick triage workflow, JSON/CSV outputs, basic caching, unit tests, docs site.
+- **Next major release:** PySide6 GUI beta with workflow designer, Node.js SDK, Parquet support, plugin metadata API, Docker distribution, CI/CD pipelines.
+- **Subsequent major release:** Rust accelerators for parsing, GUI visualization enhancements (timeline, diffing), session resume, multi-image orchestration, advanced telemetry, integrations with SOAR tools.
+- **Stable release:** Stable API, polished GUI/TUI experiences, performance benchmarks, governance board, long-term support policy, community forum setup.
 - **Beyond:** GUI automation scripting, commercial support offerings, analytics dashboards, ML-assisted anomaly detection.
 
 ## 13. Testing & Quality Strategy

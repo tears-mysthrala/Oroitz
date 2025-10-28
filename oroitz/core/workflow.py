@@ -117,8 +117,6 @@ def seed_workflows() -> None:
         description=("Highlight network activity, sockets, and associated processes"),
         plugins=[
             PluginSpec(name="windows.netscan"),
-            PluginSpec(name="windows.sockscan"),
-            PluginSpec(name="windows.connections"),
         ],
     )
     registry.register(network_focus)
@@ -128,7 +126,7 @@ def seed_workflows() -> None:
         id="full_system_scan",
         name="Full System Scan",
         description=(
-            "Complete analysis including all available plugins " "for comprehensive forensics"
+            "Complete analysis including all available plugins for comprehensive forensics"
         ),
         plugins=[
             PluginSpec(name="windows.pslist"),
@@ -138,9 +136,7 @@ def seed_workflows() -> None:
             PluginSpec(name="windows.dlllist"),
             PluginSpec(name="windows.handles"),
             PluginSpec(name="windows.psscan"),
-            PluginSpec(name="windows.sockscan"),
-            PluginSpec(name="windows.connections"),
-            PluginSpec(name="windows.timeliner"),
+            PluginSpec(name="timeliner.Timeliner"),
             PluginSpec(name="windows.getservicesids"),
         ],
     )
@@ -170,7 +166,6 @@ def seed_workflows() -> None:
         description=("Detailed memory structure analysis including pools, heaps, and allocations"),
         plugins=[
             PluginSpec(name="windows.poolscanner"),
-            PluginSpec(name="windows.heap"),
             PluginSpec(name="windows.bigpoolscan"),
             PluginSpec(name="windows.memmap"),
         ],
@@ -183,7 +178,7 @@ def seed_workflows() -> None:
         name="Timeline Overview",
         description=("Chronological view of system events and process activities"),
         plugins=[
-            PluginSpec(name="windows.timeliner"),
+            PluginSpec(name="timeliner.Timeliner"),
             PluginSpec(name="windows.pslist"),
         ],
     )

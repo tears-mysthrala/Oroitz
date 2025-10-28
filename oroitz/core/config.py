@@ -26,6 +26,7 @@ class Config(BaseSettings):
     # GUI settings
     telemetry_enabled: bool = False
     cache_enabled: bool = True
+    force_reexecute_on_fail: bool = False
     auto_export: bool = False
     theme: str = "system"
     font_size: int = 10

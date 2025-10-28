@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "oroitz"
-version = "0.0.1"
+version = "2025.10.28"
 description = "Oroitz: cross-platform Volatility 3 wrapper with shared core and multi-interface adapters"
 authors = ["Tears Workshop <tearsmysthrala@gmail.com>"]
 license = "MIT"

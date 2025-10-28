@@ -123,6 +123,10 @@ class SettingsDialog(QDialog):
         self.cache_results_check = QCheckBox("Cache plugin results")
         layout.addRow(self.cache_results_check)
 
+        # Force re-execute on fail
+        self.force_reexecute_check = QCheckBox("Force re-execute on fail")
+        layout.addRow(self.force_reexecute_check)
+
         # Auto-export
         self.auto_export_check = QCheckBox("Auto-export results")
         layout.addRow(self.auto_export_check)
@@ -160,6 +164,7 @@ class SettingsDialog(QDialog):
 
         # Analysis
         self.cache_results_check.setChecked(config.cache_enabled)
+        self.force_reexecute_check.setChecked(config.force_reexecute_on_fail)
         self.auto_export_check.setChecked(config.auto_export)
 
         # Appearance
@@ -181,6 +186,7 @@ class SettingsDialog(QDialog):
 
         # Analysis
         config.cache_enabled = self.cache_results_check.isChecked()
+        config.force_reexecute_on_fail = self.force_reexecute_check.isChecked()
         config.auto_export = self.auto_export_check.isChecked()
 
         # Appearance

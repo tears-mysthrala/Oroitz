@@ -283,6 +283,7 @@ class Executor:
         plugin_name: str,
         image_path: str,
         session_id: Optional[str] = None,
+        force_reexecute: bool = False,
         **kwargs: Any,
     ) -> ExecutionResult:
         """Execute a single Volatility plugin."""
@@ -292,19 +293,23 @@ class Executor:
         # Use session_id or default
         cache_session_id = session_id or "default"
 
-        # Check cache first
         cache_key_params = {"image_path": image_path, **kwargs}
-        cached_result = cache.get(cache_session_id, plugin_name, cache_key_params)
-        if cached_result is not None:
-            logger.info(f"Using cached result for {plugin_name}")
-            return ExecutionResult(
-                plugin_name=plugin_name,
-                success=True,
-                output=cached_result,
-                error=None,
-                duration=0.0,  # Cached, no execution time
-                timestamp=timestamp,
-            )
+
+        # Check cache first, unless force_reexecute is True
+        if not force_reexecute:
+            cached_result = cache.get(cache_session_id, plugin_name, cache_key_params)
+            if cached_result is not None:
+                logger.info(f"Using cached result for {plugin_name}")
+                return ExecutionResult(
+                    plugin_name=plugin_name,
+                    success=True,
+                    output=cached_result,
+                    error=None,
+                    duration=0.0,  # Cached, no execution time
+                    timestamp=timestamp,
+                )
+        else:
+            logger.info(f"Force re-executing {plugin_name}, bypassing cache.")
 
         try:
             log_event("plugin_start", {"plugin": plugin_name, "image": image_path})
@@ -345,9 +350,31 @@ class Executor:
             attempts=attempts_value,
         )
 
-    def execute_workflow(self, workflow_spec: Any, image_path: str) -> List[ExecutionResult]:
+    def execute_workflow(
+        self, workflow_spec: Any, image_path: str, force_reexecute: bool = False
+    ) -> List[ExecutionResult]:
         """Execute all plugins in a workflow."""
         results: List[ExecutionResult] = []
+
+        # Detect OS to filter compatible plugins
+        detected_os = self._detect_os(image_path)
+        if detected_os:
+            logger.info(f"Detected OS: {detected_os}")
+            # Filter plugins to only those compatible with detected OS
+            compatible_plugins = [
+                plugin
+                for plugin in workflow_spec.plugins
+                if plugin.name.startswith(f"{detected_os}.")
+                or not any(plugin.name.startswith(f"{os}.") for os in ["windows", "linux", "mac"])
+            ]
+            if len(compatible_plugins) != len(workflow_spec.plugins):
+                logger.info(
+                    f"Filtered {len(workflow_spec.plugins) - len(compatible_plugins)} "
+                    "incompatible plugins"
+                )
+            workflow_spec.plugins = compatible_plugins
+        else:
+            logger.warning("Could not detect OS, executing all plugins (may fail)")
 
         # Adjust concurrency based on image size for large images
         image_size_gb = self._get_image_size_gb(image_path)
@@ -367,7 +394,12 @@ class Executor:
                 "executing plugins sequentially"
             )
             for plugin in workflow_spec.plugins:
-                result = self.execute_plugin(plugin.name, image_path, **plugin.parameters)
+                result = self.execute_plugin(
+                    plugin.name,
+                    image_path,
+                    force_reexecute=config.force_reexecute_on_fail,
+                    **plugin.parameters,
+                )
                 results.append(result)
         else:
             # Use thread pool for normal-sized images
@@ -380,7 +412,11 @@ class Executor:
                 future_to_index = {}
                 for i, plugin in enumerate(workflow_spec.plugins):
                     future = executor.submit(
-                        self.execute_plugin, plugin.name, image_path, **plugin.parameters
+                        self.execute_plugin,
+                        plugin.name,
+                        image_path,
+                        force_reexecute=config.force_reexecute_on_fail,
+                        **plugin.parameters,
                     )
                     futures.append(future)
                     future_to_index[future] = i
@@ -397,3 +433,35 @@ class Executor:
                 results = [result for _, result in completed_results]
 
         return results
+
+    def _detect_os(self, image_path: str) -> Optional[str]:
+        """Detect the OS of the memory image."""
+        if not VOLATILITY_AVAILABLE:
+            return None
+
+        os_plugins = {"windows": "windows.info", "linux": "linux.info", "mac": "mac.info"}
+
+        for os_name, plugin in os_plugins.items():
+            try:
+                # Try to run the info plugin
+                ctx = contexts.Context()
+                ctx.config["automagic.LayerStacker.single_location"] = f"file://{image_path}"
+
+                automagic_classes = automagic.available(ctx)
+                chosen_automagics = automagic.choose_automagic(automagic_classes, plugin)
+
+                for amagic in chosen_automagics:
+                    if amagic.__class__.__name__ == "LayerStacker":
+                        ctx.config["automagic.LayerStacker.single_location"] = (
+                            f"file://{image_path}"
+                        )
+                    amagic(ctx, config_path=config.config_file)
+
+                # Try to construct the plugin
+                plugins.construct_plugin(ctx, plugin)
+                # If no exception, OS detected
+                return os_name
+            except Exception:
+                continue
+
+        return None

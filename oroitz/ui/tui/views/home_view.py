@@ -21,31 +21,30 @@ class HomeView(Screen):
     def compose(self) -> ComposeResult:
         """Compose the home screen."""
         with Container(id="home-container"):
-            with Vertical():
+            with Vertical(classes="full-height"):
                 yield Breadcrumb("Home")
                 yield Static("🕵️ Oroitz - Cross-platform Volatility 3 Wrapper", id="title")
                 yield Static("Select a workflow to begin analysis:", classes="subtitle")
 
                 # Workflow buttons
-                with VerticalScroll(id="workflow-scroll"):
-                    with Vertical(id="workflow-buttons"):
-                        for workflow in registry.list():
-                            yield Button(
-                                f"{workflow.name}\n{workflow.description}",
-                                id=f"workflow-{workflow.id}",
-                                classes="workflow-button",
-                            )
+                with VerticalScroll(id="workflow-scroll", classes="full-height"):
+                    for workflow in registry.list():
+                        yield Button(
+                            f"{workflow.name}\n{workflow.description}",
+                            id=f"workflow-{workflow.id}",
+                            classes="workflow-button",
+                        )
 
-                yield Static("", id="spacer")
-                yield Static(
-                    "💡 Tip: Use Tab/Shift+Tab to navigate, Enter to select, Esc to go back",
-                    classes="help-text",
-                )
-                with Horizontal(id="bottom-buttons"):
-                    yield Button("Help", id="help-button", variant="default")
-                    yield Button("Settings", id="settings-button", variant="default")
-                    yield Button("Provide Feedback", id="feedback-button", variant="default")
-                yield Button("Exit", id="exit-button", variant="error")
+                with Vertical(id="bottom-section"):
+                    yield Static(
+                        "💡 Tip: Use Tab/Shift+Tab to navigate, Enter to select, Esc to go back",
+                        classes="help-text",
+                    )
+                    with Horizontal(id="bottom-buttons"):
+                        yield Button("Help", id="help-button", variant="default")
+                        yield Button("Settings", id="settings-button", variant="default")
+                        yield Button("Provide Feedback", id="feedback-button", variant="default")
+                    yield Button("Exit", id="exit-button", variant="error")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle button presses."""

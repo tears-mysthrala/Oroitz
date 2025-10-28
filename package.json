@@ -1,0 +1,12 @@
+{
+  "name": "oroitz-node-binding-placeholder",
+  "version": "0.0.0",
+  "description": "Placeholder for future Node.js binding for Oroitz project.",
+  "private": true,
+  "scripts": {
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}

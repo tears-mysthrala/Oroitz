@@ -3,7 +3,7 @@ name: Release
 on:
     push:
         tags:
-            - "v*.*.*"
+            - "20*.*.*"
 
 jobs:
     build:
@@ -68,9 +68,4 @@ jobs:
                   ls -la *.tar.gz
 
             - name: Create GitHub release
-              uses: softprops/action-gh-release@v1
-              with:
-                  files: artifacts/*.tar.gz
-                  generate_release_notes: true
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: gh release create ${{ github.ref_name }} artifacts/*.tar.gz --generate-notes

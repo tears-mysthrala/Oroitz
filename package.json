@@ -1,6 +1,6 @@
 {
   "name": "oroitz-node-binding-placeholder",
-  "version": "0.0.0",
+  "version": "2025.10.28",
   "description": "Placeholder for future Node.js binding for Oroitz project.",
   "private": true,
   "scripts": {

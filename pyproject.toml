@@ -31,7 +31,7 @@ black = "^24.3.0"
 pre-commit = "^4.3.0"
 pytest-asyncio = "^1.2.0"
 pyinstaller = "^6.5.0"
-psutil = "^6.0.0"
+psutil = "^7.1.2"
 safety = "^3.6.2"
 
 [tool.poetry.group.gui.dependencies]

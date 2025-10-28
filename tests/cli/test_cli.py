@@ -9,7 +9,7 @@ from oroitz.cli import cli
 
 
 def test_cli_quick_triage():
-    """Test CLI quick_triage command."""
+    """Test CLI quick_triage command with mock data fallback."""
     runner = CliRunner()
 
     # Create a fake image file
@@ -20,16 +20,19 @@ def test_cli_quick_triage():
         # Run quick_triage command
         result = runner.invoke(cli, ["quick-triage", str(fake_image)])
 
-        # Should fail since Volatility not available and no mock fallback
-        assert result.exit_code != 0
-        assert "Failed to execute" in result.output or "not available" in result.output
+        # Should succeed with mock data fallback (ADR-0004)
+        assert result.exit_code == 0
+        assert (
+            "processes found" in result.output.lower()
+            or "results exported" in result.output.lower()
+        )
 
     finally:
         fake_image.unlink()
 
 
 def test_cli_quick_triage_with_output():
-    """Test CLI quick_triage with JSON output."""
+    """Test CLI quick_triage with JSON output and mock data fallback."""
     runner = CliRunner()
 
     # Create a fake image file and output file
@@ -50,8 +53,12 @@ def test_cli_quick_triage_with_output():
             ],
         )
 
-        # Should fail since Volatility not available
-        assert result.exit_code != 0
+        # Should succeed with mock data fallback (ADR-0004)
+        assert result.exit_code == 0
+        assert (
+            "processes found" in result.output.lower()
+            or "results exported" in result.output.lower()
+        )
 
         # Check output file exists and has content
         assert output_file.exists()

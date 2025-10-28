@@ -7,6 +7,7 @@ from oroitz.core.executor import Executor
 
 
 def test_retry_and_fallback_telemetry():
+    """Test telemetry events during retry and mock data fallback."""
     # Configure retries
     config.volatility_retry_attempts = 2
     config.volatility_retry_backoff_seconds = 0
@@ -27,7 +28,7 @@ def test_retry_and_fallback_telemetry():
         with patch("oroitz.core.executor.log_event") as mock_log:
             executor.execute_plugin("windows.pslist", "/fake/image", "windows")
 
-            # Should have emitted retry and error events
+            # Should have emitted retry and fallback events
             calls = [c[0][0] for c in mock_log.call_args_list]
             assert "plugin_retry" in calls
-            assert "plugin_error" in calls
+            assert "plugin_mock_fallback" in calls

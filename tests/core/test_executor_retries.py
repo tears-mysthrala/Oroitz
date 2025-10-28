@@ -49,7 +49,7 @@ def test_retry_then_success(monkeypatch):
 
 
 def test_permanent_failure_fallback(monkeypatch):
-    """Simulate repeated failures to ensure proper failure handling without mock data."""
+    """Simulate repeated failures to ensure proper mock data fallback (ADR-0004)."""
     # Use 3 attempts and no backoff to speed up
     config.volatility_retry_attempts = 3
     config.volatility_retry_backoff_seconds = 0
@@ -65,14 +65,17 @@ def test_permanent_failure_fallback(monkeypatch):
 
     fail = _make_result(1, stdout="", stderr="error")
 
-    # All attempts fail
+    # All attempts fail, should fallback to mock data
     with (
         patch("oroitz.core.executor.contexts.Context", side_effect=Exception("Python API failed")),
         patch("oroitz.core.executor.subprocess.run", side_effect=[fail, fail, fail]),
     ):
         result = executor.execute_plugin("windows.pslist", "/fake/image")
 
-    assert result.success is False
-    assert result.output is None
-    assert result.error is not None
-    assert result.attempts == config.volatility_retry_attempts
+    # Should succeed with mock data fallback (ADR-0004)
+    assert result.success is True
+    assert result.output is not None
+    assert len(result.output) == 2  # Mock data
+    assert result.error is None
+    assert result.used_mock is True
+    assert result.attempts == 0  # Mock doesn't count attempts

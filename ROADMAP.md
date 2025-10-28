@@ -105,7 +105,7 @@ Based on manual testing feedback (`manual_testing_feedback.txt`):
 - **GUI Implementation**: 100% ✅ (All features implemented, comprehensive testing complete)
 - **TUI Implementation**: 100% ✅ (All features implemented, comprehensive testing complete)
 - **Testing Infrastructure**: 100% ✅ (Comprehensive test suite, isolated environments)
-- **Volatility Integration**: 100% ✅ (Real CLI execution with subprocess, automatic fallback to mock data, tested with real memory samples)
+- **Volatility Integration**: 100% ✅ (Real CLI execution with subprocess, automatic retry mechanism, tested with real memory samples)
 - **Documentation**: 100% ✅ (Complete user guides, technical docs, and troubleshooting guides)
 
 **Ready for production use!** 🎉

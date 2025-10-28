@@ -4,7 +4,7 @@ import json
 import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 from pydantic import BaseModel
 
@@ -44,7 +44,6 @@ class ExecutionResult(BaseModel):
     duration: float
     timestamp: float
     attempts: int = 1
-    used_mock: bool = False
 
 
 class Executor:
@@ -79,15 +78,10 @@ class Executor:
 
     def _execute_volatility_plugin(
         self, plugin_name: str, image_path: str, **kwargs: Any
-    ) -> Tuple[Optional[List[Dict[str, Any]]], int, bool]:
+    ) -> Tuple[Optional[List[Dict[str, Any]]], int]:
         """Execute a Volatility 3 plugin using Python API."""
         if not VOLATILITY_AVAILABLE:
-            logger.warning("Volatility 3 Python API not available, falling back to mock data")
-            log_event(
-                "plugin_fallback",
-                {"plugin": plugin_name, "reason": "volatility_unavailable"},
-            )
-            return self._get_mock_data(plugin_name), 0, True
+            raise RuntimeError("Volatility 3 Python API not available")
 
         # Use Python API for better integration
         try:
@@ -119,7 +113,7 @@ class Executor:
             for row in treegrid.get_renderable().rows:  # type: ignore
                 result.append(dict(row))
 
-            return result, 1, False
+            return result, 1
 
         except Exception as e:
             logger.warning("Volatility 3 Python API failed: %s", e)
@@ -128,15 +122,10 @@ class Executor:
 
     def _execute_volatility_plugin_cli(
         self, plugin_name: str, image_path: str, **kwargs: Any
-    ) -> Tuple[Optional[List[Dict[str, Any]]], int, bool]:
+    ) -> Tuple[Optional[List[Dict[str, Any]]], int]:
         """Execute a Volatility 3 plugin using CLI as fallback."""
         if not self._volatility_available:
-            logger.warning("Volatility 3 CLI not available, falling back to mock data")
-            log_event(
-                "plugin_fallback",
-                {"plugin": plugin_name, "reason": "volatility_unavailable"},
-            )
-            return self._get_mock_data(plugin_name), 0, True
+            raise RuntimeError("Volatility 3 CLI not available")
 
         # Adjust timeout based on image size for large images
         image_size_gb = self._get_image_size_gb(image_path)
@@ -147,8 +136,6 @@ class Executor:
         # Retry loop for transient failures
         attempts = max(1, getattr(config, "volatility_retry_attempts", 1))
         backoff = float(getattr(config, "volatility_retry_backoff_seconds", 0))
-
-        last_exception = None
         attempts_taken = 0
         for attempt in range(1, attempts + 1):
             try:
@@ -186,7 +173,6 @@ class Executor:
                         attempts,
                         result.stderr,
                     )
-                    last_exception = RuntimeError(result.stderr)
                     log_event(
                         "plugin_retry",
                         {"plugin": plugin_name, "attempt": attempt, "reason": result.stderr},
@@ -196,12 +182,9 @@ class Executor:
                         if backoff > 0:
                             time.sleep(backoff * (2 ** (attempt - 1)))
                         continue
-                    attempts_taken = attempt
-                    log_event(
-                        "plugin_fallback",
-                        {"plugin": plugin_name, "attempts": attempts},
+                    raise RuntimeError(
+                        f"Plugin {plugin_name} failed after {attempts} attempts: {result.stderr}"
                     )
-                    return self._get_mock_data(plugin_name), attempts_taken, True
 
                 # Parse JSON output
                 try:
@@ -217,12 +200,9 @@ class Executor:
                         if backoff > 0:
                             time.sleep(backoff * (2 ** (attempt - 1)))
                         continue
-                    attempts_taken = attempt
-                    log_event(
-                        "plugin_fallback",
-                        {"plugin": plugin_name, "attempts": attempts},
+                    raise RuntimeError(
+                        f"Plugin {plugin_name} failed to parse JSON after {attempts} attempts"
                     )
-                    return self._get_mock_data(plugin_name), attempts_taken, True
 
                 # Volatility 3 JSON output is usually wrapped in a structure
                 # Extract the actual data
@@ -231,25 +211,17 @@ class Executor:
                     for key, value in output_data.items():
                         if isinstance(value, list) and value and isinstance(value[0], dict):
                             attempts_taken = attempt
-                            return value, attempts_taken, False
+                            return value, attempts_taken
                     # If no list found, return empty list
                     attempts_taken = attempt
-                    return [], attempts_taken, False
+                    return [], attempts_taken
                 elif isinstance(output_data, list):
                     attempts_taken = attempt
-                    return output_data, attempts_taken, False
+                    return output_data, attempts_taken
                 else:
                     logger.warning("Unexpected output format from %s", plugin_name)
                     attempts_taken = attempt
-                    log_event(
-                        "plugin_fallback",
-                        {
-                            "plugin": plugin_name,
-                            "attempts": attempts,
-                            "reason": "unexpected_format",
-                        },
-                    )
-                    return self._get_mock_data(plugin_name), attempts_taken, True
+                    raise RuntimeError(f"Plugin {plugin_name} returned unexpected output format")
 
             except subprocess.TimeoutExpired as e:
                 logger.error(
@@ -258,7 +230,6 @@ class Executor:
                     attempt,
                     attempts,
                 )
-                last_exception = e
                 log_event(
                     "plugin_retry",
                     {"plugin": plugin_name, "attempt": attempt, "reason": str(e)},
@@ -267,12 +238,7 @@ class Executor:
                     if backoff > 0:
                         time.sleep(backoff * (2 ** (attempt - 1)))
                     continue
-                attempts_taken = attempt
-                log_event(
-                    "plugin_fallback",
-                    {"plugin": plugin_name, "attempts": attempts, "reason": str(e)},
-                )
-                return self._get_mock_data(plugin_name), attempts_taken, True
+                raise RuntimeError(f"Plugin {plugin_name} timed out after {attempts} attempts")
             except Exception as e:
                 logger.error(
                     "Failed to execute Volatility plugin %s (attempt %d/%d): %s",
@@ -281,33 +247,13 @@ class Executor:
                     attempts,
                     e,
                 )
-                last_exception = e
                 if attempt < attempts:
                     if backoff > 0:
                         time.sleep(backoff * (2 ** (attempt - 1)))
                     continue
-                attempts_taken = attempt
-                return self._get_mock_data(plugin_name), attempts_taken, True
+                raise RuntimeError(f"Plugin {plugin_name} failed after {attempts} attempts: {e}")
 
-        # If we get here, and last_exception is set, return mock data as fallback
-        if last_exception is not None:
-            logger.debug("Returning mock data for %s after %d attempts", plugin_name, attempts)
-            log_event(
-                "plugin_fallback",
-                {"plugin": plugin_name, "attempts": attempts, "reason": str(last_exception)},
-            )
-            return self._get_mock_data(plugin_name), attempts, True
-
-        # Fallback: ensure we return a valid tuple on all code paths. This
-        # should be rare, but defensively return mock data so callers always
-        # receive a (list|None, int, bool) tuple instead of falling off the
-        # end of the function (which is what Pylance warns about).
-        logger.debug(
-            "Falling back to mock data for %s with no exception after attempts=%d",
-            plugin_name,
-            attempts_taken,
-        )
-        return self._get_mock_data(plugin_name), int(attempts_taken or 0), True
+        # This should not be reached, as the loop either succeeds or raises an exception
 
     def _get_image_size_gb(self, image_path: str) -> float:
         """Get image file size in GB."""
@@ -331,33 +277,6 @@ class Executor:
             return min(total_timeout, 1800)
         else:
             return base_timeout
-
-    def _get_mock_data(self, plugin_name: str) -> List[Dict[str, Any]]:
-        """Fallback to mock data when Volatility execution fails."""
-        if plugin_name == "windows.pslist":
-            return self._mock_pslist()
-        elif plugin_name == "windows.netscan":
-            return self._mock_netscan()
-        elif plugin_name == "windows.malfind":
-            return self._mock_malfind()
-        elif plugin_name == "windows.pstree":
-            return self._mock_pstree()
-        elif plugin_name == "windows.dlllist":
-            return self._mock_dlllist()
-        elif plugin_name == "windows.handles":
-            return self._mock_handles()
-        elif plugin_name == "windows.psscan":
-            return self._mock_psscan()
-        elif plugin_name == "windows.sockscan":
-            return self._mock_sockscan()
-        elif plugin_name == "windows.connections":
-            return self._mock_connections()
-        elif plugin_name == "windows.timeliner":
-            return self._mock_timeliner()
-        elif plugin_name == "windows.getservicesids":
-            return self._mock_getservicesids()
-        else:
-            return []
 
     def execute_plugin(
         self,
@@ -391,7 +310,7 @@ class Executor:
             log_event("plugin_start", {"plugin": plugin_name, "image": image_path})
 
             # Execute real Volatility 3 plugin
-            output, attempts_taken, used_mock = self._execute_volatility_plugin(
+            output, attempts_taken = self._execute_volatility_plugin(
                 plugin_name, image_path, **kwargs
             )
 
@@ -413,9 +332,8 @@ class Executor:
 
         duration = time.time() - start_time
 
-        # Ensure attempts and used_mock are set even on exceptions/cached results
+        # Ensure attempts is set even on exceptions/cached results
         attempts_value = int(locals().get("attempts_taken", 0))
-        used_mock_value = bool(locals().get("used_mock", False))
 
         return ExecutionResult(
             plugin_name=plugin_name,
@@ -425,7 +343,6 @@ class Executor:
             duration=duration,
             timestamp=timestamp,
             attempts=attempts_value,
-            used_mock=used_mock_value,
         )
 
     def execute_workflow(self, workflow_spec: Any, image_path: str) -> List[ExecutionResult]:
@@ -480,228 +397,3 @@ class Executor:
                 results = [result for _, result in completed_results]
 
         return results
-
-    def _mock_pslist(self) -> List[Dict[str, Union[str, int, bool, None]]]:
-        """Mock data for pslist plugin."""
-        return [
-            {
-                "PID": 4,
-                "ImageFileName": "System",
-                "PPID": 0,
-                "Threads": 100,
-                "Handles": 500,
-                "SessionId": 0,
-                "Wow64": False,
-                "CreateTime": "2023-01-01T00:00:00Z",
-                "ExitTime": None,
-            },
-            {
-                "PID": 1234,
-                "ImageFileName": "notepad.exe",
-                "PPID": 876,
-                "Threads": 8,
-                "Handles": 150,
-                "SessionId": 1,
-                "Wow64": True,
-                "CreateTime": "2023-01-01T12:00:00Z",
-                "ExitTime": None,
-            },
-        ]
-
-    def _mock_netscan(self) -> List[Dict[str, Union[str, int, None]]]:
-        """Mock data for netscan plugin."""
-        return [
-            {
-                "Offset": "0x12345678",
-                "PID": 1234,
-                "Owner": "notepad.exe",
-                "Created": "2023-01-01T12:00:00Z",
-                "LocalAddr": "192.168.1.100",
-                "LocalPort": 12345,
-                "ForeignAddr": "8.8.8.8",
-                "ForeignPort": 53,
-                "State": "ESTABLISHED",
-            },
-        ]
-
-    def _mock_malfind(self) -> List[Dict[str, Union[str, int, None]]]:
-        """Mock data for malfind plugin."""
-        return [
-            {
-                "PID": 5678,
-                "Process": "suspicious.exe",
-                "Start VPN": "0x400000",
-                "End VPN": "0x500000",
-                "Tag": "MzHeader",
-                "Protection": "PAGE_EXECUTE_READWRITE",
-                "CommitCharge": 1024,
-                "PrivateMemory": 2048,
-            },
-        ]
-
-    def _mock_pstree(self) -> List[Dict[str, Union[str, int, None]]]:
-        """Mock data for pstree plugin."""
-        return [
-            {
-                "PID": 4,
-                "PPID": 0,
-                "ImageFileName": "System",
-                "Offset": "0x12345678",
-                "Threads": 100,
-                "Handles": 500,
-                "CreateTime": "2023-01-01T00:00:00Z",
-            },
-            {
-                "PID": 1234,
-                "PPID": 4,
-                "ImageFileName": "notepad.exe",
-                "Offset": "0x87654321",
-                "Threads": 8,
-                "Handles": 150,
-                "CreateTime": "2023-01-01T12:00:00Z",
-            },
-        ]
-
-    def _mock_dlllist(self) -> List[Dict[str, Union[str, int, None]]]:
-        """Mock data for dlllist plugin."""
-        return [
-            {
-                "PID": 1234,
-                "Process": "notepad.exe",
-                "Base": "0x77400000",
-                "Size": 1048576,
-                "Name": "kernel32.dll",
-                "Path": "C:\\Windows\\System32\\kernel32.dll",
-                "LoadTime": "2023-01-01T12:00:00Z",
-            },
-            {
-                "PID": 1234,
-                "Process": "notepad.exe",
-                "Base": "0x77500000",
-                "Size": 524288,
-                "Name": "user32.dll",
-                "Path": "C:\\Windows\\System32\\user32.dll",
-                "LoadTime": "2023-01-01T12:00:01Z",
-            },
-        ]
-
-    def _mock_handles(self) -> List[Dict[str, Union[str, int, None]]]:
-        """Mock data for handles plugin."""
-        return [
-            {
-                "PID": 1234,
-                "Process": "notepad.exe",
-                "Offset": "0x12345678",
-                "HandleValue": 0x1C,
-                "Type": "File",
-                "GrantedAccess": "0x12019f",
-                "Name": "C:\\Users\\user\\Documents\\test.txt",
-            },
-            {
-                "PID": 1234,
-                "Process": "notepad.exe",
-                "Offset": "0x87654321",
-                "HandleValue": 0x20,
-                "Type": "Key",
-                "GrantedAccess": "0x20019",
-                "Name": "\\REGISTRY\\MACHINE\\SOFTWARE\\Microsoft\\Windows",
-            },
-        ]
-
-    def _mock_psscan(self) -> List[Dict[str, Union[str, int, bool, None]]]:
-        """Mock data for psscan plugin."""
-        return [
-            {
-                "Offset": "0x12345678",
-                "PID": 1234,
-                "PPID": 876,
-                "ImageFileName": "notepad.exe",
-                "CreateTime": "2023-01-01T12:00:00Z",
-                "ExitTime": None,
-                "Threads": 8,
-                "Handles": 150,
-                "SessionId": 1,
-                "Wow64": True,
-            },
-            {
-                "Offset": "0x87654321",
-                "PID": 5678,
-                "PPID": 4,
-                "ImageFileName": "explorer.exe",
-                "CreateTime": "2023-01-01T11:00:00Z",
-                "ExitTime": None,
-                "Threads": 12,
-                "Handles": 300,
-                "SessionId": 1,
-                "Wow64": False,
-            },
-        ]
-
-    def _mock_sockscan(self) -> List[Dict[str, Union[str, int, None]]]:
-        """Mock data for sockscan plugin."""
-        return [
-            {
-                "Offset": "0x12345678",
-                "PID": 1234,
-                "Port": 12345,
-                "Proto": 6,
-                "AddressFamily": 2,
-                "CreateTime": "2023-01-01T12:00:00Z",
-                "LocalAddr": "192.168.1.100",
-                "ForeignAddr": "8.8.8.8",
-            },
-        ]
-
-    def _mock_connections(self) -> List[Dict[str, Union[str, int, None]]]:
-        """Mock data for connections plugin."""
-        return [
-            {
-                "Offset": "0x12345678",
-                "PID": 1234,
-                "Owner": "notepad.exe",
-                "CreateTime": "2023-01-01T12:00:00Z",
-                "LocalAddr": "192.168.1.100",
-                "LocalPort": 12345,
-                "ForeignAddr": "8.8.8.8",
-                "ForeignPort": 53,
-                "State": "ESTABLISHED",
-            },
-        ]
-
-    def _mock_timeliner(self) -> List[Dict[str, Union[str, int, None]]]:
-        """Mock data for timeliner plugin."""
-        return [
-            {
-                "Plugin": "windows.pslist",
-                "Description": "Process notepad.exe created",
-                "CreatedDate": "2023-01-01T12:00:00Z",
-                "AccessedDate": None,
-                "ModifiedDate": None,
-                "ChangedDate": None,
-            },
-            {
-                "Plugin": "windows.netscan",
-                "Description": "Network connection established",
-                "CreatedDate": "2023-01-01T12:01:00Z",
-                "AccessedDate": None,
-                "ModifiedDate": None,
-                "ChangedDate": None,
-            },
-        ]
-
-    def _mock_getservicesids(self) -> List[Dict[str, Union[str, int, None]]]:
-        """Mock data for getservicesids plugin."""
-        return [
-            {
-                "SID": "S-1-5-18",
-                "Name": "NT AUTHORITY\\SYSTEM",
-                "Service": "System",
-                "Domain": "NT AUTHORITY",
-            },
-            {
-                "SID": "S-1-5-19",
-                "Name": "NT AUTHORITY\\LOCAL SERVICE",
-                "Service": "Local Service",
-                "Domain": "NT AUTHORITY",
-            },
-        ]

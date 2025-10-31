@@ -32,7 +32,10 @@ All interfaces share the same core engine, ensuring consistent results across pl
 
    ```bash
    poetry install
+   poetry run python scripts/setup_volatility_plugins.py --dest vendor/volatility_plugins --update-env
    ```
+
+   The helper script downloads the Volatility community plugin pack (community3) required for hash extraction workflows and records the plugin path in `.env`.
 
 3. **Verify installation:**
 
@@ -50,11 +53,17 @@ All interfaces share the same core engine, ensuring consistent results across pl
    poetry run python -m oroitz.cli quick-triage samples/memdump.mem --output results.json
    ```
 
-2. **View the results:**
+2. **Enumerate accounts and hashes (requires community plugins):**
+
+   ```bash
+   poetry run python -m oroitz.cli accounts samples/memdump.mem --output accounts.json
+   ```
+
+3. **View the results:**
 
    ```bash
    cat results.json | jq '.processes | length'  # Count processes
-   cat results.json | jq '.network_connections[0]'  # First network connection
+   cat accounts.json | jq '.hashes | length'    # Hash records (if available)
    ```
 
 ### Using the GUI

@@ -4,6 +4,14 @@ The Oroitz Command Line Interface (CLI) provides powerful scripting and automati
 
 ## Getting Started
 
+Before running workflows that extract account data, install the Volatility community plugins bundle:
+
+```bash
+poetry run python scripts/setup_volatility_plugins.py --dest vendor/volatility_plugins --update-env
+```
+
+This downloads the `community3` repository and records the plugin path in `.env` as `OROITZ_PLUGIN_DIRS`. Ensure this variable is exported in your shell before invoking the CLI.
+
 ```bash
 # Activate the virtual environment
 poetry shell
@@ -175,7 +183,10 @@ python -m oroitz.cli quick-triage nonexistent.dump
 
 ```bash
 python -m oroitz.cli quick-triage memory.dump
-# Falls back to mock data with warning if Volatility 3 is not available
+# Falls back to mock data with warning if most plugins fail
+
+python -m oroitz.cli accounts memory.dump
+# Hash extraction plugins report failures explicitly when community plugins are missing
 ```
 
 ## Advanced Usage

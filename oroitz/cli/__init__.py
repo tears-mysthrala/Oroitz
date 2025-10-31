@@ -22,7 +22,8 @@ def cli(log_level: str) -> None:
 @cli.command()
 @click.argument("image_path", type=click.Path(exists=True))
 @click.option("--output", type=click.Path(), help="Output file for JSON export")
-def quick_triage(image_path: str, output: Optional[str]) -> None:
+@click.option("--force-reexecute", is_flag=True, default=False, help="Bypass cache and re-run")
+def quick_triage(image_path: str, output: Optional[str], force_reexecute: bool) -> None:
     """Run quick triage analysis on a memory image."""
     click.echo(f"Running quick triage on {image_path}")
 
@@ -34,7 +35,7 @@ def quick_triage(image_path: str, output: Optional[str]) -> None:
 
     # Execute workflow (Volatility 3 auto-detects symbol tables)
     executor = Executor()
-    results = executor.execute_workflow(workflow, str(image_path))
+    results = executor.execute_workflow(workflow, str(image_path), force_reexecute=force_reexecute)
 
     # Normalize output
     normalizer = OutputNormalizer()
@@ -50,6 +51,35 @@ def quick_triage(image_path: str, output: Optional[str]) -> None:
         click.echo(f"Processes found: {len(normalized.processes)}")
         click.echo(f"Network connections: {len(normalized.network_connections)}")
         click.echo(f"Malfind hits: {len(normalized.malfind_hits)}")
+        click.echo(f"Users: {len(normalized.users)}")
+
+
+@cli.command()
+@click.argument("image_path", type=click.Path(exists=True))
+@click.option("--output", type=click.Path(), help="Output file for JSON export")
+@click.option("--force-reexecute", is_flag=True, default=False, help="Bypass cache and re-run")
+def accounts(image_path: str, output: Optional[str], force_reexecute: bool) -> None:
+    """Enumerate accounts and attempt hash extraction from memory image."""
+    click.echo(f"Running account enumeration on {image_path}")
+
+    workflow = registry.get("account_enumeration")
+    if not workflow:
+        click.echo("account_enumeration workflow not found", err=True)
+        return
+
+    executor = Executor()
+    results = executor.execute_workflow(workflow, str(image_path), force_reexecute=force_reexecute)
+
+    normalizer = OutputNormalizer()
+    normalized = normalizer.normalize_quick_triage(results)
+
+    if output:
+        exporter = OutputExporter()
+        exporter.export_json(normalized, Path(output))
+        click.echo(f"Results exported to {output}")
+    else:
+        click.echo(f"Users: {len(normalized.users)}")
+        click.echo(f"Hashes: {len(normalized.hashes)}")
 
 
 @cli.command()

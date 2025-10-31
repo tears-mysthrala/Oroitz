@@ -4,6 +4,7 @@ import pytest
 from pydantic import ValidationError
 
 from oroitz.core.output import (
+    HashInfo,
     MalfindHit,
     NetworkConnection,
     OutputNormalizer,
@@ -141,6 +142,20 @@ def test_normalize_quick_triage():
             duration=2.0,
             timestamp=1234567892.0,
         ),
+        ExecutionResult(
+            plugin_name="windows.hashdump",
+            success=True,
+            output=[
+                {
+                    "Username": "Administrator",
+                    "LMHash": "aad3b435b51404eeaad3b435b51404ee",
+                    "NTHash": "31d6cfe0d16ae931b73c59d7e0c089c0",
+                }
+            ],
+            error=None,
+            duration=1.2,
+            timestamp=1234567893.0,
+        ),
     ]
 
     normalized = normalizer.normalize_quick_triage(results)
@@ -154,6 +169,33 @@ def test_normalize_quick_triage():
     assert normalized.processes[0].name == "System"
     assert normalized.network_connections[0].state == "LISTENING"
     assert normalized.malfind_hits[0].process_name == "bad.exe"
+    assert normalized.hashes
+    assert normalized.hashes[0].username == "Administrator"
+    assert normalized.hashes[0].hash_type == "NTLM"
+
+
+def test_normalize_hashes_handles_empty():
+    normalizer = OutputNormalizer()
+
+    hashes = normalizer.normalize_hashes(
+        [
+            {
+                "Username": "user1",
+                "Hash": "abc123",
+                "HashType": "Custom",
+                "Note": "from custom plugin",
+            }
+        ],
+        plugin_name="windows.cachedump",
+    )
+
+    assert len(hashes) == 1
+    info = hashes[0]
+    assert isinstance(info, HashInfo)
+    assert info.username == "user1"
+    assert info.hash_value == "abc123"
+    assert info.hash_type == "Custom"
+    assert info.note == "from custom plugin"
 
 
 def test_schema_validation_process_info():

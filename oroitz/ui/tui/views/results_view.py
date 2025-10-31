@@ -59,6 +59,9 @@ class ResultsView(Screen):
                     with TabPane("Network", id="network-tab"):
                         yield DataTable(id="network-table")
 
+                    with TabPane("Users", id="users-tab"):
+                        yield DataTable(id="users-table")
+
                     with TabPane("DLLs", id="dlls-tab"):
                         yield DataTable(id="dlls-table")
 
@@ -72,7 +75,8 @@ class ResultsView(Screen):
 
     def on_mount(self) -> None:
         """Populate the results tables when screen mounts."""
-        self._populate_tables()
+        # Defer population until after initial layout to ensure widgets exist
+        self.call_after_refresh(self._populate_tables)
 
     def _get_summary(self) -> str:
         """Get a summary of the results."""
@@ -98,6 +102,7 @@ class ResultsView(Screen):
         # In a real implementation, this would parse the actual output data
         self._populate_processes_tab()
         self._populate_network_tab()
+        self._populate_users_tab()
         self._populate_dlls_tab()
         self._populate_timeline_tab()
 
@@ -176,6 +181,24 @@ class ResultsView(Screen):
             ]
             for local, remote, state, pid, process in mock_connections:
                 table.add_row(local, remote, state, pid, process)
+
+    def _populate_users_tab(self) -> None:
+        """Populate users tab with data from windows.getsids."""
+        table = self.query_one("#users-table", DataTable)
+        table.add_columns("Name", "SID", "PID", "Process")
+
+        users_result = next(
+            (r for r in self.results if r.plugin_name == "windows.getsids" and r.output), None
+        )
+
+        if users_result and users_result.output:
+            for user in users_result.output:
+                table.add_row(
+                    str(user.get("Name", "")),
+                    str(user.get("SID", "")),
+                    str(user.get("PID", "")),
+                    str(user.get("Process", "")),
+                )
 
     def _populate_dlls_tab(self) -> None:
         """Populate DLLs tab with DLL-related data."""

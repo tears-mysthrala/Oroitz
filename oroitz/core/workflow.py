@@ -186,3 +186,18 @@ def seed_workflows() -> None:
     registry.register(timeline_overview)
 
     logger.info("Seeded default workflows")
+
+    # account_enumeration workflow (attempts to derive users/hashes from memory)
+    account_enumeration = WorkflowSpec(
+        id="account_enumeration",
+        name="Account Enumeration",
+        description=(
+            "Enumerate user SIDs and attempt hash extraction from memory (SAM/LSA if available)"
+        ),
+        plugins=[
+            PluginSpec(name="windows.getsids"),
+            PluginSpec(name="windows.hashdump"),
+            PluginSpec(name="windows.cachedump"),
+        ],
+    )
+    registry.register(account_enumeration)

@@ -230,8 +230,12 @@ class OutputNormalizer:
         """Normalize netscan output."""
         normalized: List[NetworkConnection] = []
         for item in raw_output:
+            # Some outputs use "Offset(V)" instead of "Offset"
+            offset_val = (
+                item.get("Offset") if item.get("Offset") is not None else item.get("Offset(V)")
+            )
             conn = NetworkConnection(
-                offset=str(item.get("Offset")) if item.get("Offset") is not None else None,
+                offset=str(offset_val) if offset_val is not None else None,
                 pid=item.get("PID"),
                 owner=item.get("Owner"),
                 created=item.get("Created"),
@@ -379,15 +383,13 @@ class OutputExporter:
                 logger.info(f"Exported users to CSV: {users_path}")
 
             # Password hashes
-            if output.password_hashes:
+            if output.hashes:
                 hashes_path = Path(f"{base_path}_hashes.csv")
                 with open(hashes_path, "w", newline="", encoding="utf-8") as f:
-                    if output.password_hashes:
-                        writer = csv.DictWriter(
-                            f, fieldnames=output.password_hashes[0].model_dump().keys()
-                        )
+                    if output.hashes:
+                        writer = csv.DictWriter(f, fieldnames=output.hashes[0].model_dump().keys())
                         writer.writeheader()
-                        for item in output.password_hashes:
+                        for item in output.hashes:
                             writer.writerow(item.model_dump())
                 logger.info(f"Exported password hashes to CSV: {hashes_path}")
         else:

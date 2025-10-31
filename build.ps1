@@ -44,10 +44,14 @@ switch ($Command) {
     "install" {
         Write-Host "Installing all dependencies..." -ForegroundColor Green
         Invoke-Poetry "install --with dev"
+        Write-Host "Fetching Volatility community plugins..." -ForegroundColor Green
+        Invoke-Poetry "run python scripts/setup_volatility_plugins.py --dest vendor/volatility_plugins --update-env"
     }
     "install-min" {
         Write-Host "Installing minimal dependencies..." -ForegroundColor Green
         Invoke-Poetry "install"
+        Write-Host "Fetching Volatility community plugins..." -ForegroundColor Green
+        Invoke-Poetry "run python scripts/setup_volatility_plugins.py --dest vendor/volatility_plugins --update-env"
     }
     "build" {
         Write-Host "Building PyInstaller executables..." -ForegroundColor Green

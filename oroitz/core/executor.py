@@ -54,7 +54,6 @@ class Executor:
 
     def __init__(self) -> None:
         self.max_concurrency = config.max_concurrency
-        self.executor = ThreadPoolExecutor(max_workers=self.max_concurrency)
         # Check if volatility3 CLI is available
         self._volatility_available = self._check_volatility_cli()
 
@@ -174,6 +173,19 @@ class Executor:
             try:
                 # Build command - Volatility 3 auto-detects symbol tables
                 cmd = self._vol_command + ["-f", image_path, "-r", "json"]
+
+                # Add plugin dirs (-p) and symbol dirs (-s) if configured
+                try:
+                    plugin_dirs = getattr(config, "plugin_dirs", []) or []
+                    if plugin_dirs:
+                        # Join with OS path separator
+                        import os
+
+                        cmd += ["-p", os.pathsep.join(str(p) for p in plugin_dirs)]
+                except Exception:
+                    pass
+                if getattr(config, "symbols_path", None):
+                    cmd += ["-s", str(config.symbols_path)]
 
                 # Add plugin name
                 cmd.append(plugin_name)
@@ -365,14 +377,29 @@ class Executor:
             )
 
         except Exception as e:
-            # Fallback to mock data when Volatility fails (ADR-0004)
-            logger.warning(f"Volatility execution failed for {plugin_name}, using mock data: {e}")
-            output = self._generate_mock_data(plugin_name)
-            success = True  # Mock data is considered successful
-            error = None
-            used_mock = True
-            attempts_taken = 0  # Mock doesn't use attempts
-            log_event("plugin_mock_fallback", {"plugin": plugin_name, "error": str(e)})
+            # For security-sensitive plugins, avoid mock fallback to prevent misleading data
+            sensitive_plugins = {"windows.hashdump", "windows.cachedump", "windows.lsadump"}
+            if any(name in plugin_name for name in sensitive_plugins):
+                logger.warning(
+                    f"Volatility execution failed for {plugin_name}, not using mock: {e}"
+                )
+                output = []
+                success = False
+                error = str(e)
+                used_mock = False
+                attempts_taken = int(locals().get("attempts_taken", 0))
+                log_event("plugin_failure", {"plugin": plugin_name, "error": str(e)})
+            else:
+                # Fallback to mock data when Volatility fails (ADR-0004)
+                logger.warning(
+                    f"Volatility execution failed for {plugin_name}, using mock data: {e}"
+                )
+                output = self._generate_mock_data(plugin_name)
+                success = True  # Mock data is considered successful
+                error = None
+                used_mock = True
+                attempts_taken = 0  # Mock doesn't use attempts
+                log_event("plugin_mock_fallback", {"plugin": plugin_name, "error": str(e)})
 
         duration = time.time() - start_time
 
@@ -400,21 +427,19 @@ class Executor:
         detected_os = self._detect_os(image_path)
         if detected_os:
             logger.info(f"Detected OS: {detected_os}")
-            # Filter plugins to only those compatible with detected OS
-            compatible_plugins = [
+            plugins_to_run = [
                 plugin
                 for plugin in workflow_spec.plugins
                 if plugin.name.startswith(f"{detected_os}.")
                 or not any(plugin.name.startswith(f"{os}.") for os in ["windows", "linux", "mac"])
             ]
-            if len(compatible_plugins) != len(workflow_spec.plugins):
+            if len(plugins_to_run) != len(workflow_spec.plugins):
                 logger.info(
-                    f"Filtered {len(workflow_spec.plugins) - len(compatible_plugins)} "
-                    "incompatible plugins"
+                    f"Filtered {len(workflow_spec.plugins) - len(plugins_to_run)} incompatible plugins"
                 )
-            workflow_spec.plugins = compatible_plugins
         else:
             logger.warning("Could not detect OS, executing all plugins (may fail)")
+            plugins_to_run = list(workflow_spec.plugins)
 
         # Adjust concurrency based on image size for large images
         image_size_gb = self._get_image_size_gb(image_path)
@@ -433,11 +458,11 @@ class Executor:
                 f"Very large image detected ({image_size_gb:.2f} GB), "
                 "executing plugins sequentially"
             )
-            for plugin in workflow_spec.plugins:
+            for plugin in plugins_to_run:
                 result = self.execute_plugin(
                     plugin.name,
                     image_path,
-                    force_reexecute=config.force_reexecute_on_fail,
+                    force_reexecute=force_reexecute,
                     **plugin.parameters,
                 )
                 results.append(result)
@@ -450,12 +475,12 @@ class Executor:
             ) as executor:
                 futures = []
                 future_to_index = {}
-                for i, plugin in enumerate(workflow_spec.plugins):
+                for i, plugin in enumerate(plugins_to_run):
                     future = executor.submit(
                         self.execute_plugin,
                         plugin.name,
                         image_path,
-                        force_reexecute=config.force_reexecute_on_fail,
+                        force_reexecute=force_reexecute,
                         **plugin.parameters,
                     )
                     futures.append(future)

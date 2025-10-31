@@ -10,9 +10,11 @@ help: ## Show this help message
 
 install: ## Install all dependencies
 	poetry install --with dev
+	poetry run python scripts/setup_volatility_plugins.py --dest vendor/volatility_plugins --update-env
 
 install-minimal: ## Install minimal dependencies (no GUI)
 	poetry install
+	poetry run python scripts/setup_volatility_plugins.py --dest vendor/volatility_plugins --update-env
 
 build: ## Build PyInstaller executables
 	poetry run python scripts/build_installers.py

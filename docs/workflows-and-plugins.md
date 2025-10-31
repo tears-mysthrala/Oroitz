@@ -81,6 +81,23 @@ Document the default workflows, their constituent Volatility plugins, expected o
   - GUI: Timeline chart (future enhancement) and table view with filters.
   - TUI: Paginated table with search (`/time 2022-11-01`).
 
+### account_enumeration
+
+- **Goal:** Enumerate user accounts present in memory and attempt to recover NTLM hashes from SAM/LSA structures.
+- **Plugins:**
+  1. `windows.getsids`
+  2. `windows.hashdump`
+  3. `windows.cachedump`
+- **Transforms:**
+  - Normalize SID records into the `users` schema.
+  - Normalize recovered hashes into the `hashes` schema and annotate unavailable data with explanatory notes.
+- **Outputs:**
+  - `users` table (name, SID, PID, process).
+  - `hashes` table (username, hash type/value, contextual note).
+- **UI Expectations:**
+  - GUI: Dedicated “Users” and “Hashes” tabs in Results Explorer with filtering.
+  - TUI: “Users” tab populated via `getsids`; hashes tab remains empty when plugins are unavailable (no mock fallback).
+
 ## Validation Rules
 
 - Before executing, ensure selected workflow supports the memory image OS (Windows vs Linux vs macOS). For now focus on Windows; extend catalogue before claiming cross-platform support.

@@ -212,7 +212,7 @@ class ResultsExplorer(QWidget):
         table.resizeColumnsToContents()
 
     def _update_users_tab(self) -> None:
-        """Update the users table."""
+        """Update the users table (from windows.getsids normalized data)."""
         if not self.normalized_data or not self.normalized_data.users:
             self._clear_table(self.users_tab)
             return
@@ -222,25 +222,21 @@ class ResultsExplorer(QWidget):
 
         # Set up table
         table.setRowCount(len(users))
-        table.setColumnCount(6)
-        table.setHorizontalHeaderLabels(
-            ["Username", "UID", "GID", "Home Dir", "Shell", "Description"]
-        )
+        table.setColumnCount(4)
+        table.setHorizontalHeaderLabels(["Name", "SID", "PID", "Process"])
 
         # Populate table
         for row, user in enumerate(users):
-            table.setItem(row, 0, QTableWidgetItem(user.username or ""))
-            table.setItem(row, 1, QTableWidgetItem(str(user.uid or "")))
-            table.setItem(row, 2, QTableWidgetItem(str(user.gid or "")))
-            table.setItem(row, 3, QTableWidgetItem(user.home_dir or ""))
-            table.setItem(row, 4, QTableWidgetItem(user.shell or ""))
-            table.setItem(row, 5, QTableWidgetItem(user.description or ""))
+            table.setItem(row, 0, QTableWidgetItem(user.name or ""))
+            table.setItem(row, 1, QTableWidgetItem(user.sid or ""))
+            table.setItem(row, 2, QTableWidgetItem(str(user.pid or "")))
+            table.setItem(row, 3, QTableWidgetItem(user.process or ""))
 
         # Resize columns to content
         table.resizeColumnsToContents()
 
     def _update_hashes_tab(self) -> None:
-        """Update the hashes table."""
+        """Update the hashes table (if present)."""
         if not self.normalized_data or not self.normalized_data.hashes:
             self._clear_table(self.hashes_tab)
             return
@@ -250,16 +246,15 @@ class ResultsExplorer(QWidget):
 
         # Set up table
         table.setRowCount(len(hashes))
-        table.setColumnCount(5)
-        table.setHorizontalHeaderLabels(["Username", "UID", "GID", "Hash Type", "Hash Value"])
+        table.setColumnCount(4)
+        table.setHorizontalHeaderLabels(["Username", "Hash Type", "Hash Value", "Note"])
 
         # Populate table
         for row, hash_info in enumerate(hashes):
             table.setItem(row, 0, QTableWidgetItem(hash_info.username or ""))
-            table.setItem(row, 1, QTableWidgetItem(str(hash_info.uid or "")))
-            table.setItem(row, 2, QTableWidgetItem(str(hash_info.gid or "")))
-            table.setItem(row, 3, QTableWidgetItem(hash_info.hash_type or ""))
-            table.setItem(row, 4, QTableWidgetItem(hash_info.hash_value or ""))
+            table.setItem(row, 1, QTableWidgetItem(hash_info.hash_type or ""))
+            table.setItem(row, 2, QTableWidgetItem(hash_info.hash_value or ""))
+            table.setItem(row, 3, QTableWidgetItem(hash_info.note or ""))
 
         # Resize columns to content
         table.resizeColumnsToContents()

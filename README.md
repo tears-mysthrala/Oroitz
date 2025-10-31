@@ -58,6 +58,13 @@ See [ROADMAP.md](ROADMAP.md) for the complete development roadmap and progress t
 3. From the repository root, run `poetry install` to create the virtual environment and pull dependencies.
 4. Activate the Poetry shell with `poetry shell`, or prefix commands with `poetry run`.
 5. Run the quality checks: `poetry run pytest` for tests and `poetry run ruff check .` for linting.
+6. Install the Volatility community plugin pack so hash extraction plugins are available:
+
+   ```bash
+   poetry run python scripts/setup_volatility_plugins.py --dest vendor/volatility_plugins --update-env
+   ```
+
+   This downloads the `community3` bundle into `vendor/volatility_plugins` and writes `OROITZ_PLUGIN_DIRS` into `.env`. If the download fails (for example, offline environment), fetch the archive manually from `https://github.com/volatilityfoundation/community3` and point `OROITZ_PLUGIN_DIRS` at the extracted directory.
 
 Volatility 3 is listed as a dependency in `pyproject.toml`; no additional manual installation is required for local development. Representative memory images are not committed to this repository because they are large and may contain sensitive data. To obtain approved test samples, use `assets/samples.json` together with the helper script `scripts/fetch_samples.py` which will download verified samples into the local `samples/` directory. See `samples/README.md` for instructions and licensing/provenance guidance. The system automatically detects symbol tables from memory images — no manual profile configuration needed.
 
@@ -66,6 +73,7 @@ Volatility 3 is listed as a dependency in `pyproject.toml`; no additional manual
 Once installed, you can run Oroitz in several ways:
 
 - **CLI**: `poetry run python -m oroitz.cli --help` to see available commands
+- **Account enumeration**: `poetry run python -m oroitz.cli accounts samples/memdump.mem --output accounts.json`
 - **GUI**: `poetry run python -m oroitz.ui.gui` to launch the PySide6 desktop application
 - **TUI**: `poetry run python -m oroitz.ui.tui` to launch the Textual terminal interface
 

@@ -1,7 +1,7 @@
 """Configuration management for Oroitz core engine."""
 
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -19,6 +19,7 @@ class Config(BaseSettings):
     # Volatility settings
     volatility_path: Optional[Path] = None
     symbols_path: Optional[Path] = None
+    plugin_dirs: List[Path] = []
     # Execution retry settings (Phase 6 hardening)
     volatility_retry_attempts: int = 2
     volatility_retry_backoff_seconds: float = 1.0
@@ -40,7 +41,27 @@ class Config(BaseSettings):
     @classmethod
     def from_file(cls, file_path: Path) -> "Config":
         """Load configuration from a TOML file."""
-        # For now, basic; later add TOML support
+        try:
+            import tomllib  # Python 3.11+
+        except ModuleNotFoundError:  # pragma: no cover - fallback for older runtimes
+            tomllib = None  # type: ignore
+
+        data = {}
+        try:
+            if tomllib is not None:
+                with open(file_path, "rb") as f:
+                    data = tomllib.load(f)
+            # If no tomllib, return with config_file only
+        except Exception:
+            # On any error, fall back to empty data but record config_file
+            data = {}
+
+        # Flatten top-level [oroitz] section if present; otherwise pass as-is
+        if isinstance(data, dict):
+            candidate = data.get("oroitz") if "oroitz" in data else data
+            if isinstance(candidate, dict):
+                return cls(**candidate, config_file=file_path)
+
         return cls(config_file=file_path)
 
 

@@ -274,14 +274,20 @@ class OutputNormalizer:
     def normalize_users(self, raw_output: List[Dict[str, Any]]) -> List[UserInfo]:
         """Normalize user information output from windows.getsids."""
         normalized: List[UserInfo] = []
+        seen = set()
         for item in raw_output:
-            user = UserInfo(
-                name=item.get("Name"),
-                sid=item.get("SID"),
-                pid=item.get("PID"),
-                process=item.get("Process"),
-            )
-            normalized.append(user)
+            name = item.get("Name")
+            sid = item.get("SID")
+            key = (name, sid)
+            if key not in seen:
+                seen.add(key)
+                user = UserInfo(
+                    name=name,
+                    sid=sid,
+                    pid=item.get("PID"),
+                    process=item.get("Process"),
+                )
+                normalized.append(user)
         return normalized
 
     def normalize_hashes(self, raw_output: List[Dict[str, Any]]) -> List[HashInfo]:

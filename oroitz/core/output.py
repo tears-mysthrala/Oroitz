@@ -291,17 +291,47 @@ class OutputNormalizer:
         return normalized
 
     def normalize_hashes(self, raw_output: List[Dict[str, Any]]) -> List[HashInfo]:
-        """Normalize password hash output (not available in current Volatility version)."""
-        # Hash extraction is not available in the current Volatility 3 version
-        # Return a single entry indicating this
-        return [
-            HashInfo(
-                note=(
-                    "Hash extraction plugins (hashdump, lsadump, cachedump) "
-                    "are not available in this Volatility 3 version"
+        """Normalize password hash output from hashdump or cachedump."""
+        normalized: List[HashInfo] = []
+        for item in raw_output:
+            username = item.get("Username") or item.get("User")
+            lm_hash = item.get("LMHash")
+            nt_hash = item.get("NTHash")
+            hash_value = item.get("Hash")
+            hash_type = item.get("HashType")
+
+            if lm_hash and nt_hash:
+                # hashdump format
+                normalized.append(
+                    HashInfo(
+                        username=username,
+                        hash_value=f"{lm_hash}:{nt_hash}",
+                        hash_type="NTLM",
+                    )
                 )
-            )
-        ]
+            elif hash_value and hash_type:
+                # cachedump or other format
+                normalized.append(
+                    HashInfo(
+                        username=username,
+                        hash_value=hash_value,
+                        hash_type=hash_type,
+                        note=item.get("Note"),
+                    )
+                )
+            else:
+                # Unknown format
+                normalized.append(
+                    HashInfo(
+                        username=username,
+                        note="Unknown hash format",
+                    )
+                )
+
+        if not normalized:
+            # No hashes found
+            return [HashInfo(note="No password hashes found or plugins not available")]
+        return normalized
 
     def normalize_quick_triage(self, results: List) -> QuickTriageOutput:
         """Normalize complete quick_triage workflow output."""
@@ -316,6 +346,8 @@ class OutputNormalizer:
                 output.malfind_hits = self.normalize_malfind(result.output)
             elif result.plugin_name == "windows.getsids" and result.output:
                 output.users = self.normalize_users(result.output)
+            elif result.plugin_name in ("windows.hashdump", "windows.cachedump") and result.output:
+                output.hashes = self.normalize_hashes(result.output)
 
         return output
 

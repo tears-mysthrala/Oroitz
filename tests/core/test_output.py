@@ -185,8 +185,7 @@ def test_normalize_hashes_handles_empty():
                 "HashType": "Custom",
                 "Note": "from custom plugin",
             }
-        ],
-        plugin_name="windows.cachedump",
+        ]
     )
 
     assert len(hashes) == 1

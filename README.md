@@ -53,7 +53,7 @@ See [ROADMAP.md](ROADMAP.md) for the complete development roadmap and progress t
 
 ## Getting Started
 
-1. Install Python 3.11 and ensure `python --version` reports 3.11.x.
+1. Install Python 3.11 or 3.12 and ensure `python --version` reports 3.11.x or 3.12.x. **Note:** Python 3.11 is recommended for maximum compatibility with all Volatility3 plugins. Python 3.12 is supported but some advanced plugins may have compatibility issues.
 2. Install Poetry per the instructions at <https://python-poetry.org/docs/#installation>.
 3. From the repository root, run `poetry install` to create the virtual environment and pull dependencies.
 4. Activate the Poetry shell with `poetry shell`, or prefix commands with `poetry run`.

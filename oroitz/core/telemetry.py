@@ -1,9 +1,9 @@
 """Telemetry and logging for Oroitz."""
 
+import json
 import logging
 import sys
 from typing import Any, Dict
-import json
 
 # Configure simple logging to avoid Rich import issues
 logging.basicConfig(

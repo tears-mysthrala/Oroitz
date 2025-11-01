@@ -49,6 +49,10 @@ Document the default workflows, their constituent Volatility plugins, expected o
 - **UI Expectations:**
   - GUI: Tree view with collapsible nodes, side panel for DLL details, export buttons.
   - TUI: Tree printed using Rich tree widget, commands `expand`, `collapse`, `filter dll <term>`.
+- **Note on Process Counts:**
+  - The Deep Dive scan uses `windows.psscan` which scans memory for process structures and may find hidden, terminated, or rootkit-concealed processes that don't appear in the active process list.
+  - The Quick Triage uses `windows.pslist` which only shows active/running processes from the kernel's process list.
+  - This is why you may see MORE processes in a Deep Dive scan than in a Quick Triage - this is expected behavior and indicates the scan is working correctly.
 
 ### network_focus
 

@@ -16,7 +16,7 @@ All interfaces share the same core engine, ensuring consistent results across pl
 
 ### Prerequisites
 
-- Python 3.11 or later
+- Python 3.11 or 3.12 (3.11 recommended for maximum compatibility with all Volatility3 plugins)
 - Poetry (dependency manager)
 
 ### Install Steps

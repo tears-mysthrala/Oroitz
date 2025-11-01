@@ -300,11 +300,19 @@ Checkbox {
 TabPane {
     padding: 1;
     height: 1fr;
+    overflow-y: auto;
 }
 
 TabbedContent {
     border: solid #16213e;
     height: 1fr;
+    min-height: 40vh;
+}
+
+/* Ensure DataTable in tabs can scroll */
+TabPane DataTable {
+    height: 1fr;
+    max-height: 100%;
 }
 
 /* High contrast variant */

@@ -3,7 +3,6 @@
 import json
 import subprocess
 import time
-from concurrent.futures import ThreadPoolExecutor
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 from pydantic import BaseModel
@@ -434,9 +433,8 @@ class Executor:
                 or not any(plugin.name.startswith(f"{os}.") for os in ["windows", "linux", "mac"])
             ]
             if len(plugins_to_run) != len(workflow_spec.plugins):
-                logger.info(
-                    f"Filtered {len(workflow_spec.plugins) - len(plugins_to_run)} incompatible plugins"
-                )
+                filtered = len(workflow_spec.plugins) - len(plugins_to_run)
+                logger.info(f"Filtered {filtered} incompatible plugins")
         else:
             logger.warning("Could not detect OS, executing all plugins (may fail)")
             plugins_to_run = list(workflow_spec.plugins)

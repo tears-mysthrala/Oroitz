@@ -19,7 +19,6 @@ import zipfile
 from pathlib import Path
 from typing import Iterable
 
-
 COMMUNITY_ZIP_URL = (
     "https://github.com/volatilityfoundation/community3/archive/refs/heads/master.zip"
 )

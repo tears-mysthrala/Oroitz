@@ -1,7 +1,7 @@
 """Configuration management for Oroitz core engine."""
 
 from pathlib import Path
-from typing import Optional, List
+from typing import List, Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 

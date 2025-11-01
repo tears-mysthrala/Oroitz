@@ -1,4 +1,6 @@
 name: Sample smoke benchmark (auto)
+permissions:
+  contents: read
 
 on:
   push:

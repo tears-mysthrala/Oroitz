@@ -31,7 +31,7 @@ poetry --version
 # Check current version
 python3 --version
 
-# Install Python 3.11+ if needed
+# Install Python 3.11 (recommended) or 3.12 if needed
 # On Ubuntu/Debian:
 sudo apt update
 sudo apt install python3.11 python3.11-venv
@@ -41,6 +41,8 @@ brew install python@3.11
 
 # On Windows: Download from python.org
 ```
+
+**Note**: Python 3.11 is recommended for maximum compatibility. Python 3.12 is supported but some advanced Volatility3 plugins (e.g., hashdump) may have issues due to the removal of the deprecated `imp` module. If you encounter plugin failures on Python 3.12, consider downgrading to Python 3.11.
 
 ### Dependency Installation Fails
 

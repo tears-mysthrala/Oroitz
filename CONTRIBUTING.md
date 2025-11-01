@@ -12,7 +12,7 @@ Thank you for considering a contribution. This project aims to build a cross-pla
 
 ## Getting Started
 
-1. Install Python 3.11 and Poetry.
+1. Install Python 3.11 or 3.12 (3.11 recommended for maximum compatibility) and Poetry.
 2. Run `poetry install` to create and populate the virtual environment.
 3. Activate the environment using `poetry shell` or prefix commands with `poetry run`.
 4. Copy `.env.example` files if they exist for the subsystem you are touching (none yet).

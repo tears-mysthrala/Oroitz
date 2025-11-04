@@ -13,6 +13,7 @@ Container {
 .full-height {
     height: 2fr;
 }
+
 #home-container,
 #wizard-container,
 #run-container,
@@ -386,6 +387,7 @@ TabbedContent {
     background: #ffffff;
     border: solid #ffffff;
 }
+
 .help-text {
     margin: 0 0 1 0;
     color: #b0b0b0;

@@ -1,21 +1,101 @@
 version: 2
 updates:
+  # Python dependencies (pip/poetry)
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Madrid"
     allow:
       - dependency-type: "direct"
       - dependency-type: "indirect"
     commit-message:
-      prefix: "deps"
+      prefix: "deps(python)"
       include: "scope"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "python"
+    groups:
+      # Group security updates together for priority review
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
+      # Group development dependencies
+      dev-dependencies:
+        patterns:
+          - "pytest*"
+          - "ruff"
+          - "black"
+          - "pre-commit"
+          - "pyinstaller"
+          - "safety"
+        update-types:
+          - "minor"
+          - "patch"
+      # Group documentation dependencies
+      docs-dependencies:
+        patterns:
+          - "mkdocs*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Group GUI dependencies
+      gui-dependencies:
+        patterns:
+          - "PySide6"
+          - "pytest-qt"
+        update-types:
+          - "minor"
+          - "patch"
+      # Group TUI dependencies
+      tui-dependencies:
+        patterns:
+          - "textual"
+          - "rich"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions dependencies
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Madrid"
     commit-message:
-      prefix: "deps"
+      prefix: "deps(actions)"
       include: "scope"
     open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+    groups:
+      # Group all GitHub Actions updates together
+      actions:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # npm dependencies (for future Node.js binding)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Madrid"
+    commit-message:
+      prefix: "deps(npm)"
+      include: "scope"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "javascript"

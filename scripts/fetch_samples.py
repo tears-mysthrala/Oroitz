@@ -83,7 +83,7 @@ def download_url(
         size = None
 
     if size and size > size_threshold and not non_interactive:
-        print(f"Remote file is large ({size / (1024*1024):.1f} MB): {url}")
+        print(f"Remote file is large ({size / (1024 * 1024):.1f} MB): {url}")
         if input("Proceed to download? [y/N]: ").strip().lower() not in ("y", "yes"):
             print("Skipping")
             return

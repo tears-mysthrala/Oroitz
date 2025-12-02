@@ -66,7 +66,7 @@ class RunView(Screen):
 
             for i, plugin_spec in enumerate(self.workflow.plugins):
                 plugin_name = plugin_spec.name
-                self.log_text += f"Running plugin {i+1}/{total_plugins}: {plugin_name}\n"
+                self.log_text += f"Running plugin {i + 1}/{total_plugins}: {plugin_name}\n"
                 cast(Static, self.query_one("#log-content")).update(self.log_text)
 
                 # Execute plugin

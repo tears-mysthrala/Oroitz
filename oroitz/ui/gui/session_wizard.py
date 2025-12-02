@@ -279,7 +279,7 @@ class SummaryPage(QWizardPage):
 
         summary = f"""
         <b>Session Name:</b> {session_name}<br>
-        <b>Memory Image:</b> {image_path or 'Not selected'}<br>
+        <b>Memory Image:</b> {image_path or "Not selected"}<br>
         <b>Workflow:</b> {workflow_name}
         """
 

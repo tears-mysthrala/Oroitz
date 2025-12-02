@@ -148,7 +148,7 @@ def seed_workflows() -> None:
         id="malware_hunt",
         name="Malware Hunt",
         description=(
-            "Focused scan for malware indicators, suspicious processes, " "and injected code"
+            "Focused scan for malware indicators, suspicious processes, and injected code"
         ),
         plugins=[
             PluginSpec(name="windows.malfind"),

@@ -67,13 +67,12 @@ class AboutDialog(QDialog):
         # Links
         links_layout = QVBoxLayout()
         github_label = QLabel(
-            '<a href="https://github.com/tears-mysthrala/Oroitz">' "GitHub Repository</a>"
+            '<a href="https://github.com/tears-mysthrala/Oroitz">GitHub Repository</a>'
         )
         github_label.setOpenExternalLinks(True)
         links_layout.addWidget(github_label)
         docs_label = QLabel(
-            '<a href="https://github.com/tears-mysthrala/Oroitz/blob/main/docs/">'
-            "Documentation</a>"
+            '<a href="https://github.com/tears-mysthrala/Oroitz/blob/main/docs/">Documentation</a>'
         )
         docs_label.setOpenExternalLinks(True)
         links_layout.addWidget(docs_label)

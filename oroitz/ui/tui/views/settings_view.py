@@ -97,4 +97,3 @@ class SettingsView(Screen):
         """Clear the application cache."""
         cache.clear()
         self.notify("Cache cleared", severity="information")
-

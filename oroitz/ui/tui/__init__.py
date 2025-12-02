@@ -24,9 +24,7 @@ class OroitzTUI(App):
     """Main Textual application for Oroitz."""
 
     CSS_PATH = (
-        None
-        if getattr(sys, "_MEIPASS", None)
-        else Path(__file__).parent / "styles" / "base.css"
+        None if getattr(sys, "_MEIPASS", None) else Path(__file__).parent / "styles" / "base.css"
     )
 
     BINDINGS = [

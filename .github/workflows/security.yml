@@ -33,11 +33,15 @@ jobs:
       - name: Install dependencies
         run: poetry install --only dev
 
+      - name: Export dependencies
+        run: poetry export --without-hashes -f requirements.txt -o requirements.txt
+
       - name: Run safety check
-        run: |
-          poetry export --without-hashes -f requirements.txt -o requirements.txt
-          poetry run safety check -r requirements.txt --output json > safety-report.json || true
-          cat safety-report.json
+        run: poetry run safety check -r requirements.txt --output json > safety-report.json
+        continue-on-error: true
+
+      - name: Display safety report
+        run: cat safety-report.json
         continue-on-error: true
 
       - name: Upload safety report

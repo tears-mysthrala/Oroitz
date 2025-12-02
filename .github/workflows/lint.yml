@@ -33,6 +33,3 @@ jobs:
 
       - name: Run ruff format check
         run: poetry run ruff format --check .
-
-      - name: Run black check
-        run: poetry run black --check .

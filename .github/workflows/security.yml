@@ -25,27 +25,46 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Poetry
+      - name: Install Poetry and export plugin
         run: |
           python -m pip install --upgrade pip
-          pip install poetry
+          pip install poetry poetry-plugin-export
 
       - name: Install dependencies
         run: poetry install --only dev
 
-      - name: Export dependencies
-        run: poetry export --without-hashes -f requirements.txt -o requirements.txt
-
-      - name: Run safety check
-        run: poetry run safety check -r requirements.txt --output json > safety-report.json
+      - name: Export dependencies to requirements.txt
+        run: poetry export --without-hashes -f requirements.txt -o requirements.txt --all-extras
         continue-on-error: true
 
-      - name: Display safety report
-        run: cat safety-report.json
+      - name: Fallback - generate requirements from pyproject.toml
+        if: ${{ !hashFiles('requirements.txt') }}
+        run: |
+          pip install toml
+          python -c "
+          import toml
+          with open('pyproject.toml') as f:
+              data = toml.load(f)
+          deps = data.get('tool', {}).get('poetry', {}).get('dependencies', {})
+          with open('requirements.txt', 'w') as f:
+              for pkg, ver in deps.items():
+                  if pkg != 'python':
+                      if isinstance(ver, str):
+                          f.write(f'{pkg}{ver.replace(\"^\", \">=\")}\\n')
+                      elif isinstance(ver, dict):
+                          f.write(f'{pkg}\\n')
+          "
+
+      - name: Run safety check
+        run: |
+          pip install safety
+          safety check -r requirements.txt --output json > safety-report.json || true
+          cat safety-report.json
         continue-on-error: true
 
       - name: Upload safety report
         uses: actions/upload-artifact@v5
+        if: always()
         with:
           name: safety-report
           path: safety-report.json
@@ -74,3 +93,4 @@ jobs:
         uses: github/codeql-action/analyze@v3
         with:
           category: "/language:python"
+          upload: always

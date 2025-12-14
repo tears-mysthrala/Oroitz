@@ -2,7 +2,6 @@
 
 import hashlib
 import json
-import pickle
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
@@ -30,12 +29,12 @@ class Cache:
     def get(self, session_id: str, plugin_name: str, parameters: Dict[str, Any]) -> Optional[Any]:
         """Get cached result if exists."""
         cache_key = self._get_cache_key(session_id, plugin_name, parameters)
-        cache_file = self.cache_dir / f"{cache_key}.pkl"
+        cache_file = self.cache_dir / f"{cache_key}.json"
 
         if cache_file.exists():
             try:
-                with open(cache_file, "rb") as f:
-                    result: Any = pickle.load(f)
+                with open(cache_file, "r", encoding="utf-8") as f:
+                    result: Any = json.load(f)
                 logger.debug(f"Cache hit for {plugin_name}")
                 return result
             except Exception as e:
@@ -51,24 +50,24 @@ class Cache:
     ) -> None:
         """Cache a result."""
         cache_key = self._get_cache_key(session_id, plugin_name, parameters)
-        cache_file = self.cache_dir / f"{cache_key}.pkl"
+        cache_file = self.cache_dir / f"{cache_key}.json"
 
         try:
-            with open(cache_file, "wb") as f:
-                pickle.dump(result, f)
+            with open(cache_file, "w", encoding="utf-8") as f:
+                json.dump(result, f, indent=2)
             logger.debug(f"Cached result for {plugin_name}")
         except Exception as e:
             logger.warning(f"Failed to cache result for {plugin_name}: {e}")
 
     def clear(self) -> None:
         """Clear all cached results."""
-        for cache_file in self.cache_dir.glob("*.pkl"):
+        for cache_file in self.cache_dir.glob("*.json"):
             cache_file.unlink()
         logger.info("Cache cleared")
 
     def get_stats(self) -> Dict[str, Union[int, float]]:
         """Get cache statistics."""
-        cache_files = list(self.cache_dir.glob("*.pkl"))
+        cache_files = list(self.cache_dir.glob("*.json"))
         total_size = sum(f.stat().st_size for f in cache_files) if cache_files else 0
         return {
             "total_entries": len(cache_files),

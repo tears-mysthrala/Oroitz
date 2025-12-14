@@ -90,7 +90,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install poetry
           # install runtime dependencies so CodeQL autobuild can detect any build/runtime steps
-          poetry install --only main || true
+          poetry install --only main
+        continue-on-error: true
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
@@ -103,4 +104,4 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
-        # No unsupported parameters passed to analyze; init@v4 already set languages/queries
+        # Removed category parameter - not supported in v4, languages/queries set in init@v4 instead

@@ -80,6 +80,19 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install project runtime dependencies (so autobuild can detect the project)
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          # install runtime dependencies so CodeQL autobuild can detect any build/runtime steps
+          poetry install --only main
+        continue-on-error: true
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
@@ -91,5 +104,4 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
-        with:
-          category: "/language:python"
+        # Removed category parameter - not supported in v4, languages/queries set in init@v4 instead

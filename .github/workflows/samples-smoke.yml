@@ -134,7 +134,7 @@ jobs:
           poetry run python tools/benchmark.py --sample samples/memdump.mem --output results/benchmark_report.json
 
       - name: Upload benchmark report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: benchmark-report
           path: results/benchmark_report.json

@@ -35,7 +35,7 @@ jobs:
 
       - name: Restore cache by sample sha
         id: cache-restore
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ci/cached_samples
           key: sample-memdump-${{ steps.restore-sample-cache.outputs.sample-sha }}

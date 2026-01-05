@@ -19,7 +19,7 @@ volatility3 = "^2.26.2"
 pydantic = "^2.7.0"
 pydantic-settings = "^2.0.0"
 rich = "^14.2.0"
-textual = "^6.2.1"
+textual = "^7.0.0"
 click = "^8.1.7"
 yara-python = "^4.5.0"
 
